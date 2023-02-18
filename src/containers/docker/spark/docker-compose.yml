@@ -1,7 +1,10 @@
 version: "3.3"
 services:
   spark-master:
-    image: docker.io/bitnami/spark:3.3
+    # image: docker.io/bitnami/spark:3.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "9090:8080"
       - "7077:7077"
@@ -12,7 +15,10 @@ services:
       - SPARK_LOCAL_IP=spark-master
       - SPARK_WORKLOAD=master
   spark-worker-a:
-    image: docker.io/bitnami/spark:3.3
+    # image: docker.io/bitnami/spark:3.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "9091:8080"
       - "7000:7000"
@@ -30,7 +36,10 @@ services:
        - /tmp/apps:/opt/spark-apps
        - /tmp/data:/opt/spark-data
   spark-worker-b:
-    image: docker.io/bitnami/spark:3.3
+    # image: docker.io/bitnami/spark:3.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "9092:8080"
       - "7001:7000"

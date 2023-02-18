@@ -53,3 +53,7 @@ test.json
 gcpuser
 gcpuser.pub
 *.ovpn
+
+.ipynb_checkpoints
+.pyo
+.pyc

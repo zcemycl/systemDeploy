@@ -1,11 +1,15 @@
 ```
-docker build -t cluster-apache-spark:3.0.2 .
+docker build -t cluster-apache-spark:latest .
 docker-compose up -d
+mkdir /tmp/data
+mkdir /tmp/apps
 cp *.csv /tmp/data
 cp *.py /tmp/apps
 mkdir /tmp/data/data-output
 docker exec -it spark-spark-master-1 bash
 bin/spark-submit /opt/spark-apps/test.py 
+OR
+docker exec -it spark-spark-master-1 bash -c "bin/spark-submit /opt/spark-apps/test.py"
 ```
 
 ### References

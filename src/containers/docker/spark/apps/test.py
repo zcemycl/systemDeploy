@@ -20,12 +20,12 @@ def main():
     LOGGER.info(logstat2)
     for col_name in selected_data.columns:
         selected_data = selected_data.withColumnRenamed(col_name, col_name.replace(" ",""))
-    selected_data.write.mode('overwrite').parquet(S3_DATA_OUT_PATH)
-    logstat3 = f'Selected data was successfully saved to local: {S3_DATA_OUT_PATH}'
-    print(logstat3)
-    LOGGER.info(logstat3)
-    # sc.close()
-    spark.stop()
+    # selected_data.write.mode('overwrite').parquet(S3_DATA_OUT_PATH)
+    # logstat3 = f'Selected data was successfully saved to local: {S3_DATA_OUT_PATH}'
+    # print(logstat3)
+    # LOGGER.info(logstat3)
+    # # sc.close()
+    # spark.stop()
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,8 @@
 # builder step used to download and configure spark environment
 FROM openjdk:11.0.11-jre-slim-buster as builder
 
-COPY start-spark.sh /tmp/
+COPY start-spark.sh /tmp/start-spark.sh
+COPY conf/spark-defaults.conf /tmp/spark-defaults.conf
 
 # Add Dependencies for PySpark
 RUN apt-get update && apt-get install -y curl vim wget software-properties-common ssh net-tools ca-certificates python3 python3-pip python3-numpy python3-matplotlib python3-scipy python3-pandas python3-simpy
@@ -45,6 +46,6 @@ touch $SPARK_WORKER_LOG && \
 ln -sf /dev/stdout $SPARK_MASTER_LOG && \
 ln -sf /dev/stdout $SPARK_WORKER_LOG
 
-COPY start-spark.sh /
-
 CMD ["/bin/bash", "/tmp/start-spark.sh"]
+RUN mv /tmp/spark-defaults.conf /opt/spark/conf
+RUN /opt/spark/sbin/start-history-server.sh 

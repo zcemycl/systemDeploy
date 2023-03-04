@@ -5,3 +5,6 @@ helm install redis-release redis/
 helm upgrade redis-release redis/
 helm uninstall redis-release
 ```
+
+### References
+1. [How to Create Helm Charts - The Ultimate Guide](https://www.youtube.com/watch?v=jUYNS90nq8U)

@@ -10,6 +10,9 @@ spec:
   containers:
   - image: {{ .Values.imageName }}
     name: {{ .Values.appName }}
+    envFrom:
+      - configMapRef:
+          name: {{ .Values.configmap.name }}
     resources:
       requests:
         memory: "1Gi"

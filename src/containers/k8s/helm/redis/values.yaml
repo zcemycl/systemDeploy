@@ -7,7 +7,7 @@ configmap:
   color: blue
 secrets:
   name: app-secret
-  host: 
-  user:
-  pwd:
+  host: eHh4eA==
+  user: eHh4eA==
+  pwd: eHh4eA==
   

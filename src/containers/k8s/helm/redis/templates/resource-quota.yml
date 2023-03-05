@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
     name: compute-quota
-    namespace: {{ .Values.nsName }}
+    namespace: {{ .Values.namespace.name }}
 
 spec:
     hard:

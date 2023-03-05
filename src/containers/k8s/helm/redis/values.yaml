@@ -1,3 +1,6 @@
-nsName: dev
+namespace:
+  name: dev
 appName: redis
 imageName: redis
+configmap:
+  color: blue

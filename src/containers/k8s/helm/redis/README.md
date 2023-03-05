@@ -1,3 +1,12 @@
+### How to run?
+1. Create encoded secrets and append them to `secret.yml`. (Try not to push)
+```
+# encode
+echo -n 'xxxx' | base64
+# decode
+echo -n 'xxxx' | base64 --decode
+```
+2. Apply the helm chart.
 ```
 helm create redis
 # Delete all things in templates and values.yaml

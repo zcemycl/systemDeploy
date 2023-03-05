@@ -13,6 +13,8 @@ spec:
     envFrom:
       - configMapRef:
           name: {{ .Values.configmap.name }}
+      - secretRef:
+          name: {{ .Values.secrets.name }}
     resources:
       requests:
         memory: "1Gi"

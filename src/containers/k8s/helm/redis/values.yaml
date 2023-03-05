@@ -5,3 +5,9 @@ imageName: redis
 configmap:
   name: app-config
   color: blue
+secrets:
+  name: app-secret
+  host: 
+  user:
+  pwd:
+  

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ubuntu-servers
+  name: ubuntu-servers
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: ubuntu-servers
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ubuntu-servers
+    spec:
+      containers:
+      - image: ubuntu:18.04
+        name: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        resources: {}
+status: {}

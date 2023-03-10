@@ -20,7 +20,13 @@ spec:
       containers:
       - image: ubuntu:18.04
         name: ubuntu
-        command: ["sleep"]
-        args: ["infinity"]
+        command: ["/bin/sh", "-c"]
+        args: 
+          - apt-get update;
+            apt-get -y install openssh-server;
+            useradd leo;
+            echo "leo:leo" | chpasswd;
+            service ssh restart;
+            sleep infinity;
         resources: {}
 status: {}

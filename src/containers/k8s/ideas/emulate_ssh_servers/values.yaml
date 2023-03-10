@@ -1,0 +1,10 @@
+app:
+  name: ubuntu-servers
+  image: ubuntu:18.04
+  replicas: 4
+  username: leo
+  password: leo
+
+route:
+  name: ssh-service
+  nodePort: 30022

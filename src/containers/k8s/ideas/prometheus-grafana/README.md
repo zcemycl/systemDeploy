@@ -16,5 +16,11 @@
     kubectl port-forward svc/my-kube-prometheus-stack-prometheus 9090 
     ```
 
+### How to monitor?
+```
+kubectl port-forward svc/my-kube-prometheus-stack-kube-state-metrics 8080
+```
+
 ### References
 1. [How to K8s: Getting Started with Prometheus and Grafana](https://www.macstadium.com/blog/how-to-k8s-getting-started-with-prometheus-and-grafana)
+2. [Utilizing Grafana & Prometheus Kubernetes Cluster Monitoring](https://adamtheautomator.com/prometheus-kubernetes/)

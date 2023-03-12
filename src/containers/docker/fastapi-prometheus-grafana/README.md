@@ -32,3 +32,5 @@
 2. [https://github.com/vegasbrianc/prometheus](https://github.com/vegasbrianc/prometheus)
 3. [Testing Application Monitoring Locally with a Docker Composition](https://dev.to/camptocamp-ops/testing-application-monitoring-locally-with-a-docker-composition-47hn)
 4. [Prometheus Query Examples](https://prometheus.io/docs/prometheus/latest/querying/examples/)
+5. [https://github.com/marcel-dempers/docker-development-youtube-series](https://github.com/marcel-dempers/docker-development-youtube-series)
+6. [https://github.com/trallnag/prometheus-fastapi-instrumentator#exposing-endpoint](https://github.com/trallnag/prometheus-fastapi-instrumentator#exposing-endpoint)

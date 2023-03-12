@@ -38,6 +38,8 @@ services:
       - 3000:3000
     volumes:
       - ./grafana/provisioning/datasources/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/provisioning/dashboards/dashboard.yml:/etc/grafana/provisioning/dashboards/default.yaml
+      - ./grafana/provisioning/dashboards/app_requests.json:/etc/grafana/provisioning/dashboards/app_requests.json
     env_file:
       - ./grafana/config.monitoring
     networks:

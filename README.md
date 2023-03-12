@@ -8,3 +8,5 @@
 5. Kubernetes
 6. Helm
 7. Google Cloud Platform
+8. Prometheus
+9. Grafana

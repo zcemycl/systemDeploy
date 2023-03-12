@@ -26,3 +26,9 @@
     rate(http_requests_total{job="app", handler="/"}[5m])
     Options: Auto Legend, 30s Min step, Time series format, Both Types, Enable Exemplars
     ```
+
+### References
+1. [FastAPI Microservice with Docker, Prometheus and Grafana.](https://www.youtube.com/watch?v=A6K0ZXUKgYg)
+2. [https://github.com/vegasbrianc/prometheus](https://github.com/vegasbrianc/prometheus)
+3. [Testing Application Monitoring Locally with a Docker Composition](https://dev.to/camptocamp-ops/testing-application-monitoring-locally-with-a-docker-composition-47hn)
+4. [Prometheus Query Examples](https://prometheus.io/docs/prometheus/latest/querying/examples/)

@@ -55,5 +55,5 @@ gcpuser.pub
 *.ovpn
 
 .ipynb_checkpoints
-.pyo
-.pyc
+*.pyo
+*.pyc

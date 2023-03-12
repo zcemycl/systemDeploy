@@ -24,4 +24,5 @@
 6. Grafana localhost:3000, navigate to Settings -> DataSources -> Prometheus (http://prometheus:9090).
     ```
     rate(http_requests_total{job="app", handler="/"}[5m])
+    Options: Auto Legend, 30s Min step, Time series format, Both Types, Enable Exemplars
     ```

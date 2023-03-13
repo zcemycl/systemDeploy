@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -125,6 +124,231 @@
       ],
       "title": "Monitor app",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{__name__=\"myapp_random_number_count_created\", instance=\"172.16.238.10:8888\", job=\"app\", nseconds=\"0\"}",
+                  "{__name__=\"myapp_random_number_count_total\", instance=\"172.16.238.10:8888\", job=\"app\", nseconds=\"0\"}",
+                  "nseconds=0",
+                  "nseconds=1",
+                  "nseconds=2",
+                  "nseconds=3",
+                  "nseconds=4",
+                  "nseconds=5",
+                  "nseconds=6",
+                  "nseconds=7",
+                  "nseconds=8",
+                  "nseconds=9",
+                  "nseconds=10"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"0\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=0",
+          "range": true,
+          "refId": "0"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"1\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=1",
+          "range": true,
+          "refId": "1"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"2\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=2",
+          "range": true,
+          "refId": "2"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"3\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=3",
+          "range": true,
+          "refId": "3"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"4\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=4",
+          "range": true,
+          "refId": "4"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"5\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=5",
+          "range": true,
+          "refId": "5"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"6\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=6",
+          "range": true,
+          "refId": "6"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"7\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=7",
+          "range": true,
+          "refId": "7"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"8\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=8",
+          "range": true,
+          "refId": "8"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"9\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=9",
+          "range": true,
+          "refId": "9"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "myapp_random_number_count_total{nseconds=\"10\", job=\"app\"}",
+          "hide": false,
+          "legendFormat": "nseconds=10",
+          "range": true,
+          "refId": "10"
+        }
+      ],
+      "title": "/get_random distinct results count",
+      "type": "piechart"
     }
   ],
   "refresh": "5s",

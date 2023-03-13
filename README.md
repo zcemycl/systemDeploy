@@ -78,6 +78,10 @@
         B[NodeIP] --> AA;
     ```
 4. Google Cloud Platform
+    ```mermaid
+    flowchart LR;
+        A[Artifact Registry] --> B[Cloud Run];
+    ```
 5. FastAPI + Prometheus + Grafana
     ```mermaid
     flowchart LR;

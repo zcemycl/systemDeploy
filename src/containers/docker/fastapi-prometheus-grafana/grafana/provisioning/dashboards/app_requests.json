@@ -108,18 +108,58 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "rate(http_requests_total{job=\"app\", handler=\"/get_random\"}[5m])",
+          "hide": false,
+          "interval": "5s",
+          "legendFormat": "/get_random",
+          "range": true,
+          "refId": "/get_random"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
           "exemplar": true,
           "expr": "rate(http_requests_total{job=\"app\", handler=\"/\"}[5m])",
           "hide": false,
-          "instant": true,
           "interval": "5s",
-          "key": "Q-d969474f-bce3-4771-9109-17a30616b093-0",
-          "legendFormat": "__auto",
+          "legendFormat": "/",
           "range": true,
-          "refId": "Average rate of requests"
+          "refId": "/"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "rate(http_requests_total{job=\"app\", handler=\"/metrics\"}[5m])",
+          "hide": false,
+          "interval": "5s",
+          "legendFormat": "/metrics",
+          "range": true,
+          "refId": "/metrics"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "rate(http_requests_total{job=\"app\", handler=\"/docs\"}[5m])",
+          "hide": false,
+          "interval": "5s",
+          "legendFormat": "/docs",
+          "range": true,
+          "refId": "/docs"
         }
       ],
       "title": "Monitor app",

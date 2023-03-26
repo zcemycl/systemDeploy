@@ -90,3 +90,26 @@
     ```
     ![fastapi-prometheus-grafana](docs/resources/grafana_fastapi_prometheus.png)
 
+## Archive
+- API calls
+    ```mermaid
+    sequenceDiagram
+        participant app;
+        participant api;
+        participant location_api;
+        participant sensor_api;
+        participant prediction_api;
+        Note over app: requirements <br>- delay: 2s;
+        app->>+api: GET;
+        Note over location_api: <br>- endpoint: /location <br>- delay: 0.5s;
+        api->>+location_api: GET /location;
+        location_api-->>-api: return (lat,lng);
+        Note over sensor_api: <br>- endpoint: /sensor <br>- delay: 2s;
+        api->>+sensor_api: GET /sensor?lat,lng;
+        sensor_api-->>-api: return (timestamp, sensor_data);
+        Note over prediction_api: <br>- endpoint: /predict <br>- delay: 4s;
+        api->>+prediction_api: GET /sensor?lat,lng,sensor_data;
+        prediction_api-->>-api: return (prediction_data);
+        api-->>-app: ;
+    ```
+- MLOps

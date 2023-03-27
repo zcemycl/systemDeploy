@@ -113,3 +113,56 @@
         api-->>-app: ;
     ```
 - MLOps
+    ```mermaid
+    flowchart TB;
+        subgraph A[Continuous Integration]
+            direction TB
+            subgraph AA[Data]
+                AAB[Database] --- AAA[Artefacts];
+            end
+            subgraph AB[Preprocessing]
+                ABA[Exploration] --> ABB[Processing];
+                ABB-->ABC[Feature Extraction];
+            end
+            subgraph AC[Model]
+                ACA[Model Selection]-->ACB[Train];
+                ACB-->ACC[Validate];
+                ACC-->ACD[Model Registration];
+                ACD-->ACA;
+            end
+            AA-->|batch/stream processing|AB;
+            AB-->|features|AA;
+            AC-->|model artefacts|AA;
+            AA-->AC;
+        end
+        a((client));
+        a-->|raw data|AA;
+        subgraph B[Continuous Deployment]
+            direction LR
+            subgraph BA[Deploy]
+                BAA[Containers]-->BAB[Servers];
+                BAB-->BAC[Load Balancer] & BAD[Logging];
+            end
+            subgraph BB[Monitoring]
+                BBA[Visualisation Tool];
+            end
+            BAD-->BBA;
+        end
+        AC-->B;
+        B-->|endpoints, kpis|a;
+    ```
+    |Role|Responsibilities|
+    |---|---|
+    |Data engineer|Data, Preprocessing|
+    |Data scientist|Preprocessing, Model|
+    |ML engineer|Preprocessing, Model, Deploy|
+    |Devops|Deploy, Monitoring|
+
+    |Responsibility|Skills|
+    |---|---|
+    |Data|SQL, Postgresql, Pgadmin, SQLAlchemy, SQLModel, Alembic|
+    |Preprocessing|Spark, Pandas, Databricks|
+    |Model|Tensorflow, Pytorch, MLflow|
+    |Deploy|FastAPI, Tensorflow, Pytorch, Prometheus|
+    |Monitoring|Prometheus, Grafana|
+    

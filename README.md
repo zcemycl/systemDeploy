@@ -165,4 +165,45 @@
     |Model|Tensorflow, Pytorch, MLflow|
     |Deploy|FastAPI, Tensorflow, Pytorch, Prometheus|
     |Monitoring|Prometheus, Grafana|
-    
+
+- Kafka Broker and Database Crash
+    ```mermaid
+    flowchart LR;
+        A[Collectors]-->B[Kafka Broker];
+        subgraph C[Workers]
+            C1[Worker1];
+            C2[Worker2];
+        end
+        B-->|work1 topic|C1;
+        B-->|work2 topic|C2;
+        subgraph D[Database]
+            D1[Table1];
+            D2[Table2];
+        end
+        C1-->|1. write|D1;
+        D-->|2. crash|D;
+        C2-->|3. disconnect, can't write|D2;
+    ```
+    ```mermaid
+    ---
+    displayMode: compact
+    ---
+    gantt
+        title Workers Timetable
+        dateFormat HH:mm
+        axisFormat %H:%M
+        tickInterval 1hour
+
+        section Worker 1
+        w1: a1, 00:20, 15m
+        w1: a1, 02:20, 15m
+        w1: a1, 04:20, 15m
+        w1: a1, 06:20, 15m
+        w1: a1, 08:20, 15m
+        w1: a1, 10:20, 15m
+
+        section Worker 2
+        w2: a2, 00:00, 1h
+        w2: a2, 04:00, 1h
+        w2: a2, 08:00, 1h
+    ```

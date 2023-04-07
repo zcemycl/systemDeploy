@@ -58,3 +58,5 @@ gcpuser.pub
 *.pyo
 *.pyc
 __pycache__/*
+
+build

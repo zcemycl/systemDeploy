@@ -8,4 +8,4 @@ add_subdirectory(libs)
  
 # Link runTests with what we want to test and the GTest and pthread library
 add_executable(runTests test/trandom.cpp)
-target_link_libraries(runTests ${GTEST_LIBRARIES} pthread random)
+target_link_libraries(runTests ${GTEST_LIBRARIES} pthread random turtle)

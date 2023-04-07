@@ -1,8 +1,10 @@
 #include "random.h"
+#include "mock_turtle.h"
+#include "painter.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-using ::testing::AtLeast;   
+using testing::AtLeast;   
  
 TEST(SquareRootTest, PositiveNos) { 
     ASSERT_EQ(6, squareRoot(36.0));

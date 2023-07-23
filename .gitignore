@@ -60,3 +60,4 @@ gcpuser.pub
 __pycache__/*
 
 build
+*.gpg

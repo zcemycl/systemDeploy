@@ -21,6 +21,7 @@ flowchart TB;
     end
 
     E[(credentials)];
+    F[(AWS Management Console)];
 
     D[Leo]-->B3;
     B1 -->|push| C1;
@@ -29,6 +30,5 @@ flowchart TB;
     D --> E;
     B1 --> E;
     B2 --> E;
-    
-
+    D & A -->|access| F;
 ```

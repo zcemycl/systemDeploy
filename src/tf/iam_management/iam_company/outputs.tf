@@ -25,6 +25,7 @@ output "dev_access_secret_key" {
 # output "dev_user_passwords" {
 #   value = [for p in aws_iam_user_login_profile.dev-users: p.encrypted_password]
 # }
+# password for users
 output "dev_user_passwords" {
   value = [for p in aws_iam_user_login_profile.dev-users: p.password]
 }

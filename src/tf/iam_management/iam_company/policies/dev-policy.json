@@ -1,0 +1,46 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "IAMActions",
+            "Effect": "Allow",
+            "Action": [
+                "iam:AddRoleToInstanceProfile",
+                "iam:AttachRolePolicy",
+                "iam:CreateRole",
+                "iam:CreatePolicy",
+                "iam:CreatePolicyVersion",
+                "iam:CreateServiceLinkedRole",
+                "iam:DeleteInstanceProfile",
+                "iam:DeletePolicy",
+                "iam:DeletePolicyVersion",
+                "iam:DeleteRole",
+                "iam:DeleteRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:DetachUserPolicy",
+                "iam:GetInstanceProfile",
+                "iam:GetRole",
+                "iam:GetRolePolicy",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:GetUser",
+                "iam:ListAttachedRolePolicies",
+                "iam:ListEntitiesForPolicy",
+                "iam:ListInstanceProfiles",
+                "iam:ListInstanceProfilesForRole",
+                "iam:ListPolicyVersions",
+                "iam:ListRoles",
+                "iam:ListRolePolicies",
+                "iam:PutRolePolicy",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:TagRole",
+                "iam:UpdateAssumeRolePolicy",
+                "iam:UntagRole",
+                "iam:UpdateRole",
+                "iam:UpdateRoleDescription",
+                "sts:GetFederationToken"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

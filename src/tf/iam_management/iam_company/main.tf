@@ -53,3 +53,14 @@ resource "aws_iam_access_key" "dev_users" {
     for_each = toset([for u in aws_iam_user.developers : u.name])
     user    = each.key
 }
+
+resource "aws_iam_policy" "dev_policy" {
+    name = "dev-policy"
+    policy = file("policies/dev-policy.json")
+}
+
+resource "aws_iam_policy_attachment" "dev_policy_attach" {
+    name = "dev-policy-attach"
+    users = [for u in aws_iam_user.developers : u.name]
+    policy_arn = aws_iam_policy.dev_policy.arn
+}

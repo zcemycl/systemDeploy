@@ -37,6 +37,7 @@ resource "aws_rds_cluster" "rds_cluster" {
   apply_immediately            = true
   preferred_backup_window      = "02:00-03:00"
   preferred_maintenance_window = "Sat:04:00-Sat:05:00"
+  skip_final_snapshot = true
 }
 
 resource "aws_rds_cluster_instance" "rds_wr" {

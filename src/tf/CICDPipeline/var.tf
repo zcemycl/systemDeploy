@@ -5,4 +5,3 @@ variable "AWS_REGION" {
 variable "AWS_AZ" {
   default = "eu-west-2a"
 }
-

@@ -42,9 +42,9 @@ def parse_contents(contents, filename: str, date: float):
 
     decoded = base64.b64decode(content_string)
     try:
-        r = requests.get('http://server:5000/summary', 
-            json={"data": content_string, 
-                "filename": filename, 
+        r = requests.get('http://server:5000/summary',
+            json={"data": content_string,
+                "filename": filename,
                 "date": date})
         summary = json.loads(r.content)
         print(summary)

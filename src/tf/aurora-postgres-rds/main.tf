@@ -5,20 +5,20 @@ resource "random_password" "aurora" {
 }
 
 resource "aws_security_group" "rds_sg" {
-    name = "aurora-postgres-rds-sg"
-    ingress {
-        from_port = 5432
-        to_port = 5432
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  name = "aurora-postgres-rds-sg"
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-    egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_rds_cluster" "rds_cluster" {
@@ -37,7 +37,7 @@ resource "aws_rds_cluster" "rds_cluster" {
   apply_immediately            = true
   preferred_backup_window      = "02:00-03:00"
   preferred_maintenance_window = "Sat:04:00-Sat:05:00"
-  skip_final_snapshot = true
+  skip_final_snapshot          = true
 }
 
 resource "aws_rds_cluster_instance" "rds_wr" {

@@ -9,8 +9,8 @@ resource "aws_cloudwatch_metric_alarm" "example_alarm" {
   threshold           = lookup(var.ec2_alarm_config, "threshold")
 
   alarm_description = <<EOT
-    Stop the EC2 instance when CPU utilization stays below 
-    ${lookup(var.ec2_alarm_config, "threshold")}% on average 
+    Stop the EC2 instance when CPU utilization stays below
+    ${lookup(var.ec2_alarm_config, "threshold")}% on average
     for ${lookup(var.ec2_alarm_config, "evaluation_periods")} periods of
     ${lookup(var.ec2_alarm_config, "period")} seconds.
     EOT

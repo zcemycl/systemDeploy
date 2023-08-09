@@ -19,7 +19,7 @@ variable "deletion_protect" {
   default = "INACTIVE"
 }
 
-# api gateway 
+# api gateway
 variable "apigw_name" {
   default = "smokeapigw"
 }

@@ -11,5 +11,3 @@ sudo snap refresh
 
 echo "======================"
 sudo shutdown -r +0
-
-

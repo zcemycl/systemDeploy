@@ -3,11 +3,11 @@
     ```
     ssh -i mykey ubuntu@ip
     ```
-2. Wait until all resources are active. 
+2. Wait until all resources are active.
     ```
     nice -n 16 watch -n 1 -c juju status --relations --color
     ```
-3. Create proxy. 
+3. Create proxy.
     ```
     ssh -i mykey -D 9999 ubuntu@ip
     # go to firefox Settings -> proxy (Connection Settings)

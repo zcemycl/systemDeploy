@@ -4,7 +4,7 @@
 # http://0.0.0.0:8050
 # prod
 docker build -t dash-prod -f install/Dockerfile.prod .
-docker run -dp 8050:8050 dash-prod 
+docker run -dp 8050:8050 dash-prod
 # dev
 docker build -t dash-dev -f install/Dockerfile.dev .
 docker run -p 8050:8050 -v $(pwd)/client/app.py:/app.py dash-dev

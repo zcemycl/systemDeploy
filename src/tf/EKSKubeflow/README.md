@@ -38,7 +38,7 @@ export USE_RDS="true"
 # true/false flag to configure and deploy with S3
 export USE_S3="true"
 ```
-3. Edit `.tfvars` file. 
+3. Edit `.tfvars` file.
 ```
 cat <<EOF > sample.auto.tfvars
 cluster_name="${CLUSTER_NAME}"
@@ -55,10 +55,10 @@ EOF
 
 cp sample.auto.tfvars .tfvars
 ```
-4. Initialise and plan. 
+4. Initialise and plan.
 ```
 # Make sure installing 1.2.7 terraform
-aws-vault exec {} -- terraform init 
+aws-vault exec {} -- terraform init
 aws-vault exec {} -- terraform plan
 ```
 5. Build `Makefile`.

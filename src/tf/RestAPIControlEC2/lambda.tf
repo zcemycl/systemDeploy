@@ -20,4 +20,3 @@ resource "aws_lambda_function" "test_lambda" {
     command = "echo ${aws_lambda_function.test_lambda.invoke_arn} >> info.txt"
   }
 }
-

@@ -21,4 +21,3 @@ EOF
     Topic  = var.tag_topic
   }
 }
-

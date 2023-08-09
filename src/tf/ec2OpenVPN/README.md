@@ -2,7 +2,7 @@
 1. London (eu-west-2, eu-west-2a, ami-035469b606478d63d)
 2. Singapore (ap-southeast-1, ap-southeast-1a, ami-09f03fa5572692399)
 
-### How to run? 
+### How to run?
 ```
 aws-vault exec leo.leung -- terraform apply -auto-approve -var-file="singapore.tfvars"
 ```

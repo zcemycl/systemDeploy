@@ -21,9 +21,8 @@ then
         ros-turtlebot-sim \
         bash
 elif [ $mode = exec ]
-then 
+then
     docker exec -it \
         `docker ps | grep "r1_turtlebot3" | awk '{ print $1 }'` \
         bash
 fi
-

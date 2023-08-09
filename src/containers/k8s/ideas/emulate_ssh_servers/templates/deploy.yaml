@@ -20,7 +20,7 @@ spec:
       - image: {{ .Values.app.image }}
         name: ubuntu
         command: ["/bin/sh", "-c"]
-        args: 
+        args:
           - apt-get update;
             apt-get -y install openssh-server;
             useradd leo;

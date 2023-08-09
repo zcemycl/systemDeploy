@@ -1,31 +1,31 @@
 resource "aws_vpc" "vpc" {
-  cidr_block = "10.0.0.0/16"
-  enable_dns_support = true
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}"
+    Name   = "${var.tag_author} -- ${var.tag_topic}"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Internet Gateway"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Internet Gateway"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
 resource "aws_subnet" "private_subnet1" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = "10.0.0.0/19"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.0.0.0/19"
   availability_zone = "${var.region}a"
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Private subnet 1"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Private subnet 1"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
@@ -41,14 +41,14 @@ resource "aws_subnet" "private_subnet1" {
 # }
 
 resource "aws_subnet" "public_subnet1" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = "10.0.64.0/19"
-  availability_zone = "${var.region}a"
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.0.64.0/19"
+  availability_zone       = "${var.region}a"
   map_public_ip_on_launch = true
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Public subnet 1"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Public subnet 1"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
@@ -67,19 +67,19 @@ resource "aws_subnet" "public_subnet1" {
 resource "aws_eip" "nat" {
   vpc = true
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Elastic IP"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Elastic IP"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
-  subnet_id = aws_subnet.public_subnet1.id
+  subnet_id     = aws_subnet.public_subnet1.id
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Nat gateway"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Nat gateway"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -93,9 +93,9 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Private Route Table"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Private Route Table"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
@@ -107,18 +107,18 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.tag_author} -- ${var.tag_topic}: Public Route Table"
+    Name   = "${var.tag_author} -- ${var.tag_topic}: Public Route Table"
     Author = var.tag_author
-    Topic = var.tag_topic
+    Topic  = var.tag_topic
   }
 }
 
 resource "aws_route_table_association" "private_subnet1" {
-  subnet_id = aws_subnet.private_subnet1.id
+  subnet_id      = aws_subnet.private_subnet1.id
   route_table_id = aws_route_table.private.id
 }
 
 resource "aws_route_table_association" "public_subnet1" {
-  subnet_id = aws_subnet.public_subnet1.id
+  subnet_id      = aws_subnet.public_subnet1.id
   route_table_id = aws_route_table.public.id
 }

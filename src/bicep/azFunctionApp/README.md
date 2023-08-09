@@ -1,5 +1,5 @@
 ### How to start?
-1. Create Resource group. 
+1. Create Resource group.
     ```
     az group create --name rg-blog-example  --location westeurope
     ```
@@ -11,19 +11,19 @@
     az deployment group create -g rg-blog-example --template-file main.bicep --parameters appInsightsLocation=westeurope appName=leosleepyFunc
     ```
 4. Create the folder which contains multiple function folders and settings files.
-    a. Use Azure VSCode extension. 
-        - Download Azure Functions Extension. 
+    a. Use Azure VSCode extension.
+        - Download Azure Functions Extension.
         - Left panel to find Azure logo, sign in.
         - F1 Azure Functions: Create Function. (better to open a new window for vscode with root that you prefer.)
-    b. Use `func` command line. 
+    b. Use `func` command line.
     c. Run the functions locally, via `func start`.
 5. Deploy the function project to Azure.
     ```
     func azure functionapp publish leoassassFunc
     ```
-6. Find the invoke link and api token. 
+6. Find the invoke link and api token.
     - Go to your resource group, then your function app.
-    - Click in Functions -> Functions. Go to your specific function. 
+    - Click in Functions -> Functions. Go to your specific function.
     - Get Function Url. (It should include a code as api key.)
     - Or get it from Function keys. (Add `?code=` followed by your key, and `&params=` for other parameters.)
 
@@ -37,7 +37,7 @@
     --query "invokeUrlTemplate" \
     --output tsv`
     ```
-2. Get the code for calling url with authorisation. 
+2. Get the code for calling url with authorisation.
     ```
     FUNCAPP_CODE=`az functionapp function keys list \
     --function-name HttpTrigger1 \

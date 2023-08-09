@@ -19,9 +19,9 @@ if __name__ == "__main__":
     p.add_argument('--endpt', type=str, required=True)
     p.add_argument('--subkey', type=str, required=True)
     args = p.parse_args()
-    client = ComputerVisionClient(args.endpt,  
+    client = ComputerVisionClient(args.endpt,
         CognitiveServicesCredentials(args.subkey))
-    
+
     read_image_url = "https://raw.githubusercontent.com/MicrosoftDocs/azure-docs/master/articles/cognitive-services/Computer-vision/Images/readsample.jpg"
     f = urllib.request.urlopen(read_image_url)
     img = Image.open(io.BytesIO(f.read()))
@@ -46,4 +46,3 @@ if __name__ == "__main__":
                 plt.scatter(bbox[::2],bbox[1::2])
     print()
     plt.show()
-

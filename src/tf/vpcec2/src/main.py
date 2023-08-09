@@ -9,14 +9,14 @@ def root() -> dict:
     url = 'http://169.254.169.254/latest/meta-data/instance-id'
     try:
         instanceid = urllib.request.urlopen(url).read().decode()
-    except: 
+    except:
         instanceid = "unknown"
     try:
         socketname = socket.gethostname()
     except:
         socketname = "unknown"
     return {
-        "msg": "Hello, World!", 
+        "msg": "Hello, World!",
         "ec2_identifier": instanceid,
         "docker_identifier": socketname
     }

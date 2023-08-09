@@ -42,7 +42,7 @@ def create_items(container):
 
 def scale_container(container):
     print('\nScaling Container\n')
-    
+
     # You can scale the throughput (RU/s) of your container up and down to meet the needs of the workload. Learn more: https://aka.ms/cosmos-request-units
     try:
         offer = container.read_offer()
@@ -52,7 +52,7 @@ def scale_container(container):
         container.replace_throughput(offer.offer_throughput)
 
         print('Replaced Offer. Offer Throughput is now \'{0}\''.format(offer.offer_throughput))
-    
+
     except exceptions.CosmosHttpResponseError as e:
         if e.status_code == 400:
             print('Cannot read container throuthput.');
@@ -178,9 +178,9 @@ def get_sales_order_v2(item_id):
     return order2
 
 def run_sample(args):
-    client = cosmos_client.CosmosClient(args.endpt, 
-        {'masterKey': args.apikey}, 
-        user_agent="CosmosDBPythonQuickstart", 
+    client = cosmos_client.CosmosClient(args.endpt,
+        {'masterKey': args.apikey},
+        user_agent="CosmosDBPythonQuickstart",
         user_agent_overwrite=True)
     DATABASE_ID = args.dbid
     CONTAINER_ID = args.containerid

@@ -29,7 +29,7 @@ resource webAppName_resource 'Microsoft.Web/sites@2022-03-01' = {
   }
   properties: {
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${dockerRegistryHost}/${dockerImage}' 
+      linuxFxVersion: 'DOCKER|${dockerRegistryHost}/${dockerImage}'
       acrUseManagedIdentityCreds: true
     }
     serverFarmId: '/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'

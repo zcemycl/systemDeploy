@@ -56,7 +56,7 @@
                     AAA1[CI Testings]
                 end
                 AAA -->|package| AAB[Artefacts]
-                
+
             end
         end
         A -->|docker image| B1;

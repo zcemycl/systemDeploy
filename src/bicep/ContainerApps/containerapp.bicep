@@ -29,7 +29,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
           name: 'container-registry-password'
           value: registryPassword
         }
-      ]      
+      ]
       registries: [
         {
           server: registry

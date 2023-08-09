@@ -3,9 +3,9 @@
     ```
     az deployment sub create --name blob-example --location ukwest --template-file ./main.bicep
     ```
-2. Upload an image. 
+2. Upload an image.
     ```
-    az storage blob upload --account-name xxxxxxxx --container-name image --file /media/yui/Disk/data/people.jpg 
+    az storage blob upload --account-name xxxxxxxx --container-name image --file /media/yui/Disk/data/people.jpg
     ```
 3. Delete resource group with subscription. (Need to manually do this)
     ```

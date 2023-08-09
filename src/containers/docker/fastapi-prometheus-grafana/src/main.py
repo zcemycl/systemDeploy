@@ -1,6 +1,6 @@
 import time
 import random
-from fastapi import Request, FastAPI 
+from fastapi import Request, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Histogram, Counter

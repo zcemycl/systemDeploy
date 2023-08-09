@@ -26,7 +26,7 @@ services:
     networks:
       example-network:
         ipv4_address: 172.16.238.11
-  
+
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
@@ -45,7 +45,7 @@ services:
     networks:
       example-network:
         ipv4_address: 172.16.238.12
-  
+
 networks:
   example-network:
     name: example-network

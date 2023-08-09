@@ -48,4 +48,4 @@ ln -sf /dev/stdout $SPARK_WORKER_LOG
 
 CMD ["/bin/bash", "/tmp/start-spark.sh"]
 RUN mv /tmp/spark-defaults.conf /opt/spark/conf
-RUN /opt/spark/sbin/start-history-server.sh 
+RUN /opt/spark/sbin/start-history-server.sh

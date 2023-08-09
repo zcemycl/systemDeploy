@@ -1,5 +1,5 @@
 ```
-az deployment group create --resource-group exampleRG 
+az deployment group create --resource-group exampleRG
     --template-file main.bicep --parameters location=ukwest
 export resourceGroupName=exampleRG
 accountName=`az cosmosdb list \

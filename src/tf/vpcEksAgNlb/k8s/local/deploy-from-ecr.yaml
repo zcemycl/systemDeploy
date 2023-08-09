@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
+metadata:
   name: fastapi-trial-k8s
 spec:
-  selector: 
+  selector:
     matchLabels:
       app: fastapi-trial-k8s
   replicas: 3
   template:
     metadata:
-      labels: 
+      labels:
         app: fastapi-trial-k8s
     spec:
       containers:

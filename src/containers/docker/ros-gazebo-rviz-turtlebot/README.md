@@ -1,6 +1,6 @@
 ```
 # terminal 1
-./run_docker.sh run 
+./run_docker.sh run
 roscore
 # terminal 2
 ./run_docker.sh exec

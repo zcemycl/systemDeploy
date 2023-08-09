@@ -31,7 +31,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
     name: 'default'
 
     resource container 'containers' = {
-      name: blobName 
+      name: blobName
     }
   }
 

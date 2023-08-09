@@ -46,5 +46,3 @@ resource "aws_apigatewayv2_route" "apigw_route" {
   # authorizer_id = aws_apigatewayv2_authorizer.apigw_auth.id
   target = "integrations/${aws_apigatewayv2_integration.apigw_inte.id}"
 }
-
-

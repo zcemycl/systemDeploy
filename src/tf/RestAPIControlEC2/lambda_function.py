@@ -22,7 +22,7 @@ def lambda_handler(event, context):
             if i['InstanceId']==instanceId:
                 statusCode = 200
                 resp["ip"] = i.get("PublicIpAddress","")
-                
+
     respObj["statusCode"] = statusCode
     respObj["body"] = json.dumps(resp)
     print(respObj)
@@ -38,4 +38,3 @@ def lambda_handler(event, context):
     elif action=="describe":
         pass
     return respObj
-    

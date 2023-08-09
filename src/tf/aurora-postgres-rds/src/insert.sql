@@ -1,2 +1,2 @@
-insert into persons (name) 
+insert into persons (name)
 values ('Leo Leung');

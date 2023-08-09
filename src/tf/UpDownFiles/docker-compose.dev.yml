@@ -25,6 +25,6 @@ services:
       - my_network
     depends_on:
       - client
-networks: 
+networks:
   my_network:
     driver : bridge

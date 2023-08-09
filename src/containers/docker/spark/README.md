@@ -7,7 +7,7 @@ cp *.csv /tmp/data
 cp *.py /tmp/apps
 mkdir /tmp/data/data-output
 docker exec -it spark-spark-master-1 bash
-bin/spark-submit /opt/spark-apps/test.py 
+bin/spark-submit /opt/spark-apps/test.py
 OR
 docker exec -it spark-spark-master-1 bash -c "bin/spark-submit /opt/spark-apps/test.py"
 ```
@@ -15,7 +15,7 @@ docker exec -it spark-spark-master-1 bash -c "bin/spark-submit /opt/spark-apps/t
 ## Add history
 ```
 docker exec -it spark-spark-master-1 bash -c "mkdir /tmp/spark-events"
-sbin/start-history-server.sh 
+sbin/start-history-server.sh
 ```
 
 ### References

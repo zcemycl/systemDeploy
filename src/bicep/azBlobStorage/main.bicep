@@ -17,4 +17,3 @@ module blob 'modules/blob.bicep' = {
     location: location
   }
 }
-

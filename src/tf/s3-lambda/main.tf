@@ -55,9 +55,10 @@ resource "aws_iam_role" "lambda_iam" {
 }
 
 resource "aws_lambda_layer_version" "lambda_layer" {
-  s3_bucket  = aws_s3_bucket.lambda_functions.id
-  s3_key     = aws_s3_object.upload_s3_rds_lambda_layer.id
-  layer_name = "base_layer"
+  s3_bucket        = aws_s3_bucket.lambda_functions.id
+  s3_key           = aws_s3_object.upload_s3_rds_lambda_layer.id
+  layer_name       = "base_layer"
+  source_code_hash = data.archive_file.dependencies.output_base64sha256
 
   compatible_runtimes = ["python3.10"]
 }

@@ -50,3 +50,19 @@ resource "aws_rds_cluster_instance" "rds_wr" {
   publicly_accessible = true
   # db_subnet_group_name =
 }
+
+resource "aws_secretsmanager_secret" "rds" {
+  name = "rds-secrets"
+}
+
+resource "aws_secretsmanager_secret_version" "rds" {
+  secret_id     = aws_secretsmanager_secret.rds.id
+  secret_string = <<EOF
+  {
+    "db_user": "postgres",
+    "db_pwd": "${random_password.aurora.result}",
+    "db_host": "${aws_rds_cluster_instance.rds_wr.endpoint}",
+    "db_port": 5432
+  }
+EOF
+}

@@ -54,6 +54,13 @@ resource "aws_iam_role" "lambda_iam" {
   assume_role_policy = file("policies/lambda-task-role.json")
 }
 
+resource "aws_iam_role_policy" "lambda_role_policy" {
+  name = "lambda_role_policy"
+  role = aws_iam_role.lambda_iam.id
+
+  policy = file("policies/lambda-role-policy.json")
+}
+
 resource "aws_lambda_layer_version" "lambda_layer" {
   s3_bucket        = aws_s3_bucket.lambda_functions.id
   s3_key           = aws_s3_object.upload_s3_rds_lambda_layer.id
@@ -74,8 +81,16 @@ resource "aws_lambda_function" "random_lambda" {
   layers           = [aws_lambda_layer_version.lambda_layer.arn]
 }
 
+resource "aws_lambda_permission" "test" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.random_lambda.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = "arn:aws:s3:::${aws_s3_bucket.trigger_pt.id}"
+}
+
 resource "aws_s3_bucket" "trigger_pt" {
-  bucket = "trigger-lambda"
+  bucket = "trigger-lambda-leo-120823"
 }
 
 resource "aws_s3_bucket_notification" "aws_lambda_trigger" {

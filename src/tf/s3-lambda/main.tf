@@ -73,3 +73,15 @@ resource "aws_lambda_function" "random_lambda" {
   source_code_hash = data.archive_file.random_func.output_base64sha256
   layers           = [aws_lambda_layer_version.lambda_layer.arn]
 }
+
+resource "aws_s3_bucket" "trigger_pt" {
+  bucket = "trigger-lambda"
+}
+
+resource "aws_s3_bucket_notification" "aws_lambda_trigger" {
+  bucket = aws_s3_bucket.trigger_pt.id
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.random_lambda.arn
+    events              = ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
+  }
+}

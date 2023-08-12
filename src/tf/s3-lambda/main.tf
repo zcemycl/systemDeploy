@@ -100,3 +100,16 @@ resource "aws_s3_bucket_notification" "aws_lambda_trigger" {
     events              = ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
   }
 }
+
+resource "aws_cloudwatch_log_group" "lambda_s3_rds" {
+  name              = "/aws/lambda/s3-rds-connection"
+  retention_in_days = 3
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+resource "aws_cloudwatch_log_stream" "lambda_s3_rds" {
+  name           = "bsc-log-stream"
+  log_group_name = aws_cloudwatch_log_group.lambda_s3_rds.name
+}

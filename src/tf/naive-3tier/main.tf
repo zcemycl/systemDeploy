@@ -58,3 +58,29 @@ module "secrets" {
     }
   ]
 }
+
+resource "aws_vpc" "base_vpc" {
+  cidr_block       = var.vpc_cidr
+  instance_tenancy = "default"
+
+  tags = {
+    Name = "vpc"
+  }
+}
+
+resource "aws_internet_gateway" "base_igw" {
+  vpc_id = aws_vpc.base_vpc.id
+
+  tags = {
+    Name = "vpc-igw"
+  }
+}
+
+module "alb_network" {
+  source                  = "./modules/subnets"
+  name                    = "alb"
+  subnets_cidr            = var.alb_subnets_cidr
+  vpc_id                  = aws_vpc.base_vpc.id
+  map_public_ip_on_launch = true
+  availability_zones      = var.availability_zones
+}

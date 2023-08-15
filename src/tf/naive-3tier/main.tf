@@ -68,31 +68,18 @@ resource "aws_vpc" "base_vpc" {
   }
 }
 
-resource "aws_internet_gateway" "base_igw" {
-  vpc_id = aws_vpc.base_vpc.id
-
-  tags = {
-    Name = "vpc-igw"
-  }
-}
-
-resource "aws_route_table" "base_public_route_table" {
-  vpc_id = aws_vpc.base_vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.base_igw.id
-  }
-  tags = {
-    Name = "base-public-route-table"
-  }
+module "igw_public_route_table" {
+  source                     = "./modules/subnets"
+  vpc_id                     = aws_vpc.base_vpc.id
+  include_public_route_table = true
 }
 
 module "alb_network" {
-  source                  = "./modules/subnets"
-  name                    = "alb"
-  subnets_cidr            = var.alb_subnets_cidr
-  vpc_id                  = aws_vpc.base_vpc.id
-  map_public_ip_on_launch = true
-  availability_zones      = var.availability_zones
+  source                         = "./modules/subnets"
+  name                           = "alb"
+  subnets_cidr                   = var.alb_subnets_cidr
+  vpc_id                         = aws_vpc.base_vpc.id
+  subnet_map_public_ip_on_launch = true
+  availability_zones             = var.availability_zones
+  include_private_route_table    = true
 }

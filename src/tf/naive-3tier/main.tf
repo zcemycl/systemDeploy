@@ -75,11 +75,21 @@ module "igw_public_route_table" {
 }
 
 module "alb_network" {
-  source                         = "./modules/subnets"
-  name                           = "alb"
-  subnets_cidr                   = var.alb_subnets_cidr
-  vpc_id                         = aws_vpc.base_vpc.id
-  subnet_map_public_ip_on_launch = true
-  availability_zones             = var.availability_zones
-  include_private_route_table    = true
+  source                            = "./modules/subnets"
+  name                              = "alb"
+  subnets_cidr                      = var.alb_subnets_cidr
+  vpc_id                            = aws_vpc.base_vpc.id
+  subnet_map_public_ip_on_launch    = true
+  availability_zones                = var.availability_zones
+  include_private_route_table       = true
+  map_subnet_to_public_route_tables = module.igw_public_route_table.public_route_tables
+}
+
+module "app_network" {
+  source                             = "./modules/subnets"
+  name                               = "app"
+  subnets_cidr                       = var.app_subnets_cidr
+  vpc_id                             = aws_vpc.base_vpc.id
+  availability_zones                 = var.availability_zones
+  map_subnet_to_private_route_tables = module.alb_network.private_route_tables
 }

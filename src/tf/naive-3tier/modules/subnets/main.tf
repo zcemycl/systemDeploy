@@ -60,5 +60,15 @@ resource "aws_route_table" "private_route_table" {
 }
 
 # public route table association
+resource "aws_route_table_association" "public_route_table_association" {
+  count          = length(var.map_subnet_to_public_route_tables) > 0 ? length(aws_subnet.subnets) : 0
+  subnet_id      = element(aws_subnet.subnets.*.id, count.index)
+  route_table_id = var.map_subnet_to_public_route_tables[0].id
+}
 
 # private route table association
+resource "aws_route_table_association" "private_route_table_association" {
+  count          = length(var.map_subnet_to_private_route_tables) > 0 ? length(aws_subnet.subnets) : 0
+  subnet_id      = element(aws_subnet.subnets.*.id, count.index)
+  route_table_id = element(var.map_subnet_to_private_route_tables.*.id, count.index)
+}

@@ -32,3 +32,11 @@ variable "include_private_route_table" {
   type    = bool
   default = false
 }
+
+variable "map_subnet_to_public_route_tables" {
+  default = []
+}
+
+variable "map_subnet_to_private_route_tables" {
+  default = []
+}

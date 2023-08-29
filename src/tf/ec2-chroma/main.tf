@@ -38,7 +38,7 @@ resource "aws_instance" "chroma_instance" {
   availability_zone = "eu-west-2a"
   instance_type     = "t3.small"
   security_groups   = [aws_security_group.chroma_sg.name]
-  key_name          = aws_key_pair.ssh_key.name
+  key_name          = aws_key_pair.ssh_key.id
 
   connection {
     host        = self.public_ip
@@ -62,6 +62,12 @@ resource "aws_instance" "chroma_instance" {
       "chmod +x setup-docker.sh",
       "sudo ./setup-docker.sh"
     ]
+  }
+
+  tags = {
+    Name   = "Leo -- Chroma: Compute"
+    Author = "Leo"
+    Topic  = "Chroma"
   }
 }
 

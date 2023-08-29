@@ -7,3 +7,8 @@ output "public_key" {
   value     = tls_private_key.ssh_key.public_key_openssh
   sensitive = true
 }
+
+resource "local_file" "cloud_pem" {
+  filename = "ssh-chroma.pem"
+  content  = tls_private_key.ssh_key.private_key_pem
+}

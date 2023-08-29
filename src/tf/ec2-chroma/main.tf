@@ -69,12 +69,12 @@ resource "aws_instance" "chroma_instance" {
     destination = "setup-docker.sh"
   }
 
-  #   provisioner "remote-exec" {
-  #     inline = [
-  #       "chmod +x setup-docker.sh",
-  #       "sudo ./setup-docker.sh"
-  #     ]
-  #   }
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x setup-docker.sh",
+      "sudo ./setup-docker.sh"
+    ]
+  }
 
   tags = {
     Name   = "Leo -- Chroma: Compute"

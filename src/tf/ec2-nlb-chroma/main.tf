@@ -84,3 +84,34 @@ module "chroma_network" {
   availability_zones                 = ["eu-west-2a"]
   map_subnet_to_private_route_tables = module.nlb_network.private_route_tables
 }
+
+resource "aws_instance" "chroma_instance" {
+  ami               = "ami-0a6006bac3b9bb8d3"
+  availability_zone = "eu-west-2a"
+  instance_type     = "t3.small"
+  vpc_security_group_ids = [
+    module.security_groups.chroma_instance_sg_id
+  ]
+  key_name                    = aws_key_pair.ssh_key.id
+  associate_public_ip_address = true # commentable?
+
+  ebs_block_device {
+    device_name = "/dev/xvda"
+    volume_size = 24
+  }
+
+  user_data = <<EOF
+#!/bin/bash
+curl -L https://raw.githubusercontent.com/zcemycl/systemDeploy/main/src/tf/ec2-nlb-chroma/docker-compose.yml -o /home/ec2-user/docker-compose.yml
+curl -L https://raw.githubusercontent.com/zcemycl/systemDeploy/main/src/tf/ec2-nlb-chroma/setup-docker.sh -o setup-docker.sh
+chmod +x setup-docker.sh
+sudo ./setup-docker.sh
+EOF
+  subnet_id = module.chroma_network.subnet_ids[0]
+
+  tags = {
+    Name   = "Leo -- Chroma: Compute"
+    Author = "Leo"
+    Topic  = "Chroma"
+  }
+}

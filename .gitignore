@@ -62,3 +62,4 @@ __pycache__/*
 build
 *.gpg
 python/
+*.pem

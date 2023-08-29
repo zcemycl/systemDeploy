@@ -26,12 +26,19 @@ resource "aws_security_group" "chroma_sg" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 }
 
-resource "aws_ebs_volume" "example" {
-  availability_zone = "eu-west-2a"
-  size              = 24
-}
+# resource "aws_ebs_volume" "example" {
+#   availability_zone = "eu-west-2a"
+#   size              = 24
+# }
 
 resource "aws_instance" "chroma_instance" {
   ami               = "ami-0a6006bac3b9bb8d3"
@@ -39,6 +46,11 @@ resource "aws_instance" "chroma_instance" {
   instance_type     = "t3.small"
   security_groups   = [aws_security_group.chroma_sg.name]
   key_name          = aws_key_pair.ssh_key.id
+
+  ebs_block_device {
+    device_name = "/dev/xvda"
+    volume_size = 24
+  }
 
   connection {
     host        = self.public_ip
@@ -57,12 +69,12 @@ resource "aws_instance" "chroma_instance" {
     destination = "setup-docker.sh"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x setup-docker.sh",
-      "sudo ./setup-docker.sh"
-    ]
-  }
+  #   provisioner "remote-exec" {
+  #     inline = [
+  #       "chmod +x setup-docker.sh",
+  #       "sudo ./setup-docker.sh"
+  #     ]
+  #   }
 
   tags = {
     Name   = "Leo -- Chroma: Compute"
@@ -71,8 +83,8 @@ resource "aws_instance" "chroma_instance" {
   }
 }
 
-resource "aws_volume_attachment" "ebs_att" {
-  device_name = "/dev/xvda"
-  volume_id   = aws_ebs_volume.example.id
-  instance_id = aws_instance.chroma_instance.id
-}
+# resource "aws_volume_attachment" "ebs_att" {
+#   device_name = "/dev/xvda"
+#   volume_id   = aws_ebs_volume.example.id
+#   instance_id = aws_instance.chroma_instance.id
+# }

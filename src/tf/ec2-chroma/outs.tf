@@ -12,3 +12,12 @@ resource "local_file" "cloud_pem" {
   filename = "ssh-chroma.pem"
   content  = tls_private_key.ssh_key.private_key_pem
 }
+
+output "chroma_apikey" {
+  value     = aws_api_gateway_api_key.api_key.value
+  sensitive = true
+}
+
+output "chroma_base_url" {
+  value = aws_api_gateway_deployment.chroma_api.invoke_url
+}

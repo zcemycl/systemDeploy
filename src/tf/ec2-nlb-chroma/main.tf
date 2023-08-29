@@ -42,6 +42,12 @@ module "security_groups" {
       ingress_rules = [
         {
           protocol    = "tcp"
+          from_port   = 22
+          to_port     = 22
+          cidr_blocks = ["0.0.0.0/0"]
+        },
+        {
+          protocol    = "tcp"
           from_port   = 8000
           to_port     = 8000
           cidr_blocks = ["0.0.0.0/0"]
@@ -57,4 +63,24 @@ module "security_groups" {
       ]
     }
   ]
+}
+
+module "nlb_network" {
+  source                            = "./modules/subnets"
+  name                              = "nlb"
+  subnets_cidr                      = ["10.1.0.0/21"]
+  vpc_id                            = aws_vpc.base_vpc.id
+  subnet_map_public_ip_on_launch    = true
+  availability_zones                = ["eu-west-2a"]
+  include_private_route_table       = true
+  map_subnet_to_public_route_tables = module.public_access_network.public_route_tables
+}
+
+module "chroma_network" {
+  source                             = "./modules/subnets"
+  name                               = "chroma"
+  subnets_cidr                       = ["10.1.16.0/21"]
+  vpc_id                             = aws_vpc.base_vpc.id
+  availability_zones                 = ["eu-west-2a"]
+  map_subnet_to_private_route_tables = module.nlb_network.private_route_tables
 }

@@ -14,3 +14,7 @@ output "backdoor_public_ip" {
 output "chroma_private_ip" {
   value = aws_instance.chroma_instance.private_ip
 }
+
+output "apigw_loggroup_name" {
+  value = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.chroma_api.id}/${aws_api_gateway_deployment.chroma_api.stage_name}"
+}

@@ -43,7 +43,7 @@ resource "aws_api_gateway_integration" "chroma_api" {
   http_method             = aws_api_gateway_method.chroma_api.http_method
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://${aws_lb.lb.dns_name}/{proxy}"
+  uri                     = "http://${aws_lb.lb.dns_name}:8000/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"

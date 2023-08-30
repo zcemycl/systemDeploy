@@ -50,7 +50,7 @@ module "security_groups" {
           protocol    = "tcp"
           from_port   = 8000
           to_port     = 8000
-          cidr_blocks = ["0.0.0.0/0"]
+          cidr_blocks = [aws_vpc.base_vpc.cidr_block]
         }
       ]
       egress_rules = [
@@ -92,8 +92,8 @@ resource "aws_instance" "chroma_instance" {
   vpc_security_group_ids = [
     module.security_groups.chroma_instance_sg_id
   ]
-  key_name                    = aws_key_pair.ssh_key.id
-  associate_public_ip_address = true # commentable?
+  key_name = aws_key_pair.ssh_key.id
+  # associate_public_ip_address = true # commentable?
 
   ebs_block_device {
     device_name = "/dev/xvda"
@@ -114,4 +114,32 @@ EOF
     Author = "Leo"
     Topic  = "Chroma"
   }
+}
+
+resource "aws_instance" "public_instance" {
+  ami               = "ami-0a6006bac3b9bb8d3"
+  availability_zone = "eu-west-2a"
+  instance_type     = "t2.micro"
+  subnet_id         = module.nlb_network.subnet_ids[0]
+  vpc_security_group_ids = [
+    module.security_groups.chroma_instance_sg_id
+  ]
+  key_name                    = aws_key_pair.ssh_key.id
+  associate_public_ip_address = true # commentable?
+
+  connection {
+    host        = self.public_ip
+    user        = "ec2-user"
+    private_key = tls_private_key.ssh_key.private_key_pem
+    timeout     = "10m"
+  }
+
+  provisioner "file" {
+    source      = "ssh-chroma.pem"
+    destination = "ssh-chroma.pem"
+  }
+
+  depends_on = [
+    local_file.cloud_pem
+  ]
 }

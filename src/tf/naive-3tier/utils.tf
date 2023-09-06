@@ -6,7 +6,7 @@ resource "null_resource" "app_ecr_push" {
   }
 
   provisioner "local-exec" {
-    command = "cd ./src/frontend/ && docker build -t ${module.ecr.app_image}:latest -f Dockerfile ."
+    command = "cd ./src/frontend/ && docker build --platform linux/amd64 -t ${module.ecr.app_image}:latest -f Dockerfile ."
   }
   provisioner "local-exec" {
     command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${module.ecr.app_repo_id}.dkr.ecr.${var.aws_region}.amazonaws.com >> info.txt"
@@ -28,7 +28,7 @@ resource "null_resource" "api_ecr_push" {
   }
 
   provisioner "local-exec" {
-    command = "cd ./src/backend/ && docker build -t ${module.ecr.api_image}:latest -f Dockerfile ."
+    command = "cd ./src/backend/ && docker build --platform linux/amd64 -t ${module.ecr.api_image}:latest -f Dockerfile ."
   }
   provisioner "local-exec" {
     command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${module.ecr.api_repo_id}.dkr.ecr.${var.aws_region}.amazonaws.com >> info.txt"

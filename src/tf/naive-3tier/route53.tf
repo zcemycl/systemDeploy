@@ -9,6 +9,7 @@ resource "aws_route53_record" "cert_validation_app" {
   records         = [tolist(aws_acm_certificate.certificate_app.domain_validation_options)[0].resource_record_value]
   ttl             = 60
   allow_overwrite = true
+  provider        = aws.acm_eu
 }
 
 resource "aws_route53_record" "base_alb_frontend" {

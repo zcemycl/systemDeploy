@@ -19,10 +19,10 @@ def sync_handler():
     sync_task(1)
     sync_task(2)
     sync_task(3)
-    return {"result": "Sync handler complete"}
+    return {"result": "Sync handler complete!"}
 
 @app.get("/async")
 async def async_handler():
     tasks = [async_task(1), async_task(2), async_task(3)]
     await asyncio.gather(*tasks)
-    return {"result": "Async handler complete"}
+    return {"result": "Async handler complete!"}

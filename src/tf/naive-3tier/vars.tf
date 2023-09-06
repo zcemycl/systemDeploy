@@ -25,6 +25,10 @@ variable "acme_server_url" {
   #server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }
 
+variable "domain" {
+  default = "freecaretoday.com"
+}
+
 variable "application_domain" {
   default = "naive.freecaretoday.com"
 }

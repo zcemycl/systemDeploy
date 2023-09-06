@@ -32,36 +32,38 @@ module "logging" {
   ]
 }
 
-module "secrets" {
-  source = "./modules/secrets"
-  secrets = [
-    {
-      name          = "rds"
-      group_name    = "rds-secrets"
-      secret_string = <<EOF
-            {
-                "db_user": "postgres"
-                "db_pwd": ""
-                "db_host": ""
-                "db_port": 5432
-            }
-        EOF
-    },
-    {
-      name          = "app"
-      group_name    = "app-secrets"
-      secret_string = <<EOF
-            {
-                "app_user": "hi"
-            }
-        EOF
-    }
-  ]
-}
+# module "secrets" {
+#   source = "./modules/secrets"
+#   secrets = [
+#     {
+#       name          = "rds"
+#       group_name    = "rds-secrets"
+#       secret_string = <<EOF
+#             {
+#                 "db_user": "postgres"
+#                 "db_pwd": ""
+#                 "db_host": ""
+#                 "db_port": 5432
+#             }
+#         EOF
+#     },
+#     {
+#       name          = "app"
+#       group_name    = "app-secrets"
+#       secret_string = <<EOF
+#             {
+#                 "app_user": "hi"
+#             }
+#         EOF
+#     }
+#   ]
+# }
 
 resource "aws_vpc" "base_vpc" {
-  cidr_block       = var.vpc_cidr
-  instance_tenancy = "default"
+  cidr_block           = var.vpc_cidr
+  instance_tenancy     = "default"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = {
     Name = "vpc"

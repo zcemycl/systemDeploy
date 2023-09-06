@@ -8,6 +8,12 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = false
   drop_invalid_header_fields = true
   idle_timeout               = 180
+
+  #   access_logs {
+  #     bucket  = aws_s3_bucket.alb.bucket
+  #     prefix  = "alb-logs"
+  #     enabled = true
+  #   }
 }
 
 resource "aws_lb_target_group" "app_target_group" {
@@ -96,3 +102,31 @@ resource "aws_lb_listener_rule" "cors_rule" {
     }
   }
 }
+
+# logs for alb
+# resource "aws_s3_bucket" "alb" {
+#   bucket = "alb-bucket-leo-060923"
+#   acl    = "private"
+# }
+
+# data "aws_caller_identity" "current" {}
+
+# resource "aws_s3_bucket_policy" "b" {
+#   bucket = aws_s3_bucket.alb.id
+
+#   policy = <<POLICY
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Action": "s3:PutObject",
+#       "Principal": {
+#         "AWS": "${aws_lb.alb.arn}"
+#       },
+#       "Resource": "${aws_s3_bucket.alb.id}/alb-logs/AWSLogs/data.aws_caller_identity.current.account_id/*",
+#       "Effect": "Allow"
+#     }
+#   ]
+# }
+# POLICY
+# }

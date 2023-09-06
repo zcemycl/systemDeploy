@@ -53,5 +53,14 @@ resource "aws_ecs_service" "app_ecs_service" {
     subnets         = module.app_network.subnets.*.id
   }
 
+  load_balancer {
+    target_group_arn = aws_lb_target_group.app_target_group.arn
+    container_name   = "app-container"
+    container_port   = 80
+  }
 
+  depends_on = [
+    aws_lb_listener.http,
+    aws_lb_target_group.app_target_group
+  ]
 }

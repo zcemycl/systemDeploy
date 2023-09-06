@@ -5,11 +5,13 @@ module "ecr" {
       name                 = "app"
       image_tag_mutability = "MUTABLE"
       scan_on_push         = true
+      force_delete         = true
     },
     {
       name                 = "api"
       image_tag_mutability = "MUTABLE"
       scan_on_push         = true
+      force_delete         = true
     }
   ]
 }

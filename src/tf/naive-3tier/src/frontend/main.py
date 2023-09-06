@@ -18,7 +18,7 @@ async def fetch_url(session, url):
 
 @app.route("/")
 def hello_world():
-    return "<h4>Hello World!</h4>"
+    return "<h4>Hello World!!</h4>"
 
 @app.route("/async")
 async def async_page():

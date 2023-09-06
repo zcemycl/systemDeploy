@@ -2,6 +2,7 @@ FROM python:3.10-slim-bullseye
 
 ENV APP_LISTEN_IP=0.0.0.0
 ENV APP_PORT=80
+ENV BACKEND_HOST="http://0.0.0.0:3333"
 EXPOSE ${APP_PORT}
 
 RUN mkdir /app

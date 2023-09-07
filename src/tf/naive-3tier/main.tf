@@ -97,3 +97,12 @@ module "app_network" {
   availability_zones                 = var.availability_zones
   map_subnet_to_private_route_tables = module.alb_network.private_route_tables
 }
+
+module "api_network" {
+  source                             = "./modules/subnets"
+  name                               = "api"
+  subnets_cidr                       = var.api_subnets_cidr
+  vpc_id                             = aws_vpc.base_vpc.id
+  availability_zones                 = var.availability_zones
+  map_subnet_to_private_route_tables = module.alb_network.private_route_tables
+}

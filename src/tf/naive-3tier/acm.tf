@@ -22,6 +22,10 @@ resource "aws_acm_certificate" "certificate_app" {
   validation_method = "DNS"
   provider          = aws.acm_eu
 
+  subject_alternative_names = [
+    "*.${var.application_domain}",
+  ]
+
   lifecycle {
     create_before_destroy = true
   }

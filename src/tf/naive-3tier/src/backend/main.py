@@ -14,6 +14,10 @@ async def async_task(task_id):
     await asyncio.sleep(2)
     print(f"Finished async task {task_id}")
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 @app.get("/sync")
 def sync_handler():
     sync_task(1)

@@ -1,6 +1,3 @@
-# resource "aws_route53_zone" "base_zone" {
-#   name = var.domain
-# }
 data "aws_route53_zone" "base_zone" {
   name = var.domain
 }
@@ -57,6 +54,18 @@ resource "aws_route53_record" "www_frontend" {
   alias {
     name                   = aws_route53_record.base_alb_frontend.name
     zone_id                = aws_route53_zone.app_zone.id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "base_alb_backend" {
+  name    = "api.${var.application_domain}"
+  type    = "A"
+  zone_id = aws_route53_zone.app_zone.id
+
+  alias {
+    name                   = "dualstack.${aws_lb.alb.dns_name}"
+    zone_id                = aws_lb.alb.zone_id
     evaluate_target_health = true
   }
 }

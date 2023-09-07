@@ -1,3 +1,20 @@
+# resource "aws_route53_zone" "base_zone" {
+#   name = var.domain
+# }
+data "aws_route53_zone" "base_zone" {
+  name = var.domain
+}
+
+resource "aws_route53_record" "cert_validation_domain" {
+  name            = tolist(aws_acm_certificate.certificate_domain.domain_validation_options)[0].resource_record_name
+  type            = tolist(aws_acm_certificate.certificate_domain.domain_validation_options)[0].resource_record_type
+  zone_id         = data.aws_route53_zone.base_zone.id
+  records         = [tolist(aws_acm_certificate.certificate_domain.domain_validation_options)[0].resource_record_value]
+  ttl             = 60
+  allow_overwrite = true
+  provider        = aws.acm_eu
+}
+
 resource "aws_route53_zone" "app_zone" {
   name = var.application_domain
 }
@@ -10,6 +27,14 @@ resource "aws_route53_record" "cert_validation_app" {
   ttl             = 60
   allow_overwrite = true
   provider        = aws.acm_eu
+}
+
+resource "aws_route53_record" "ns_record_sub_to_base" {
+  type    = "NS"
+  zone_id = data.aws_route53_zone.base_zone.id
+  name    = "naive"
+  ttl     = "60"
+  records = aws_route53_zone.app_zone.name_servers
 }
 
 resource "aws_route53_record" "base_alb_frontend" {

@@ -7,15 +7,15 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-# resource "aws_acm_certificate" "certificate_domain" {
-#   domain_name       = var.domain
-#   validation_method = "DNS"
-#   provider          = aws.acm_eu
+resource "aws_acm_certificate" "certificate_domain" {
+  domain_name       = var.domain
+  validation_method = "DNS"
+  provider          = aws.acm_eu
 
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 resource "aws_acm_certificate" "certificate_app" {
   domain_name       = var.application_domain
@@ -25,6 +25,12 @@ resource "aws_acm_certificate" "certificate_app" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_acm_certificate_validation" "root_cert" {
+  certificate_arn         = aws_acm_certificate.certificate_domain.arn
+  validation_record_fqdns = [aws_route53_record.cert_validation_domain.fqdn]
+  provider                = aws.acm_eu
 }
 
 resource "aws_acm_certificate_validation" "app_cert" {

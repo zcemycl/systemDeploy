@@ -1,8 +1,16 @@
+import os
 from fastapi import FastAPI
 import time
 import asyncio
+from loguru import logger
+from sqlalchemy import create_engine,text
 
+RDS_HOST = os.environ["RDS_HOST"]
+RDS_PWD = os.environ["RDS_PWD"]
+logger.info(f"Rds Host: {RDS_HOST}")
 app = FastAPI()
+
+engine = create_engine(f"postgresql://postgres:{RDS_PWD}@{RDS_HOST}:5432/postgres")
 
 def sync_task(task_id):
     print(f"Starting sync task {task_id}")
@@ -17,6 +25,18 @@ async def async_task(task_id):
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+@app.get("/test_rds_connect")
+def test_rds_connect():
+    try:
+        with engine.connect() as connection:
+            result = connection.execute(text("select * from persons"))
+            for row in result:
+                print(row)
+    except Exception as e:
+        logger.info(str(e))
+        return {"message": "error"}
+    return {"message": "success"}
 
 @app.get("/sync")
 def sync_handler():

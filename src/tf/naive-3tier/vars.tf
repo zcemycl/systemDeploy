@@ -23,6 +23,10 @@ variable "api_subnets_cidr" {
   default = ["10.1.48.0/21", "10.1.56.0/21", "10.1.64.0/21"]
 }
 
+variable "db_subnets_cidr" {
+  default = ["10.1.72.0/21", "10.1.80.0/21", "10.1.88.0/21"]
+}
+
 variable "acme_server_url" {
   description = "default currently set to the lets encrypt staging environment, comment below is production environment."
   default     = "https://acme-staging-v02.api.letsencrypt.org/directory"

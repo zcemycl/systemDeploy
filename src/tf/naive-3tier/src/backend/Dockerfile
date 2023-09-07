@@ -2,6 +2,8 @@ FROM python:3.10-slim-bullseye
 
 ENV APP_LISTEN_IP=0.0.0.0
 ENV APP_PORT=80
+ENV RDS_HOST="http://0.0.0.0:5432"
+ENV RDS_PWD=""
 EXPOSE ${APP_PORT}
 
 RUN mkdir /app

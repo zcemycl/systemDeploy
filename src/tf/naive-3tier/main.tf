@@ -106,3 +106,31 @@ module "api_network" {
   availability_zones                 = var.availability_zones
   map_subnet_to_private_route_tables = module.alb_network.private_route_tables
 }
+
+module "db_network" {
+  source                             = "./modules/subnets"
+  name                               = "db"
+  subnets_cidr                       = var.db_subnets_cidr
+  vpc_id                             = aws_vpc.base_vpc.id
+  availability_zones                 = var.availability_zones
+  map_subnet_to_private_route_tables = module.alb_network.private_route_tables
+}
+
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "ssh_key" {
+  key_name   = "ssh_key"
+  public_key = tls_private_key.ssh_key.public_key_openssh
+}
+
+resource "local_file" "rds_pem" {
+  filename = "ssh-rds.pem"
+  content  = tls_private_key.ssh_key.private_key_pem
+
+  provisioner "local-exec" {
+    command = "chmod 600 ssh-rds.pem"
+  }
+}

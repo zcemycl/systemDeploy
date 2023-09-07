@@ -84,7 +84,10 @@ resource "aws_ecs_task_definition" "api_task_definition" {
       image     = "${module.ecr.api_image}:latest"
       essential = true
       environment = [
-        { "name" : "APP_PORT", "value" : "80" }
+        { "name" : "APP_PORT", "value" : "80" },
+        { "name" : "APP_LISTEN_IP", "value" : "0.0.0.0" },
+        { "name" : "RDS_HOST", "value" : "${aws_rds_cluster_instance.rds_wr.endpoint}" },
+        { "name" : "RDS_PWD", "value" : "${random_password.aurora.result}" }
       ]
       portMappings = [
         {

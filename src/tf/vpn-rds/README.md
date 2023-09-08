@@ -51,3 +51,4 @@ ssh -i ssh-rds.pem ec2-user@{private-ip}
 ## References
 1. https://spak.no/blog/article/63f519260faeadeeeb968af2
 2. https://www.youtube.com/watch?v=Bv70DoHDDCY
+3. https://aws.amazon.com/blogs/database/accessing-an-amazon-rds-instance-remotely-using-aws-client-vpn/#:~:text=AWS%20Client%20VPN%20can%20provide,to%20your%20resources%20on%20AWS.

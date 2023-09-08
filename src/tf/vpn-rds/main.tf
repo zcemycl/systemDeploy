@@ -85,5 +85,3 @@ resource "aws_ec2_client_vpn_authorization_rule" "authorization_rule_private" {
   target_network_cidr    = each.value
   authorize_all_groups   = true
 }
-# (kXX:<blgb9Aj#Q0
-# postgres.cahhyy1ozpht.eu-west-2.rds.amazonaws.com

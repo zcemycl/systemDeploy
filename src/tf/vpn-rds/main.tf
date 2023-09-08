@@ -35,6 +35,16 @@ module "private_network" {
   map_subnet_to_private_route_tables = module.public_network.private_route_tables
 }
 
+
+module "db_network" {
+  source                             = "../naive-3tier/modules/subnets"
+  name                               = "db"
+  subnets_cidr                       = ["10.1.72.0/21", "10.1.80.0/21", "10.1.88.0/21"]
+  vpc_id                             = aws_vpc.base_vpc.id
+  availability_zones                 = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+  map_subnet_to_private_route_tables = module.public_network.private_route_tables
+}
+
 resource "aws_acm_certificate" "server_vpn_cert" {
   certificate_body  = file("~/my-vpn-files/server.crt")
   private_key       = file("~/my-vpn-files/server.key")

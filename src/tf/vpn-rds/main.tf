@@ -1,50 +1,3 @@
-resource "aws_vpc" "base_vpc" {
-  cidr_block           = "10.1.0.0/16"
-  instance_tenancy     = "default"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-
-  tags = {
-    Name = "vpc"
-  }
-}
-
-module "igw_public_route_table" {
-  source                     = "../naive-3tier/modules/subnets"
-  vpc_id                     = aws_vpc.base_vpc.id
-  include_public_route_table = true
-}
-
-module "public_network" {
-  source                            = "../naive-3tier/modules/subnets"
-  name                              = "public"
-  subnets_cidr                      = ["10.1.0.0/21", "10.1.8.0/21", "10.1.16.0/21"]
-  vpc_id                            = aws_vpc.base_vpc.id
-  subnet_map_public_ip_on_launch    = true
-  availability_zones                = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
-  include_private_route_table       = true
-  map_subnet_to_public_route_tables = module.igw_public_route_table.public_route_tables
-}
-
-module "private_network" {
-  source                             = "../naive-3tier/modules/subnets"
-  name                               = "private"
-  subnets_cidr                       = ["10.1.24.0/21", "10.1.32.0/21", "10.1.40.0/21"]
-  vpc_id                             = aws_vpc.base_vpc.id
-  availability_zones                 = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
-  map_subnet_to_private_route_tables = module.public_network.private_route_tables
-}
-
-
-module "db_network" {
-  source                             = "../naive-3tier/modules/subnets"
-  name                               = "db"
-  subnets_cidr                       = ["10.1.72.0/21", "10.1.80.0/21", "10.1.88.0/21"]
-  vpc_id                             = aws_vpc.base_vpc.id
-  availability_zones                 = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
-  map_subnet_to_private_route_tables = module.public_network.private_route_tables
-}
-
 resource "aws_acm_certificate" "server_vpn_cert" {
   certificate_body  = file("~/my-vpn-files/server.crt")
   private_key       = file("~/my-vpn-files/server.key")
@@ -63,12 +16,19 @@ resource "aws_security_group" "vpn_secgroup" {
   description = "Allow inbound traffic from port 443, to the VPN"
 
   ingress {
-    protocol         = "tcp"
+    protocol         = "udp"
     from_port        = 443
     to_port          = 443
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
+  # ingress {
+  #     from_port = 0
+  #     to_port = 0
+  #     protocol = -1
+  #     self = true
+  # }
 
   egress {
     protocol         = "-1"
@@ -82,7 +42,7 @@ resource "aws_security_group" "vpn_secgroup" {
 resource "aws_ec2_client_vpn_endpoint" "my_client_vpn" {
   description            = "My client vpn"
   server_certificate_arn = aws_acm_certificate.server_vpn_cert.arn
-  client_cidr_block      = "10.100.0.0/22"
+  client_cidr_block      = "10.1.144.0/22"
   vpc_id                 = aws_vpc.base_vpc.id
 
   security_group_ids = [aws_security_group.vpn_secgroup.id]
@@ -95,7 +55,9 @@ resource "aws_ec2_client_vpn_endpoint" "my_client_vpn" {
   }
 
   connection_log_options {
-    enabled = false
+    enabled               = true
+    cloudwatch_log_group  = aws_cloudwatch_log_group.logging.name
+    cloudwatch_log_stream = aws_cloudwatch_log_stream.logging.name
   }
 
   depends_on = [
@@ -105,13 +67,9 @@ resource "aws_ec2_client_vpn_endpoint" "my_client_vpn" {
 }
 
 resource "aws_ec2_client_vpn_network_association" "client_vpn_association_private" {
+  for_each               = toset(module.private_network.subnets.*.id)
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.my_client_vpn.id
-  subnet_id              = module.private_network.subnets[0].id
-}
-
-resource "aws_ec2_client_vpn_network_association" "client_vpn_association_public" {
-  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.my_client_vpn.id
-  subnet_id              = module.public_network.subnets[1].id
+  subnet_id              = each.value
 }
 
 resource "aws_ec2_client_vpn_authorization_rule" "authorization_rule" {
@@ -120,3 +78,12 @@ resource "aws_ec2_client_vpn_authorization_rule" "authorization_rule" {
   target_network_cidr  = "10.1.0.0/16"
   authorize_all_groups = true
 }
+
+resource "aws_ec2_client_vpn_authorization_rule" "authorization_rule_private" {
+  for_each               = toset(["10.1.24.0/21", "10.1.32.0/21", "10.1.40.0/21"])
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.my_client_vpn.id
+  target_network_cidr    = each.value
+  authorize_all_groups   = true
+}
+# (kXX:<blgb9Aj#Q0
+# postgres.cahhyy1ozpht.eu-west-2.rds.amazonaws.com

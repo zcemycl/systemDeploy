@@ -41,7 +41,11 @@ ssh -i ssh-rds.pem ec2-user@{private-ip}
 ```
 
 ## Connection to RDS instance
-
+- Need to ssh into the private instance and check private ip of rds.
+    ```
+    dig {dns_name_rds}
+    ```
+- Connect with that private ip address with vpn on.
 
 
 ## References

@@ -1,9 +1,11 @@
 resource "aws_subnet" "subnets" {
-  count                   = length(var.subnets_cidr)
-  vpc_id                  = var.vpc_id
-  cidr_block              = element(var.subnets_cidr, count.index)
-  map_public_ip_on_launch = var.subnet_map_public_ip_on_launch
-  availability_zone       = element(var.availability_zones, count.index)
+  count                                       = length(var.subnets_cidr)
+  vpc_id                                      = var.vpc_id
+  cidr_block                                  = element(var.subnets_cidr, count.index)
+  map_public_ip_on_launch                     = var.subnet_map_public_ip_on_launch
+  availability_zone                           = element(var.availability_zones, count.index)
+  enable_resource_name_dns_a_record_on_launch = true
+  # enable_resource_name_dns_aaaa_record_on_launch = true
 
   tags = {
     Name = "${var.name}-subnet"

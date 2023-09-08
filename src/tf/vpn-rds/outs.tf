@@ -3,6 +3,6 @@ output "rds_password" {
   sensitive = true
 }
 
-output "rds_hostname" {
-  value = aws_rds_cluster_instance.rds_wr.endpoint
-}
+# output "rds_hostname" {
+#   value = aws_rds_cluster_instance.rds_wr.endpoint
+# }

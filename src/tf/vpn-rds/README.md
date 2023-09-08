@@ -47,6 +47,10 @@ ssh -i ssh-rds.pem ec2-user@{private-ip}
     ```
 - Connect with that private ip address with vpn on.
 
+## Connection to RDS hostname !!!
+- In `vpn-client`, you don't need private ip address!!! Just need private hostname!!!
+- Difference is adding dns_servers in ec2-vpn-client-endpoint!!!
+
 
 ## References
 1. https://spak.no/blog/article/63f519260faeadeeeb968af2

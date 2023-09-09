@@ -80,7 +80,7 @@ resource "aws_lb_listener_rule" "app_https" {
 
   condition {
     host_header {
-      values = [var.application_domain, "www.${var.application_domain}"]
+      values = ["${var.subdomain}.${var.domain}", "www.${var.subdomain}.${var.domain}"]
     }
   }
 }

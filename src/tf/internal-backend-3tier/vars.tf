@@ -46,5 +46,5 @@ variable "domain" {
 }
 
 variable "subdomain" {
-  default = "ib"
+  default = "naive"
 }

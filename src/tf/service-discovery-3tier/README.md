@@ -1,3 +1,2 @@
 ## References
-1. https://medium.com/inspiredbrilliance/ecs-integrated-service-discovery-18cdbce45d8b
-2. https://stackoverflow.com/questions/68052097/how-to-register-rds-instance-with-cloudmap
+1. https://towardsaws.com/provisioning-multiple-ecs-services-using-terraform-d4448354c803

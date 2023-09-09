@@ -32,4 +32,4 @@ async def async_page():
     for result in results:
         logger.info(result)
         res = result['json']['result']
-    return f"<h4>{res}</h4>"
+    return f"<h4>{res}!</h4>"

@@ -31,6 +31,10 @@ variable "db_subnets_cidr" {
   default = ["10.1.64.0/21", "10.1.72.0/21"]
 }
 
+variable "internal_domain_name" {
+  default = "service.internal"
+}
+
 variable "acme_server_url" {
   description = "default currently set to the lets encrypt staging environment, comment below is production environment."
   default     = "https://acme-staging-v02.api.letsencrypt.org/directory"
@@ -41,6 +45,6 @@ variable "domain" {
   default = "freecaretoday.com"
 }
 
-variable "application_domain" {
-  default = "ib.freecaretoday.com"
+variable "subdomain" {
+  default = "ib"
 }

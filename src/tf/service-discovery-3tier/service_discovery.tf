@@ -35,8 +35,19 @@ resource "aws_service_discovery_service" "db" {
   }
 }
 
-data "dns_a_record_set" "rds_hostname" {
-  host = aws_db_instance.rds.address
+# only suitable with vpn on / public hostname resolver
+# data "dns_a_record_set" "rds_hostname" {
+#   host = aws_db_instance.rds.address
+# }
+# output "rds_private_ip_addrs" {
+#   value = join(",", data.dns_a_record_set.rds_hostname.addrs)
+# }
+
+data "aws_network_interface" "rds_network_interface" {
+  filter {
+    name   = "group-name"
+    values = ["rds-sg"]
+  }
 }
 
 resource "aws_service_discovery_instance" "db" {
@@ -44,10 +55,10 @@ resource "aws_service_discovery_instance" "db" {
   service_id  = aws_service_discovery_service.db.id
 
   attributes = {
-    AWS_INSTANCE_IPV4 = join(",", data.dns_a_record_set.rds_hostname.addrs)
+    AWS_INSTANCE_IPV4 = data.aws_network_interface.rds_network_interface.private_ip # dynamic?
   }
 }
 
-output "rds_private_ip_addrs" {
-  value = join(",", data.dns_a_record_set.rds_hostname.addrs)
+output "rds_private_ip_addrs2" {
+  value = data.aws_network_interface.rds_network_interface.private_ip
 }

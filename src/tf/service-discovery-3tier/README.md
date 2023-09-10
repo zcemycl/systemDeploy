@@ -4,6 +4,11 @@
     ```bash
     curl http://test.service.internal:3000/
     ```
+3. Access the db through service discovery (dns resolver requires vpn on to deploy?)
+    ```
+    db.service.internal
+    port: 5432
+    ```
 
 ## References
 1. https://medium.com/inspiredbrilliance/ecs-integrated-service-discovery-18cdbce45d8b

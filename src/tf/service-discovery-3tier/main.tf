@@ -96,4 +96,13 @@ module "api_network" {
   map_subnet_to_private_route_tables = module.ialb_network.private_route_tables
 }
 
+module "db_network" {
+  source                             = "../naive-3tier/modules/subnets"
+  name                               = "db"
+  subnets_cidr                       = var.db_subnets_cidr
+  vpc_id                             = aws_vpc.base_vpc.id
+  availability_zones                 = var.availability_zones
+  map_subnet_to_private_route_tables = module.ialb_network.private_route_tables
+}
+
 # :) overcomplicated networks

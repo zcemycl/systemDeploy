@@ -91,8 +91,8 @@ resource "aws_ecs_task_definition" "api_task_definition" {
       environment = [
         { "name" : "APP_PORT", "value" : "${tostring(var.api_port)}" },
         { "name" : "APP_LISTEN_IP", "value" : "0.0.0.0" },
-        { "name" : "RDS_HOST", "value" : "" },
-        { "name" : "RDS_PWD", "value" : "" }
+        { "name" : "RDS_HOST", "value" : "${var.internal_db_name}.${var.internal_domain_name}" },
+        { "name" : "RDS_PWD", "value" : "${random_password.aurora.result}" }
       ]
       portMappings = [
         {

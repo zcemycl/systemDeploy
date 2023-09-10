@@ -43,6 +43,10 @@ variable "internal_serv_name" {
   default = "test"
 }
 
+variable "internal_db_name" {
+  default = "db"
+}
+
 variable "acme_server_url" {
   description = "default currently set to the lets encrypt staging environment, comment below is production environment."
   default     = "https://acme-staging-v02.api.letsencrypt.org/directory"

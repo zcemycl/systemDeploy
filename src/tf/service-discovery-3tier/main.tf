@@ -30,6 +30,12 @@ module "logging" {
       group_name        = "/ecs/api"
       stream_name       = "api-log-stream"
       retention_in_days = 1
+    },
+    {
+      name              = "vpn"
+      group_name        = "/vpc/vpn"
+      stream_name       = "log-vpn"
+      retention_in_days = 1
     }
   ]
 }

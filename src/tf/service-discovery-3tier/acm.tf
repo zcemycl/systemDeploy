@@ -42,3 +42,15 @@ resource "aws_acm_certificate_validation" "app_cert" {
   validation_record_fqdns = [aws_route53_record.cert_validation_app.fqdn]
   provider                = aws.acm_eu
 }
+
+resource "aws_acm_certificate" "server_vpn_cert" {
+  certificate_body  = file("~/my-vpn-files/server.crt")
+  private_key       = file("~/my-vpn-files/server.key")
+  certificate_chain = file("~/my-vpn-files/ca.crt")
+}
+
+resource "aws_acm_certificate" "client_vpn_cert" {
+  certificate_body  = file("~/my-vpn-files/client1.domain.tld.crt")
+  private_key       = file("~/my-vpn-files/client1.domain.tld.key")
+  certificate_chain = file("~/my-vpn-files/ca.crt")
+}

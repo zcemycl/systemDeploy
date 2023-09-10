@@ -31,6 +31,10 @@ variable "db_subnets_cidr" {
   default = ["10.1.64.0/21", "10.1.72.0/21"]
 }
 
+variable "vpn_cidr_block" {
+  default = "10.1.144.0/22"
+}
+
 variable "internal_domain_name" {
   default = "service.internal"
 }

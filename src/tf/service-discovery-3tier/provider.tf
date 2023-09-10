@@ -18,5 +18,9 @@ terraform {
       source  = "vancluever/acme"
       version = "2.11.1"
     }
+    dns = {
+      source  = "hashicorp/dns"
+      version = "3.2.4"
+    }
   }
 }

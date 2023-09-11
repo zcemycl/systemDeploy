@@ -17,8 +17,8 @@ async def connect(sid, environ, auth):
     print(f"{sid}: connected")
     await sio.emit('join', {'sid': sid})
 
-@sio.event
-async def ping_from_client(sid):
+@sio.on("ping_from_client")
+async def ping_from_client_func(sid):
     print("trigger ping")
     await sio.emit('pong_from_server', room=sid)
 

@@ -1,0 +1,9 @@
+websockets
+asyncio
+fastapi
+fastapi-socketio
+python-socketio
+uvicorn
+loguru
+sqlalchemy
+psycopg2-binary

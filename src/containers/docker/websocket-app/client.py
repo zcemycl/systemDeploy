@@ -21,11 +21,16 @@ async def pong_from_server():
     print("trigger pong")
     await sio_client.sleep(1)
     if sio_client.connected:
+        await sio_client.emit("*", "sth")
         await send_ping()
 
 async def main():
-    await sio_client.connect(url="http://localhost:8000", socketio_path="sockets")
-    # await sio_client.disconnect()
-    await sio_client.wait()
+    try:
+        await sio_client.connect(url="http://localhost:4000", socketio_path="sockets")
+        await sio_client.wait()
+    except KeyboardInterrupt:
+        await sio_client.disconnect()
+    except asyncio.exceptions.CancelledError:
+        await sio_client.disconnect()
 
 loop.run_until_complete(main())

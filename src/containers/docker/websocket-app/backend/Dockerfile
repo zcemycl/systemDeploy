@@ -10,4 +10,4 @@ ADD requirements.txt /app
 ADD main.py /app
 RUN pip3 install -r requirements.txt
 
-CMD uvicorn main:app --host ${APP_LISTEN_IP} --port ${APP_PORT}
+CMD uvicorn main:app --host ${APP_LISTEN_IP} --port ${APP_PORT} --reload

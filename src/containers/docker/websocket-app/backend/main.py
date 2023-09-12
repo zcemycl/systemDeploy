@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 import socketio
+from loguru import logger
 
 
 app = FastAPI()
@@ -14,17 +15,22 @@ async def home():
 
 @sio.event
 async def connect(sid, environ, auth):
-    print(f"{sid}: connected")
+    logger.info(f"{sid}: connected")
     await sio.emit('join', {'sid': sid})
 
 @sio.on("ping_from_client")
 async def ping_from_client_func(sid):
-    print("trigger ping")
+    logger.info(f"{sid}: trigger ping")
     await sio.emit('pong_from_server', room=sid)
+
+@sio.on("*")
+async def catch_all(event, data):
+    logger.info(f"{event}")
+    logger.info(f"{data}")
 
 @sio.event
 async def disconnect(sid):
-    print(f"{sid}: disconnected")
+    logger.info(f"{sid}: disconnected")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

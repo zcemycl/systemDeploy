@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: "./backend"
+      dockerfile: Dockerfile
+    ports:
+      - 4000:80
+    volumes:
+      - "./backend/main.py:/app/main.py"

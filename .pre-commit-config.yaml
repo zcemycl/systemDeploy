@@ -7,6 +7,7 @@ repos:
     - id: check-yaml
       exclude: ^src/containers
     - id: check-json
+      exclude: ^src/.*tsconfig.json
 - repo: https://github.com/antonbabenko/pre-commit-terraform
   rev: v1.81.0
   hooks:

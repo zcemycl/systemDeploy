@@ -63,3 +63,4 @@ build
 *.gpg
 python/
 *.pem
+node_modules

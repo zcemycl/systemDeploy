@@ -64,3 +64,4 @@ build
 python/
 *.pem
 node_modules
+mock_data

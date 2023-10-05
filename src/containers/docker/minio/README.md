@@ -9,3 +9,8 @@
     aws-vault exec minio-test --no-session -- aws --endpoint-url http://localhost s3 ls
     aws-vault exec minio-test --no-session -- aws --endpoint-url http://localhost s3 ls s3://random
     ```
+
+
+## References
+1. https://min.io/docs/minio/linux/integrations/aws-cli-with-minio.html
+2. https://sanidhya235.medium.com/introduction-to-minio-193e8523a4a8

@@ -1,4 +1,12 @@
 version: "3.7"
+volumes:
+  db_data:
+  minio_data:
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
 services:
   s3:
     restart: always
@@ -9,9 +17,12 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+    networks:
+      - frontend
+      - backend
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: 'minio_pwd'
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_ADDRESS: ':9000'
       MINIO_PORT: '9000'
       MINIO_STORAGE_USE_HTTPS: False
@@ -21,4 +32,53 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
+      retries: 3
+  db:
+    restart: always
+    image: postgres
+    container_name: mlflow_db
+    expose:
+      - 5432
+    networks:
+      - backend
+    environment:
+      - POSTGRES_USER=mlflow
+      - POSTGRES_PASSWORD=mlflow
+      - POSTGRES_DATABASE=mlflow
+    volumes:
+      - ./db_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-p", "5432", "-U", "mlflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  tracking_server:
+    restart: always
+    build:
+      context: "./mlflow"
+      dockerfile: Dockerfile
+    container_name: mlflow_server
+    depends_on:
+      - db
+      - s3
+    ports:
+      - 5000:5000
+    networks:
+      - frontend
+      - backend
+    environment:
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
+      - MLFLOW_S3_IGNORE_TLS=true
+    command: >
+      mlflow server
+      --backend-store-uri postgresql+psycopg2://mlflow:mlflow@db:5432/mlflow
+      --host 0.0.0.0
+      --serve-artifacts
+      --artifacts-destination s3://mlflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
       retries: 3

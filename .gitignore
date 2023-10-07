@@ -65,3 +65,5 @@ python/
 *.pem
 node_modules
 mock_data
+db_data
+minio_data

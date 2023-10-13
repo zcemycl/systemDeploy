@@ -7,7 +7,7 @@ data "archive_file" "lambda_function" {
 resource "aws_lambda_function" "test_lambda" {
   function_name    = "update-r53"
   s3_bucket        = aws_s3_bucket.lambda_bucket.id
-  s3_key           = aws_s3_object.lambda_function_objecta.id
+  s3_key           = aws_s3_object.lambda_function_object.id
   role             = aws_iam_role.lambda_iam.arn
   handler          = "main.lambda_handler"
   runtime          = "python3.10"

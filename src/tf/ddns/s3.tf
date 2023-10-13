@@ -12,7 +12,7 @@ resource "aws_s3_bucket_public_access_block" "lambda_bucket_block_public_access"
 
 resource "aws_s3_object" "lambda_function_object" {
   key    = "src/lambda.zip"
-  bucket = aws_s3_bucket.bsc_s3_rds_lambda_bucket.id
+  bucket = aws_s3_bucket.lambda_bucket.id
   source = data.archive_file.lambda_function.output_path
   # kms_key_id = aws_kms_key.bsc.arn
   etag = data.archive_file.lambda_function.output_md5

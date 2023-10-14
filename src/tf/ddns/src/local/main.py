@@ -9,6 +9,6 @@ if __name__ == "__main__":
     ip = requests.get("http://checkip.amazonaws.com/").content.decode('utf8')
     print(ip.strip())
     resp = requests.get(
-        f"{APIGW_INVOKE_URI}?method=set&subdomain=ddns&ip={ip}",
+        f"{APIGW_INVOKE_URI}?method=set&subdomain=ddns&ip={ip.strip()}",
         headers={'x-api-key': X_API_KEY}
-        )
+    )

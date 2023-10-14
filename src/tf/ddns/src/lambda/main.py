@@ -123,8 +123,8 @@ def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: 
     )
 
 def lambda_handler(event, context):
-    method = 'del'
-    subdomain = 'ddns25'
+    method = 'get'
+    subdomain = 'ddns17'
     ddns_record = f'{subdomain}.{BASE_DOMAIN}'
     ip = '84.64.54.43'
     # ip = '192.168.1.1'
@@ -143,10 +143,27 @@ def lambda_handler(event, context):
             print("Sub domain found... So update existing one...")
             update_existing_record(sub_resp['Item']['zone_id']['S'], ddns_record, ip)
     elif method == 'get':
-        pass
+        if 'Item' not in sub_resp:
+            return {'status_code': 404, 'message': f"GET Subdomain {ddns_record} not found. "}
+        elif 'Item' in sub_resp:
+            records = r53.list_resource_record_sets(
+                HostedZoneId=sub_resp['Item']['zone_id']['S'],
+                StartRecordName=ddns_record,
+                StartRecordType='A'
+            )
+            print('GET Subdomain info, ', records['ResourceRecordSets'][0])
+            return {
+                'status_code': 200,
+                'message': f"GET Subdomain {ddns_record} found. ",
+                'records': records['ResourceRecordSets'][0]
+            }
     elif method == 'del':
         if 'Item' not in sub_resp:
-            return
+            return {'status_code': 404, 'message': f"DEL Subdomain {ddns_record} not found. "}
         delete_existing_record(id_target, sub_resp['Item']['zone_id']['S'], ddns_record, ip)
+        return {
+            'status_code': 200,
+            'message': f"DEL Subdomain {ddns_record} found. ",
+        }
     else:
         pass

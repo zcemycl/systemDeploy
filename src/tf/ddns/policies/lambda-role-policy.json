@@ -4,7 +4,9 @@
       {
         "Action": [
           "route53:*",
-          "dynamodb:*"
+          "dynamodb:*",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
         ],
         "Effect": "Allow",
         "Resource": "*"

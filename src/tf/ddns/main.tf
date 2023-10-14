@@ -31,3 +31,11 @@ resource "aws_dynamodb_table_item" "ddns_record_items" {
   }
   ITEM
 }
+
+resource "aws_cloudwatch_log_group" "dns_func_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.test_lambda.function_name}"
+  retention_in_days = 3
+  lifecycle {
+    prevent_destroy = false
+  }
+}

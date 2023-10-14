@@ -1,11 +1,25 @@
 ## How to run?
 1. Set up the infrastructure by terraform.
 2. Export environment variables for python script.
-    ```
+    ```bash
     export APIGW_INVOKE_URI=
     export X_API_KEY=
     ```
 3. Run cronjob to regularly update. `python src/local/main.py`
+    ```bash
+    # linux
+    sudo apt update
+    sudo apt install cron
+    # macos
+    brew install cron
+
+    # common after installation
+    crontab -e
+    # add this
+    APIGW_INVOKE_URI=
+    X_API_KEY=
+    */2 * * * *  python src/local/main.py >> log.txt 2>&1
+    ```
 
 ### References
 1. https://www.youtube.com/watch?v=yzT92pEcIvM

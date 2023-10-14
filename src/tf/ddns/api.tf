@@ -43,7 +43,7 @@ resource "aws_api_gateway_deployment" "predictDeploy" {
     aws_api_gateway_integration.predictInt
   ]
   rest_api_id = aws_api_gateway_rest_api.func_test_api.id
-  stage_name  = "v1"
+  stage_name  = var.api_stage
   triggers = {
     redeployment = sha1(jsonencode([
       aws_api_gateway_resource.predictResource,

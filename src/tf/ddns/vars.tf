@@ -48,3 +48,11 @@ variable "ddns_domain" {
 variable "target_isp_ip" {
   default = "84.64.54.43"
 }
+
+variable "api_stage" {
+  default = "v1"
+}
+
+variable "api_path" {
+  default = "predict"
+}

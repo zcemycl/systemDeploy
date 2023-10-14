@@ -79,7 +79,7 @@ def update_existing_record(sub_zone_id: str, subdomain_name: str, ip: str):
             HostedZoneId=sub_zone_id.replace('/hostedzone/',''),
         )
 
-def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: str, ip: str):
+def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: str):
     records = r53.list_resource_record_sets(
         HostedZoneId=base_zone_id,
         StartRecordName=subdomain_name,
@@ -97,18 +97,20 @@ def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: 
         },
         HostedZoneId=base_zone_id.replace('/hostedzone/',''),
     )
+    records2 = r53.list_resource_record_sets(
+        HostedZoneId=sub_zone_id,
+        StartRecordName=subdomain_name,
+        StartRecordType='A'
+    )
+    print(records2)
     resp2 = r53.change_resource_record_sets(
         ChangeBatch={
             'Changes': [
                 {
                     'Action': 'DELETE',
-                    'ResourceRecordSet': {
-                        'Name': subdomain_name,
-                        'ResourceRecords': [{'Value': ip}],
-                        'TTL': 300,
-                        'Type': 'A',
-                        },
-                    },
+                    'ResourceRecordSet': records2['ResourceRecordSets'][0]
+
+                }
                 ],
         },
         HostedZoneId=sub_zone_id.replace('/hostedzone/',''),
@@ -124,11 +126,23 @@ def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: 
     )
 
 def lambda_handler(event, context):
-    method = 'get'
-    subdomain = 'ddns17'
+    if event['queryStringParameters'] == None:
+        return {'statusCode': 422, 'body': 'missing query string parameters'}
+    if 'method' not in event['queryStringParameters']:
+        return {'statusCode': 422, 'body': 'missing query string parameters -- method get del set'}
+    if 'subdomain' not in event['queryStringParameters']:
+        return {'statusCode': 422, 'body': 'missing query string parameters -- subdomain {xxx}.freecaretoday.com'}
+    if 'ip' not in event['queryStringParameters']:
+        ip = None
+    else:
+        ip = event['queryStringParameters']['ip']
+    method = event['queryStringParameters']['method']
+    subdomain = event['queryStringParameters']['subdomain']
+    if method in ['set'] and ip == None:
+        return {'statusCode': 422, 'body': 'missing query string parameters -- ip and some methods are not compatible'}
+    if method not in allowed_modes:
+        return {'statusCode': 422, 'body': 'wrong query string parameters -- method get del set'}
     ddns_record = f'{subdomain}.{BASE_DOMAIN}'
-    ip = '84.64.54.43'
-    # ip = '192.168.1.1'
     hzones = r53.list_hosted_zones()['HostedZones']
     print("hzones", hzones)
     response = retrieve_dns_record(BASE_DOMAIN)
@@ -140,9 +154,17 @@ def lambda_handler(event, context):
         if 'Item' not in sub_resp:
             print("No sub domain found... So create new one...")
             create_record_from_scratch(id_target, ddns_record, ip)
+            return {
+                'statusCode': 200,
+                'body': f"SET Subdomain {ddns_record} not found. Created from scratch."
+            }
         elif 'Item' in sub_resp:
             print("Sub domain found... So update existing one...")
             update_existing_record(sub_resp['Item']['zone_id']['S'], ddns_record, ip)
+            return {
+                'statusCode': 200,
+                'body': f"SET Subdomain {ddns_record} found. Updated record."
+            }
     elif method == 'get':
         if 'Item' not in sub_resp:
             return {'statusCode': 404, 'body': f"GET Subdomain {ddns_record} not found. "}
@@ -161,10 +183,8 @@ def lambda_handler(event, context):
     elif method == 'del':
         if 'Item' not in sub_resp:
             return {'statusCode': 404, 'body': f"DEL Subdomain {ddns_record} not found. "}
-        delete_existing_record(id_target, sub_resp['Item']['zone_id']['S'], ddns_record, ip)
+        delete_existing_record(id_target, sub_resp['Item']['zone_id']['S'], ddns_record)
         return {
             'statusCode': 200,
             'body': f"DEL Subdomain {ddns_record} found. ",
         }
-    else:
-        pass

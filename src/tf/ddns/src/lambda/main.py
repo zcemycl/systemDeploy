@@ -79,11 +79,52 @@ def update_existing_record(sub_zone_id: str, subdomain_name: str, ip: str):
         )
 
 def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: str, ip: str):
-    pass
+    records = r53.list_resource_record_sets(
+        HostedZoneId=base_zone_id,
+        StartRecordName=subdomain_name,
+        StartRecordType='NS'
+    )
+    print(records)
+    resp1 = r53.change_resource_record_sets(
+        ChangeBatch={
+            'Changes': [
+                {
+                    'Action': 'DELETE',
+                    'ResourceRecordSet': records['ResourceRecordSets'][0],
+                    },
+                ],
+        },
+        HostedZoneId=base_zone_id.replace('/hostedzone/',''),
+    )
+    resp2 = r53.change_resource_record_sets(
+        ChangeBatch={
+            'Changes': [
+                {
+                    'Action': 'DELETE',
+                    'ResourceRecordSet': {
+                        'Name': subdomain_name,
+                        'ResourceRecords': [{'Value': ip}],
+                        'TTL': 300,
+                        'Type': 'A',
+                        },
+                    },
+                ],
+        },
+        HostedZoneId=sub_zone_id.replace('/hostedzone/',''),
+    )
+    resp3 = r53.delete_hosted_zone(
+        Id=f"/hostedzone/{sub_zone_id.replace('/hostedzone/','')}"
+    )
+    dynamodb.delete_item(
+        TableName=TABLE_NAME,
+        Key={
+            'subdomain_name':{'S':subdomain_name},
+        }
+    )
 
 def lambda_handler(event, context):
     method = 'del'
-    subdomain = 'ddns23'
+    subdomain = 'ddns25'
     ddns_record = f'{subdomain}.{BASE_DOMAIN}'
     ip = '84.64.54.43'
     # ip = '192.168.1.1'
@@ -92,12 +133,6 @@ def lambda_handler(event, context):
     response = retrieve_dns_record(BASE_DOMAIN)
     id_target = response['Item']['zone_id']['S'] # base domain zone id
     print("response: ", f"{BASE_DOMAIN}", response,)
-    # for i in range(len(hzones)):
-    #     if hzones[i]['Name'] == f'{BASE_DOMAIN}.':
-    #         id_target = hzones[i]['Id']
-    #         records = r53.list_resource_record_sets(HostedZoneId=id_target)
-    #         print(records['ResourceRecordSets'])
-    #         print(records)
     sub_resp = retrieve_dns_record(ddns_record)
     print(sub_resp)
     if method == 'set':
@@ -112,47 +147,6 @@ def lambda_handler(event, context):
     elif method == 'del':
         if 'Item' not in sub_resp:
             return
-        records = r53.list_resource_record_sets(
-            HostedZoneId=id_target,
-            StartRecordName=ddns_record,
-            StartRecordType='NS'
-        )
-        print(records)
-        resp1 = r53.change_resource_record_sets(
-            ChangeBatch={
-                'Changes': [
-                    {
-                        'Action': 'DELETE',
-                        'ResourceRecordSet': records['ResourceRecordSets'][0],
-                        },
-                    ],
-            },
-            HostedZoneId=id_target.replace('/hostedzone/',''),
-        )
-        resp2 = r53.change_resource_record_sets(
-            ChangeBatch={
-                'Changes': [
-                    {
-                        'Action': 'DELETE',
-                        'ResourceRecordSet': {
-                            'Name': ddns_record,
-                            'ResourceRecords': [{'Value': ip}],
-                            'TTL': 300,
-                            'Type': 'A',
-                            },
-                        },
-                    ],
-            },
-            HostedZoneId=sub_resp['Item']['zone_id']['S'].replace('/hostedzone/',''),
-        )
-        resp3 = r53.delete_hosted_zone(
-            Id=f"/hostedzone/{sub_resp['Item']['zone_id']['S'].replace('/hostedzone/','')}"
-        )
-        dynamodb.delete_item(
-            TableName=TABLE_NAME,
-            Key={
-                'subdomain_name':{'S':ddns_record},
-            }
-        )
+        delete_existing_record(id_target, sub_resp['Item']['zone_id']['S'], ddns_record, ip)
     else:
         pass

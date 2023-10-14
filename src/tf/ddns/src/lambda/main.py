@@ -78,10 +78,12 @@ def update_existing_record(sub_zone_id: str, subdomain_name: str, ip: str):
             HostedZoneId=sub_zone_id.replace('/hostedzone/',''),
         )
 
+def delete_existing_record(base_zone_id: str, sub_zone_id: str, subdomain_name: str, ip: str):
+    pass
 
 def lambda_handler(event, context):
-    method = 'set'
-    subdomain = 'ddns12'
+    method = 'del'
+    subdomain = 'ddns23'
     ddns_record = f'{subdomain}.{BASE_DOMAIN}'
     ip = '84.64.54.43'
     # ip = '192.168.1.1'
@@ -96,10 +98,9 @@ def lambda_handler(event, context):
     #         records = r53.list_resource_record_sets(HostedZoneId=id_target)
     #         print(records['ResourceRecordSets'])
     #         print(records)
-
+    sub_resp = retrieve_dns_record(ddns_record)
+    print(sub_resp)
     if method == 'set':
-        sub_resp = retrieve_dns_record(ddns_record)
-        print(sub_resp)
         if 'Item' not in sub_resp:
             print("No sub domain found... So create new one...")
             create_record_from_scratch(id_target, ddns_record, ip)
@@ -109,7 +110,49 @@ def lambda_handler(event, context):
     elif method == 'get':
         pass
     elif method == 'del':
-        resp = r53.delete_hosted_zone(Id='/hostedzone/Z0056405277KQ8LY0NH81')
-        print(resp)
+        if 'Item' not in sub_resp:
+            return
+        records = r53.list_resource_record_sets(
+            HostedZoneId=id_target,
+            StartRecordName=ddns_record,
+            StartRecordType='NS'
+        )
+        print(records)
+        resp1 = r53.change_resource_record_sets(
+            ChangeBatch={
+                'Changes': [
+                    {
+                        'Action': 'DELETE',
+                        'ResourceRecordSet': records['ResourceRecordSets'][0],
+                        },
+                    ],
+            },
+            HostedZoneId=id_target.replace('/hostedzone/',''),
+        )
+        resp2 = r53.change_resource_record_sets(
+            ChangeBatch={
+                'Changes': [
+                    {
+                        'Action': 'DELETE',
+                        'ResourceRecordSet': {
+                            'Name': ddns_record,
+                            'ResourceRecords': [{'Value': ip}],
+                            'TTL': 300,
+                            'Type': 'A',
+                            },
+                        },
+                    ],
+            },
+            HostedZoneId=sub_resp['Item']['zone_id']['S'].replace('/hostedzone/',''),
+        )
+        resp3 = r53.delete_hosted_zone(
+            Id=f"/hostedzone/{sub_resp['Item']['zone_id']['S'].replace('/hostedzone/','')}"
+        )
+        dynamodb.delete_item(
+            TableName=TABLE_NAME,
+            Key={
+                'subdomain_name':{'S':ddns_record},
+            }
+        )
     else:
         pass

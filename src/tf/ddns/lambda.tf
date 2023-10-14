@@ -15,4 +15,11 @@ resource "aws_lambda_function" "test_lambda" {
   layers           = []
   timeout          = 120
 
+  environment {
+    variables = {
+      BASE_DOMAIN = var.domain
+      TABLE_NAME  = var.dynamodb_table_name
+    }
+  }
+
 }

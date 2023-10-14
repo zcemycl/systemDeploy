@@ -1,8 +1,9 @@
+import os
 import boto3
 import json
 
-BASE_DOMAIN = 'freecaretoday.com'
-TABLE_NAME = 'dns_record_catalog'
+BASE_DOMAIN = os.environ['BASE_DOMAIN']
+TABLE_NAME = os.environ['TABLE_NAME']
 allowed_modes = ['set', 'get', 'del']
 r53 = boto3.client('route53')
 dynamodb = boto3.client("dynamodb")

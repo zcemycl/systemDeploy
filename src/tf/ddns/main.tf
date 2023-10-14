@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "dns_record_table" {
-  name         = "dns_record_catalog"
+  name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "subdomain_name"
   attribute {

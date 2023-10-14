@@ -56,3 +56,7 @@ variable "api_stage" {
 variable "api_path" {
   default = "predict"
 }
+
+variable "dynamodb_table_name" {
+  default = "dns_record_catalog"
+}

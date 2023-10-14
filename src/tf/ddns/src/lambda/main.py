@@ -1,4 +1,5 @@
 import boto3
+import json
 
 BASE_DOMAIN = 'freecaretoday.com'
 TABLE_NAME = 'dns_record_catalog'
@@ -144,7 +145,7 @@ def lambda_handler(event, context):
             update_existing_record(sub_resp['Item']['zone_id']['S'], ddns_record, ip)
     elif method == 'get':
         if 'Item' not in sub_resp:
-            return {'status_code': 404, 'message': f"GET Subdomain {ddns_record} not found. "}
+            return {'statusCode': 404, 'body': f"GET Subdomain {ddns_record} not found. "}
         elif 'Item' in sub_resp:
             records = r53.list_resource_record_sets(
                 HostedZoneId=sub_resp['Item']['zone_id']['S'],
@@ -153,17 +154,17 @@ def lambda_handler(event, context):
             )
             print('GET Subdomain info, ', records['ResourceRecordSets'][0])
             return {
-                'status_code': 200,
-                'message': f"GET Subdomain {ddns_record} found. ",
-                'records': records['ResourceRecordSets'][0]
+                'statusCode': 200,
+                # 'message': f"GET Subdomain {ddns_record} found. ",
+                'body': json.dumps(records['ResourceRecordSets'][0])
             }
     elif method == 'del':
         if 'Item' not in sub_resp:
-            return {'status_code': 404, 'message': f"DEL Subdomain {ddns_record} not found. "}
+            return {'statusCode': 404, 'body': f"DEL Subdomain {ddns_record} not found. "}
         delete_existing_record(id_target, sub_resp['Item']['zone_id']['S'], ddns_record, ip)
         return {
-            'status_code': 200,
-            'message': f"DEL Subdomain {ddns_record} found. ",
+            'statusCode': 200,
+            'body': f"DEL Subdomain {ddns_record} found. ",
         }
     else:
         pass

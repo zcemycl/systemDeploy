@@ -35,6 +35,7 @@ terraform.rc
 *.tfstate
 mykey
 info.txt
+apikey.txt
 mykey.pub
 *.zip
 .terraform/

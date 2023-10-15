@@ -1,1 +1,71 @@
 version: '3.8'
+x-dagster-common: &dagster_common
+  build:
+    context: .
+    dockerfile: Dockerfile.dagster
+  environment:
+    DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+    DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /Users/spare/Documents/data/io_manager_storage:/tmp/io_manager_storage
+  networks:
+    - net
+  depends_on:
+    - db
+    - user_code
+
+networks:
+  net:
+    driver: bridge
+    name: dagster_net
+services:
+  db:
+    image: postgres
+    container_name: dagster_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - net
+
+  user_code:
+    build:
+      context: .
+      dockerfile: Dockerfile.user_code
+    container_name: dagster_user_code
+    image: ${DAGSTER_CURRENT_IMAGE}
+    restart: always
+    environment:
+      DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
+    networks:
+      - net
+
+  webserver:
+    <<: *dagster_common
+    entrypoint:
+      - dagster-webserver
+      - -h
+      - "0.0.0.0"
+      - -p
+      - "3000"
+      - -w
+      - workspace.yaml
+    container_name: dagster_webserver
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+
+  daemon:
+    <<: *dagster_common
+    entrypoint:
+      - dagster-daemon
+      - run
+    container_name: dagster_daemon
+    restart: on-failure

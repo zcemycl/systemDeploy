@@ -43,6 +43,9 @@ services:
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
       DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
+    volumes:
+      - ./assets.py:/opt/dagster/app/assets.py
+      - ./repo.py:/opt/dagster/app/repo.py
     networks:
       - net
 

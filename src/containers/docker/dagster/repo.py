@@ -1,5 +1,5 @@
 from assets import hackernews_top_stories, topstory_ids
-from dagster import FilesystemIOManager, graph, op, repository, schedule
+from dagster import FilesystemIOManager, asset, graph, op, repository, schedule
 from dagster_docker import docker_executor
 
 
@@ -18,6 +18,10 @@ def goodbye(foo):
 @graph
 def my_graph():
     goodbye(hello())
+
+@asset
+def new_asset():
+    return [1,2,3]
 
 
 my_job = my_graph.to_job(name="my_job")
@@ -44,4 +48,5 @@ def deploy_docker_repository():
         my_schedule,
         topstory_ids,
         hackernews_top_stories,
+        new_asset
     ]

@@ -46,6 +46,16 @@ services:
     volumes:
       - ./assets.py:/opt/dagster/app/assets.py
       - ./repo.py:/opt/dagster/app/repo.py
+    # entrypoint:
+    #   - dagster
+    #   - code-server
+    #   - start
+    #   - -h
+    #   - "0.0.0.0"
+    #   - -p
+    #   - "3000"
+    #   - -f
+    #   - repo.py
     networks:
       - net
 

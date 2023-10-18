@@ -45,19 +45,10 @@ services:
       DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
     volumes:
       - ./assets.py:/opt/dagster/app/assets.py
-      - ./repo.py:/opt/dagster/app/repo.py
-    # entrypoint:
-    #   - dagster
-    #   - code-server
-    #   - start
-    #   - -h
-    #   - "0.0.0.0"
-    #   - -p
-    #   - "3000"
-    #   - -f
-    #   - repo.py
+      - /Users/spare/Documents/proj/systemDeploy/src/containers/docker/dagster/repo.py:/opt/dagster/app/repo.py
     networks:
       - net
+    # command: dagster code-server start -h 0.0.0.0 -p 4000 -f /opt/dagster/app/repo.py
 
   webserver:
     <<: *dagster_common

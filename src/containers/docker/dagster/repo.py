@@ -1,3 +1,4 @@
+from assets import hackernews_top_stories, topstory_ids
 from dagster import FilesystemIOManager, graph, op, repository, schedule
 from dagster_docker import docker_executor
 
@@ -24,7 +25,9 @@ my_job = my_graph.to_job(name="my_job")
 my_step_isolated_job = my_graph.to_job(
     name="my_step_isolated_job",
     executor_def=docker_executor,
-    resource_defs={"io_manager": FilesystemIOManager(base_dir="/tmp/io_manager_storage")},
+    resource_defs={
+        "io_manager": FilesystemIOManager(base_dir="/tmp/io_manager_storage")
+    },
 )
 
 
@@ -35,4 +38,10 @@ def my_schedule(_context):
 
 @repository
 def deploy_docker_repository():
-    return [my_job, my_step_isolated_job, my_schedule]
+    return [
+        my_job,
+        my_step_isolated_job,
+        my_schedule,
+        topstory_ids,
+        hackernews_top_stories,
+    ]

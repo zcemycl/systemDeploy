@@ -8,16 +8,6 @@ repos:
       exclude: ^src/containers
     - id: check-json
       exclude: ^src/.*tsconfig.json
-- repo: https://github.com/PyCQA/flake8
-  rev: 6.1.0
-  hooks:
-    - id: flake8
-      exclude: alembic/
-
-- repo: https://github.com/ambv/black
-  rev: 23.9.1
-  hooks:
-    - id: black
 
 - repo: http://github.com/timothycrosley/isort
   rev: 5.12.0

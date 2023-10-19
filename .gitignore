@@ -69,3 +69,5 @@ mock_data
 db_data
 minio_data
 log.txt
+.env
+logs/

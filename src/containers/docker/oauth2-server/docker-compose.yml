@@ -1,0 +1,17 @@
+version: '3.10'
+networks:
+  net:
+    driver: bridge
+    name: net
+services:
+  oauth:
+    image: ghcr.io/navikt/mock-oauth2-server:0.5.8
+    container_name: oauth
+    ports:
+      - "8002:8080"
+    volumes:
+      - "./src/docker/oauth2:/conf"
+    environment:
+      - JSON_CONFIG_PATH=/conf/OAuth2Config.json
+    networks:
+      - net

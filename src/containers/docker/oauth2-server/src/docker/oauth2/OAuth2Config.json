@@ -1,0 +1,34 @@
+{
+    "interactiveLogin": false,
+    "httpServer": "NettyWrapper",
+    "tokenCallbacks": [
+        {
+            "issuerId": "default_issuer",
+            "tokenExpiry": 30000,
+            "requestMappings": [
+                {
+                    "requestParam": "mock_type",
+                    "match": "user",
+                    "claims": {
+                        "sub": "user",
+                        "aud": [
+                            "user"
+                        ],
+                        "email": "user@notarealuser.com"
+                    }
+                },
+                {
+                    "requestParam": "mock_type",
+                    "match": "admin",
+                    "claims": {
+                        "sub": "admin",
+                        "aud": [
+                            "admin"
+                        ],
+                        "email": "admin@notarealuser.com"
+                    }
+                }
+            ]
+        }
+    ]
+}

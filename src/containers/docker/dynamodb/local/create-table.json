@@ -1,0 +1,19 @@
+{
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }
+    ],
+    "TableName": "table-local",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 300,
+      "WriteCapacityUnits": 300
+    }
+  }

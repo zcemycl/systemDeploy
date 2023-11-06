@@ -1,0 +1,42 @@
+version: '3.10'
+networks:
+  net:
+    driver: bridge
+    name: net
+services:
+  dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:1.21.0"
+    container_name: dynamodb
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./src/docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    user: root
+    networks:
+      - net
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    container_name: dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb:8000
+    networks:
+      - net
+
+  init:
+    build:
+      context: .
+      dockerfile: Dockerfile.init
+    environment:
+      DYNAMODB_URL: http://dynamodb:8000/
+      AWS_ACCESS_KEY: fake
+      AWS_SECRET_ACCESS_KEY: fake
+      AWS_DEFAULT_REGION: eu-west-2
+    depends_on:
+      - dynamodb
+    networks:
+      - net

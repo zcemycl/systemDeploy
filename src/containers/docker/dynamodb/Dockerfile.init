@@ -1,0 +1,12 @@
+FROM amazon/aws-cli
+
+ENV DYNAMODB_URL=http://dynamodb:8000/
+ENV AWS_ACCESS_KEY_ID=fake
+ENV AWS_SECRET_ACCESS_KEY=fake
+ENV AWS_DEFAULT_REGION=eu-west-2
+
+COPY init-db.sh /
+COPY local /local
+WORKDIR /
+
+ENTRYPOINT aws dynamodb create-table --endpoint-url ${DYNAMODB_URL} --cli-input-json file:///local/create-table.json

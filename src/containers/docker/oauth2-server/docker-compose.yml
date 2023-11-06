@@ -15,3 +15,20 @@ services:
       - JSON_CONFIG_PATH=/conf/OAuth2Config.json
     networks:
       - net
+
+  init:
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+    build:
+      context: .
+      dockerfile: Dockerfile.init
+    environment:
+      OAUTH2_SERVER_URL: http://oauth:8080
+    networks:
+      - net
+    depends_on:
+      - oauth

@@ -1,0 +1,7 @@
+FROM ubuntu
+
+ENV OAUTH2_SERVER_URL=http://oauth:8002
+RUN apt-get update -y && apt-get install curl -y
+RUN echo ${OAUTH2_SERVER_URL}
+
+ENTRYPOINT curl --location ${OAUTH2_SERVER_URL}/default_issuer/token --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode 'client_id=fake' --data-urlencode 'client_secret=fake' --data-urlencode 'mock_type=user'

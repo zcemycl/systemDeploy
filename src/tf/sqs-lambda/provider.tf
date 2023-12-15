@@ -1,11 +1,6 @@
 # Configure the AWS Provider
 provider "aws" {
-  region = "eu-west-2"
-}
-
-provider "aws" {
-  alias  = "us_east"
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 terraform {
@@ -13,10 +8,6 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 4.24"
-    }
-    acme = {
-      source  = "vancluever/acme"
-      version = "2.11.1"
     }
   }
 }

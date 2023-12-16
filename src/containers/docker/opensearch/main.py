@@ -89,6 +89,7 @@ try:
                 'multi_match': {
                     "analyzer": "my_analyzer",
                     # "analyzer": "standard",
+                    # "analyzer": "simple",
                     'query': q,
                     "type": "bool_prefix", # potential fix
                     # "type": "phrase_prefix", # no

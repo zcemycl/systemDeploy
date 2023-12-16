@@ -1,3 +1,7 @@
+### How to start?
+1. Create aws infrastructure through terraform.
+2. Create studio from your user profile in sagemaker. Sagemaker -> Domains -> user profile.
+
 ### References
 1. [Train a Deep Learning model with AWS Deep Learning Containers on Amazon EC2](https://aws.amazon.com/getting-started/hands-on/train-deep-learning-model-aws-ec2-containers/)
 2. [Deploy and manage machine learning pipelines with Terraform using Amazon SageMaker](https://aws.amazon.com/blogs/machine-learning/deploy-and-manage-machine-learning-pipelines-with-terraform-using-amazon-sagemaker/)
@@ -6,3 +10,5 @@
 5. [Deploy large models on Amazon SageMaker using DJLServing and DeepSpeed model parallel inference](https://aws.amazon.com/blogs/machine-learning/deploy-large-models-on-amazon-sagemaker-using-djlserving-and-deepspeed-model-parallel-inference/)
 6. [Amazon EC2 Trn1 Instances for High-Performance Model Training are Now Available](https://aws.amazon.com/blogs/aws/amazon-ec2-trn1-instances-for-high-performance-model-training-are-now-available/)
 7. [Amazon SageMaker Simplifies Training Deep Learning Models With Billions of Parameters](https://aws.amazon.com/blogs/aws/amazon-sagemaker-simplifies-training-deep-learning-models-with-billions-of-parameters/)
+8. https://huggingface.co/docs/sagemaker/inference
+9. https://saturncloud.io/blog/how-to-work-with-custom-s3-buckets-and-aws-sagemaker/

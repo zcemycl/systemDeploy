@@ -1,10 +1,19 @@
 from opensearchpy import OpenSearch
 
-# from opensearchpy import analyzer, tokenizer, Index
-
-
 host = 'localhost'
 port = 9200
+documents = [
+    {
+        'title': "Moneyball's Leo",
+        'director': 'Bennett Miller',
+        'year': '2011'
+    },
+    {
+        'title': "Moneyball Leo",
+        'director': 'Bennett Miller',
+        'year': '2011'
+    }
+]
 
 # Create the client with SSL/TLS and hostname verification disabled.
 client = OpenSearch(
@@ -18,6 +27,24 @@ client = OpenSearch(
 
 index_name = 'python-test-index'
 index_body = {
+  'mappings': {
+    "properties":{
+        'python-test-index': {
+            "properties": {
+                "title": {
+                    "type": "text",
+                    "analyzer": "my_analyzer"
+                },
+                "director": {
+                    "type": "text"
+                },
+                "year": {
+                    "type": "text"
+                }
+            }
+        }
+    }
+  },
   'settings': {
     'index': {
       'number_of_shards': 4
@@ -26,7 +53,7 @@ index_body = {
       "analyzer": {
         "my_analyzer": {
           "tokenizer": "keyword",
-          "filter": [ "my_custom_word_delimiter_filter" ]
+          "filter": [ "lowercase", "my_custom_word_delimiter_filter" ]
         }
       },
       "filter": {
@@ -44,16 +71,52 @@ index_body = {
 }
 
 response = client.indices.create(index_name, body=index_body)
-# print(dir(client))
 
 try:
-    print(client.indices.analyze(
-        index=index_name,
-        body={
-            "analyzer": "my_analyzer",
-            "text": "Neil's-Super-Duper-XL500--42+AutoCoder"
+    for i, doc in enumerate(documents):
+        response = client.index(
+            index = index_name,
+            body = doc,
+            id = f"{i+1}",
+            refresh = True
+        )
+
+    for q in ["moneyball", "moneyball's",
+        "moneyball's OR moneyball", "Leo abc"]:
+        query = {
+            'size': 5,
+            'query': {
+                'multi_match': {
+                    "analyzer": "my_analyzer",
+                    # "analyzer": "standard",
+                    'query': q,
+                    "type": "bool_prefix", # potential fix
+                    # "type": "phrase_prefix", # no
+                    'fields': ['title'],
+                }
+            }
         }
-    ))
+
+        response = client.search(
+            body = query,
+            index = index_name
+        )
+        print(response['hits']['total']['value'])
+        print([hit['_source'] for hit in response['hits']['hits']])
+        # print(response)
+
+    for text in [
+        "Neil's-Super-Duper-XL500--42+AutoCoder",
+        "Moneyball's Leo",
+        "Moneyball Leo",
+        "moneyball"]:
+        res = client.indices.analyze(
+            index=index_name,
+            body={
+                "analyzer": "my_analyzer",
+                "text": text
+            })
+        print([token["token"] for token in res["tokens"]])
 except Exception as e:
     print(e)
 finally:

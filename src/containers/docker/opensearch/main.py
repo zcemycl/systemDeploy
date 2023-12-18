@@ -4,15 +4,26 @@ host = 'localhost'
 port = 9200
 documents = [
     {
-        'title': "Moneyball's Leo",
+        'title': "Moneyball's Leo James'",
         'director': 'Bennett Miller',
         'year': '2011'
     },
     {
-        'title': "Moneyball Leo",
+        'title': "Moneyball Leo James",
+        'director': 'Bennett Miller',
+        'year': '2011'
+    },
+    {
+        'title': "AbcmoneyballDf Leo James",
+        'director': 'Bennett Miller',
+        'year': '2011'
+    },
+    {
+        'title': "moneyballDf Leo James",
         'director': 'Bennett Miller',
         'year': '2011'
     }
+
 ]
 
 # Create the client with SSL/TLS and hostname verification disabled.
@@ -33,7 +44,8 @@ index_body = {
             "properties": {
                 "title": {
                     "type": "text",
-                    "analyzer": "my_analyzer"
+                    # "analyzer": "my_analyzer"
+                    # "analyzer": "english",
                 },
                 "director": {
                     "type": "text"
@@ -82,7 +94,8 @@ try:
         )
 
     for q in ["moneyball", "moneyball's",
-        "moneyball's OR moneyball", "Leo abc"]:
+        "moneyball's OR moneyball", "Leo abc",
+        "James", "James'"]:
         query = {
             'size': 5,
             'query': {
@@ -90,6 +103,7 @@ try:
                     "analyzer": "my_analyzer",
                     # "analyzer": "standard",
                     # "analyzer": "simple",
+                    # "analyzer": "english",
                     'query': q,
                     "type": "bool_prefix", # potential fix
                     # "type": "phrase_prefix", # no

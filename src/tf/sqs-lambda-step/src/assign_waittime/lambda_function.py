@@ -33,15 +33,15 @@ def lambda_handler(event, context):
         # no one ahead
         base_wait = 0
     else:
-        # still in calls
-        base_wait = max(time_dif, 0)
+        # busy
+        base_wait = -time_dif
     # queue message to wait n seconds in order to make calls
     for i, msg in enumerate(messages):
         _ = client.start_execution(
             stateMachineArn=state_arn,
             input=json.dumps({
                 'key1': msg,
-                'waitTime': math.ceil(base_wait+i*DELAY_INTERVAL)
+                'waitTime': math.ceil(base_wait+(i+1)*DELAY_INTERVAL)
             })
         )
 

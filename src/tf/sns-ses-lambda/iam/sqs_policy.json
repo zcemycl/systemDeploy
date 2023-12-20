@@ -1,0 +1,16 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "sns:*",
+                "SQS:SendMessage"
+            ],
+            "Principal": {
+                "Service": "sns.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}

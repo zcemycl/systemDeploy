@@ -1,5 +1,6 @@
-import socketio
 import asyncio
+
+import socketio
 
 loop = asyncio.get_event_loop()
 sio_client = socketio.AsyncClient()

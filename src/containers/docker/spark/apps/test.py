@@ -1,6 +1,6 @@
+from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
-from pyspark import SparkContext
 
 S3_DATA_SRC_PATH = '/opt/spark-data/survey_results_public.csv'
 S3_DATA_OUT_PATH = '/opt/spark-data/data-output'

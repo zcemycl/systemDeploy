@@ -1,8 +1,9 @@
-import os
-from flask import Flask
 import asyncio
-import requests
+import os
+
 import aiohttp
+import requests
+from flask import Flask
 from loguru import logger
 
 BACKEND_HOST = os.environ["BACKEND_HOST"]

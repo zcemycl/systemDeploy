@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException
-import urllib.request
 import socket
+import urllib.request
+
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 

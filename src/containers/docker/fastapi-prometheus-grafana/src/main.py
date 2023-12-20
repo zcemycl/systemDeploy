@@ -1,9 +1,10 @@
-import time
 import random
-from fastapi import Request, FastAPI
+import time
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import Counter, Histogram
 from prometheus_fastapi_instrumentator import Instrumentator
-from prometheus_client import Histogram, Counter
 
 app = FastAPI()
 

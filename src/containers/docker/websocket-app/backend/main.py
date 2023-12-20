@@ -1,8 +1,7 @@
+import socketio
 import uvicorn
 from fastapi import FastAPI
-import socketio
 from loguru import logger
-
 
 app = FastAPI()
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=["*"])

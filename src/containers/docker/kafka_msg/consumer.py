@@ -1,8 +1,10 @@
-from kafka import KafkaConsumer
-from aiokafka import AIOKafkaConsumer
 from json import loads
 from time import sleep
+
+from aiokafka import AIOKafkaConsumer
+from kafka import KafkaConsumer
 from producer import *
+
 
 def main():
     consumer = KafkaConsumer(

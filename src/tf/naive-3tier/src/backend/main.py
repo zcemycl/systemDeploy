@@ -1,9 +1,10 @@
-import os
-from fastapi import FastAPI
-import time
 import asyncio
+import os
+import time
+
+from fastapi import FastAPI
 from loguru import logger
-from sqlalchemy import create_engine,text
+from sqlalchemy import create_engine, text
 
 RDS_HOST = os.environ["RDS_HOST"]
 RDS_PWD = os.environ["RDS_PWD"]

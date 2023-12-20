@@ -1,6 +1,7 @@
-import os
-import boto3
 import json
+import os
+
+import boto3
 
 BASE_DOMAIN = os.environ['BASE_DOMAIN']
 TABLE_NAME = os.environ['TABLE_NAME']

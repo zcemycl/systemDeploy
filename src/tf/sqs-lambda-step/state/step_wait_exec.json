@@ -46,7 +46,10 @@
         "QueueUrl": "${queueurl}",
         "MessageBody.$": "$"
       },
-      "End": true
+      "Next": "Fail"
+    },
+    "Fail": {
+      "Type": "Fail"
     }
   }
 }

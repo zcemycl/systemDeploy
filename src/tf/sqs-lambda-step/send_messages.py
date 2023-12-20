@@ -1,0 +1,10 @@
+import boto3
+
+sqs = boto3.resource('sqs')
+
+queue = sqs.get_queue_by_name(QueueName="queue_for_waittime")
+messages = [f"mm{i}" for i in range(100)]
+for msg in messages:
+    resp = queue.send_message(MessageBody=msg)
+    print(resp.get('MessageId'))
+    print(resp.get('MD5OfMessageBody'))

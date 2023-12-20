@@ -1,38 +1,52 @@
 {
-    "Comment": "A description of my state machine",
-    "StartAt": "Wait",
-    "States": {
-      "Wait": {
-        "Type": "Wait",
-        "SecondsPath": "$.waitTime",
-        "Next": "Lambda Invoke"
+  "Comment": "Queue Management System",
+  "StartAt": "Wait",
+  "States": {
+    "Wait": {
+      "Type": "Wait",
+      "SecondsPath": "$.waitTime",
+      "Next": "Lambda Invoke"
+    },
+    "Lambda Invoke": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "${funcname}",
+        "Payload.$": "$"
       },
-      "Lambda Invoke": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::lambda:invoke",
-        "OutputPath": "$.Payload",
-        "Parameters": {
-          "FunctionName": "${funcname}",
-          "Payload.$": "$"
-        },
-        "End": true,
-        "Catch": [
-          {
-            "ErrorEquals": [
-              "States.ALL"
-            ],
-            "Next": "SQS SendMessage"
-          }
-        ]
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Convert back to original msg format",
+          "ResultPath": null
+        }
+      ],
+      "Next": "Pass"
+    },
+    "Convert back to original msg format": {
+      "Type": "Pass",
+      "Next": "SQS SendMessage",
+      "OutputPath": "$.key1"
+    },
+    "Pass": {
+      "Type": "Pass",
+      "OutputPath": "$.key1",
+      "Next": "Success"
+    },
+    "Success": {
+      "Type": "Succeed"
+    },
+    "SQS SendMessage": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage",
+      "Parameters": {
+        "QueueUrl": "${queueurl}",
+        "MessageBody.$": "$"
       },
-      "SQS SendMessage": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::sqs:sendMessage",
-        "Parameters": {
-          "QueueUrl": "${queueurl}",
-          "MessageBody.$": "$"
-        },
-        "End": true
-      }
+      "End": true
     }
   }
+}

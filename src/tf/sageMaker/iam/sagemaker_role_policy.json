@@ -5,7 +5,8 @@
             "Action": [
                 "sagemaker:*",
                 "iam:*",
-                "s3:*"
+                "s3:*",
+                "ecr:*"
             ],
             "Effect": "Allow",
             "Resource": "*"

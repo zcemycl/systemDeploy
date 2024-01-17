@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Dict, List
 
 
 class ModelHandler(object):
@@ -11,10 +12,11 @@ class ModelHandler(object):
     def initialize(self, context):
         self.initialized = True
 
-    def preprocess(self, data):
-        return data
+    # if Body=str, data will become List[Dict[str, bytearray]]
+    def preprocess(self, data: List[Dict[str, bytearray]]) -> str:
+        return data[0]["body"].decode()
 
-    def inference(self, data):
+    def inference(self, data: str) ->  Dict[str, int]:
         return {"positive_probability": len(data)}
 
     def postprocess(self, out):

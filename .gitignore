@@ -71,3 +71,5 @@ minio_data
 log.txt
 .env
 logs/
+*.tar
+*.tar.gz

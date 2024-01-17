@@ -19,7 +19,8 @@ data "aws_iam_policy_document" "sagemaker_policy" {
     effect = "Allow"
     actions = [
       "ecr:*",
-      "s3:*"
+      "s3:*",
+      "logs:*"
     ]
     resources = ["*"]
   }
@@ -53,8 +54,11 @@ data "aws_iam_policy_document" "lambda_role" {
 
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
-    effect    = "Allow"
-    actions   = ["sagemaker:*"]
+    effect = "Allow"
+    actions = [
+      "sagemaker:*",
+      "logs:*"
+    ]
     resources = ["*"]
   }
 }

@@ -1,5 +1,5 @@
 locals {
-  prefix              = "dummy-model-image-2"
+  prefix              = "dummy-model-image-3"
   lambda_zip_location = "outputs/lambda_function.zip"
 }
 
@@ -54,8 +54,13 @@ resource "aws_sagemaker_model" "this" {
   primary_container {
     image          = "${aws_ecr_repository.this.repository_url}:latest"
     mode           = "SingleModel"
-    model_data_url = "s3://dummy-model-image-bucket/model.tar.gz"
+    model_data_url = "s3://${aws_s3_bucket.this.bucket}/${aws_s3_bucket_object.this.id}"
   }
+
+  depends_on = [
+    null_resource.push_docker_image,
+    aws_s3_bucket_object.this
+  ]
 }
 
 resource "aws_sagemaker_endpoint_configuration" "this" {

@@ -86,6 +86,7 @@ resource "aws_lambda_function" "this" {
   source_code_hash = data.archive_file.lambda_function.output_base64sha256
   runtime          = "python3.10"
   role             = aws_iam_role.this_lambda.arn
+  timeout          = 900 # max
 
   environment {
     variables = {

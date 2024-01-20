@@ -28,9 +28,17 @@ class ModelHandler(object):
         print(type(data))
         print(context)
         inp = self.preprocess(data)
-        out = self.inference(inp)
-        postout = self.postprocess(out)
-        return postout
+        print(inp)
+        print(type(inp))
+        outs = []
+        for i, item in enumerate(inp.split('\n{"')):
+            if i>0:
+                item = '{"'+item
+            out = self.inference(json.loads(item)["content"])
+            outs.append(out)
+        print(outs)
+        postout = [self.postprocess(out)[0] for out in outs]
+        return ["\n".join(postout)]
 
 
 _service = ModelHandler()

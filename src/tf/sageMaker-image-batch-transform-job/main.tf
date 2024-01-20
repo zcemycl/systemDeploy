@@ -79,9 +79,9 @@ resource "aws_lambda_function" "this" {
   role             = aws_iam_role.this_lambda.arn
   timeout          = 900 # max
 
-  #   environment {
-  #     variables = {
-  #       endpoint_name = aws_sagemaker_endpoint.this.name
-  #     }
-  #   }
+  environment {
+    variables = {
+      model_name = aws_sagemaker_model.this.name
+    }
+  }
 }

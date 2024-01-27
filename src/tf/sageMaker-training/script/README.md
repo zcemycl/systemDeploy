@@ -1,3 +1,5 @@
+## Deployment Strategies
+
 ```mermaid
 flowchart LR;
     A[script] -->|push to| B[s3];
@@ -5,6 +7,13 @@ flowchart LR;
     B -->|pull to| D;
     D -->|create| E[Sagemaker training job];
 ```
+
+## How to run?
+- Local
+    ```
+    python train.py --train ../data
+    ```
+- Sagemaker
 
 ## References
 1. https://github.com/aws/amazon-sagemaker-examples/blob/main/sagemaker-python-sdk/tensorflow_script_mode_training_and_serving/mnist-2.py

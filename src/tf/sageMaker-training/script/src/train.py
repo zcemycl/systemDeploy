@@ -4,19 +4,23 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import (Add, Concatenate, Conv2D, Conv2DTranspose,
-                                     Dense, Input, Multiply, ReLU)
+from tensorflow.keras.layers import (Conv2D, Dense, Flatten, Input,
+                                     MaxPooling2D, ReLU)
+from tensorflow.keras.losses import CategoricalCrossentropy
 from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 
 
 def dummy_model():
-    x = Input([256, 256, 3])
-    y = Conv2D(32, 3)(x)
-    return Model(inputs=x, outputs=y)
+    inp = Input([256, 256, 3])
+    x = Conv2D(32, 3, strides=4, padding='same')(inp)
+    x = MaxPooling2D((4, 4))(x)
+    x = Flatten()(x)
+    x = Dense(128, activation='relu')(x)
+    y = Dense(2, activation='softmax')(x)
+    return Model(inputs=inp, outputs=y)
 
 if __name__ == "__main__":
-    env_train = os.environ.get("SM_CHANNEL_TRAINING")
-    print(type(env_train))
     p = argparse.ArgumentParser()
     p.add_argument("--epochs", type=int, default=2)
     p.add_argument("--batch_size", type=int, default=2)
@@ -24,10 +28,12 @@ if __name__ == "__main__":
 
     p.add_argument('--model_dir', type=str)
     p.add_argument("--train", type=str,
-        default=(env_train if env_train is not None else "../data"))
+        default=os.environ.get("SM_CHANNEL_TRAINING"))
     args = p.parse_args()
 
     model = dummy_model()
+    loss_fn = CategoricalCrossentropy()
+    optim = Adam(learning_rate=args.lr)
 
     ds = tf.keras.utils.image_dataset_from_directory(
         args.train,
@@ -40,11 +46,15 @@ if __name__ == "__main__":
     for i in range(args.epochs):
         print(i)
         for imgs, labels in ds:
-            print(imgs.shape)
-            print(labels.shape)
-            print(labels)
-            pred = model(imgs)
-            print(pred.shape)
+            with tf.GradientTape() as tape:
+                one_hot_labels = tf.one_hot(labels, 2)
+                pred = model(imgs)
+                loss = loss_fn(one_hot_labels, pred)
+            grads = tape.gradient(loss, model.trainable_weights)
+            optim.apply_gradients(zip(grads, model.trainable_weights))
+            print(one_hot_labels, pred)
+            print(loss)
             # plt.imshow(imgs[0].numpy().astype("uint8"))
             # plt.show()
-            break
+
+    model.save(os.path.join(args.model_dir, '000000001'))

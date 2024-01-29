@@ -6,10 +6,12 @@ import boto3
 s3 = boto3.client('s3')
 sm = boto3.client('sagemaker')
 
-s3.download_file('sagemaker-training-script-experiment', 'train.zip', '/tmp/train.zip')
-with zipfile.ZipFile('/tmp/train.zip', 'r') as f:
+script_s3_key = os.environ['script_s3_key']
+script_s3_bucket = os.environ['script_s3_bucket']
+s3.download_file(script_s3_bucket, script_s3_key, f"/tmp/{script_s3_key}")
+with zipfile.ZipFile(f"/tmp/{script_s3_key}", 'r') as f:
     f.extractall('/tmp/')
-os.system('rm /tmp/train.zip')
+os.system(f"rm /tmp/{script_s3_key}")
 
 def lambda_handler(event, context):
     pass

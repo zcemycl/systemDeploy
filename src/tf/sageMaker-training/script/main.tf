@@ -7,4 +7,11 @@ resource "aws_lambda_function" "this" {
   runtime          = "python3.10"
   role             = aws_iam_role.this.arn
   timeout          = 900 # max
+
+  environment {
+    variables = {
+      script_s3_key    = aws_s3_bucket_object.this_train.id
+      script_s3_bucket = aws_s3_bucket.this.bucket
+    }
+  }
 }

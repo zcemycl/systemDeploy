@@ -1,3 +1,30 @@
+resource "null_resource" "this" {
+  provisioner "local-exec" {
+    command = "./build_lambda_layer.sh ${var.PYTHON_VER}"
+  }
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+}
+
+data "null_data_source" "this" {
+  inputs = {
+    lambda_exporter_id = "${null_resource.this.id}"
+    source_dir         = "outputs/python"
+  }
+}
+
+data "archive_file" "this_lambda_layer" {
+  type        = "zip"
+  source_dir  = data.null_data_source.this.outputs["source_dir"]
+  output_path = "outputs/lambda_layer.zip"
+
+  depends_on = [
+    null_resource.this
+  ]
+}
+
 data "archive_file" "this_data" {
   type        = "zip"
   source_dir  = "${path.root}/../data"
@@ -43,4 +70,12 @@ resource "aws_s3_bucket_object" "this_lambda" {
   source        = data.archive_file.this_lambda.output_path
   force_destroy = true
   etag          = data.archive_file.this_lambda.output_md5
+}
+
+resource "aws_s3_bucket_object" "this_lambda_layer" {
+  bucket        = aws_s3_bucket.this.bucket
+  key           = "lambda_layer.zip"
+  source        = data.archive_file.this_lambda_layer.output_path
+  force_destroy = true
+  etag          = data.archive_file.this_lambda_layer.output_md5
 }

@@ -74,3 +74,4 @@ logs/
 *.tar
 *.tar.gz
 model/
+*.whl

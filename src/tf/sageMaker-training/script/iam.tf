@@ -19,7 +19,8 @@ data "aws_iam_policy_document" "lambda_policy" {
     actions = [
       "sagemaker:*",
       "logs:*",
-      "s3:*"
+      "s3:*",
+      "iam:*"
     ]
     resources = ["*"]
   }

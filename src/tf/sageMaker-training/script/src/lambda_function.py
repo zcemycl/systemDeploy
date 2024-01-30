@@ -1,4 +1,5 @@
 import os
+import time
 import zipfile
 
 import boto3
@@ -18,18 +19,24 @@ os.system(f"rm /tmp/{script_s3_key}")
 os.system(f"chmod +x /tmp/train.py")
 
 def lambda_handler(event, context):
+    start_time = time.time()
     estimator = TensorFlow(
-        base_job_name="leo-try-training",
+        base_job_name=f"leo-try-training-{int(time.time())}",
         entry_point="train.py",
         source_dir="/tmp",
+        # source_dir="/home/ec2-user/SageMaker",
         role=sagemaker_role_arn,
         instance_count=1,
-        instance_type="ml.t2.medium",
-        hyperparameters={},
+        instance_type="ml.c5.xlarge",
+        hyperparameters={"epochs": 10},
         framework_version="2.13.0",
         py_version="py310",
-        image_name="763104351884.dkr.ecr.us-east-1.amazonaws.com/tensorflow-training:2.13.0-cpu-py310-ubuntu20.04-ec2",
+        output_path=f"s3://{script_s3_bucket}/model",
+        # image_name="763104351884.dkr.ecr.eu-west-2.amazonaws.com/tensorflow-training:2.13.0-cpu-py310-ubuntu20.04-ec2",
         script_mode=True,
+        input_mode="File"
         # distribution={"parameter_server": {"enabled": True}},
     )
-    estimator.fit("s3://sagemaker-training-script-experiment/data.zip",wait=False)
+    estimator.fit(f"s3://{script_s3_bucket}/data", wait=False)
+    end_time = time.time()
+    print(f"Training job initialisation takes: {(end_time-start_time)/60} min")

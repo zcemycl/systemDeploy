@@ -27,6 +27,7 @@ if __name__ == "__main__":
     p.add_argument("--lr", type=float, default=0.1)
 
     p.add_argument('--model_dir', type=str)
+    p.add_argument("--sm-model-dir", type=str, default=os.environ.get("SM_MODEL_DIR"))
     p.add_argument("--train", type=str,
         default=os.environ.get("SM_CHANNEL_TRAINING"))
     args = p.parse_args()
@@ -57,4 +58,4 @@ if __name__ == "__main__":
             # plt.imshow(imgs[0].numpy().astype("uint8"))
             # plt.show()
 
-    model.save(os.path.join(args.model_dir, '000000001'))
+    model.save(os.path.join(args.sm_model_dir, '000000001'))

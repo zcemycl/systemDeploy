@@ -15,18 +15,21 @@ s3.download_file(script_s3_bucket, script_s3_key, f"/tmp/{script_s3_key}")
 with zipfile.ZipFile(f"/tmp/{script_s3_key}", 'r') as f:
     f.extractall('/tmp/')
 os.system(f"rm /tmp/{script_s3_key}")
+os.system(f"chmod +x /tmp/train.py")
 
 def lambda_handler(event, context):
     estimator = TensorFlow(
-        entry_point="/tmp/train.py",
+        base_job_name="leo-try-training",
+        entry_point="train.py",
+        source_dir="/tmp",
         role=sagemaker_role_arn,
         instance_count=1,
-        instance_type="ml.p3.2xlarge",
-        framework_version="2.1.0",
-        py_version="py3",
+        instance_type="ml.t2.medium",
+        hyperparameters={},
+        framework_version="2.13.0",
+        py_version="py310",
+        image_name="763104351884.dkr.ecr.us-east-1.amazonaws.com/tensorflow-training:2.13.0-cpu-py310-ubuntu20.04-ec2",
+        script_mode=True,
         # distribution={"parameter_server": {"enabled": True}},
     )
-    estimator.fit(
-        "s3://sagemaker-training-script-experiment/data.zip",
-        wait=False
-    )
+    estimator.fit("s3://sagemaker-training-script-experiment/data.zip",wait=False)

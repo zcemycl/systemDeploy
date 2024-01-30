@@ -79,3 +79,11 @@ resource "aws_s3_bucket_object" "this_lambda_layer" {
   force_destroy = true
   etag          = data.archive_file.this_lambda_layer.output_md5
 }
+
+resource "aws_s3_bucket_object" "this_data_raw" {
+  for_each = fileset(path.root, "../data/**/*.jpg")
+  bucket   = aws_s3_bucket.this.id
+  key      = replace(each.value, "../", "")
+  source   = each.value
+  etag     = data.archive_file.this_data.output_md5
+}

@@ -56,7 +56,8 @@ data "aws_iam_policy_document" "sagemaker_policy" {
     actions = [
       "sagemaker:*",
       "logs:*",
-      "s3:*"
+      "s3:*",
+      "iam:*"
     ]
     resources = ["*"]
   }

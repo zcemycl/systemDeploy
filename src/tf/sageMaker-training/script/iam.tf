@@ -20,7 +20,8 @@ data "aws_iam_policy_document" "lambda_policy" {
       "sagemaker:*",
       "logs:*",
       "s3:*",
-      "iam:*"
+      "iam:*",
+      "ecr:*"
     ]
     resources = ["*"]
   }
@@ -58,7 +59,8 @@ data "aws_iam_policy_document" "sagemaker_policy" {
       "sagemaker:*",
       "logs:*",
       "s3:*",
-      "iam:*"
+      "iam:*",
+      "ecr:*"
     ]
     resources = ["*"]
   }

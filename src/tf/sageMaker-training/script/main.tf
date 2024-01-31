@@ -26,3 +26,9 @@ resource "aws_lambda_function" "this" {
     }
   }
 }
+
+resource "aws_sagemaker_notebook_instance" "ni" {
+  name          = "sagemaker-training-script-invoke-notebook-instance"
+  role_arn      = aws_iam_role.this_sagemaker.arn
+  instance_type = "ml.t2.medium"
+}

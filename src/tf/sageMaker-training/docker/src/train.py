@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 
@@ -7,6 +8,13 @@ from tensorflow.keras.layers import (Conv2D, Dense, Flatten, Input,
 from tensorflow.keras.losses import CategoricalCrossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
+
+
+def load_json(path: str):
+    with open(path) as f:
+        json_dict = json.load(f)
+        print(json_dict)
+    return json_dict
 
 
 def dummy_model():
@@ -19,15 +27,26 @@ def dummy_model():
     return Model(inputs=inp, outputs=y)
 
 if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--epochs", type=int, default=2)
+    p.add_argument("--batch_size", type=int, default=2)
+    p.add_argument("--lr", type=float, default=0.1)
 
-    os.system("ls /opt/ml/input/config/hyperparameters.json")
-    with open("/opt/ml/input/config/hyperparameters.json") as f:
-        print(json.load(f))
-    os.system("ls /opt/ml/input/config/inputdataconfig.json")
-    os.system("ls /opt/ml/input/config/resourceconfig.json")
-    os.system("ls /opt/ml/input/data/**/*.jpg")
-    os.system("ls /opt/ml/model/**")
-    os.system("ls /opt/ml/output/**")
+    p.add_argument('--model_dir', type=str)
+    p.add_argument("--sm-model-dir", type=str, default=os.environ.get("SM_MODEL_DIR"))
+    p.add_argument("--train", type=str,
+        default=os.environ.get("SM_CHANNEL_TRAINING"))
+    args = p.parse_known_args()
+    print(args)
+
+    dic_hyp = load_json("/opt/ml/input/config/hyperparameters.json")
+    dic_inp = load_json("/opt/ml/input/config/inputdataconfig.json")
+    dic_res = load_json("/opt/ml/input/config/resourceconfig.json")
+    # os.system("ls /opt/ml/input/data/") # training
+    # os.system("ls /opt/ml/input/data/training") # A, B
+    os.system("ls /opt/ml/model/")
+    print("outputs: ")
+    os.system("ls /opt/ml/output/")
 
 
     model = dummy_model()

@@ -16,4 +16,8 @@ resource "null_resource" "this" {
   depends_on = [
     aws_ecr_repository.this
   ]
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
 }

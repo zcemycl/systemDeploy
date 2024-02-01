@@ -3,6 +3,7 @@ import json
 import os
 
 import smdebug.tensorflow as smd
+import tensorflow as tf
 from tensorflow.keras.layers import (Conv2D, Dense, Flatten, Input,
                                      MaxPooling2D, ReLU)
 from tensorflow.keras.losses import CategoricalCrossentropy
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     p.add_argument("--sm-model-dir", type=str, default=os.environ.get("SM_MODEL_DIR"))
     p.add_argument("--train", type=str,
         default=os.environ.get("SM_CHANNEL_TRAINING"))
-    args = p.parse_known_args()
+    args = p.parse_known_args()[0] # (known namespace, list of unknown strings)
     print(args)
 
     dic_hyp = load_json("/opt/ml/input/config/hyperparameters.json")

@@ -34,7 +34,7 @@ resource "aws_lambda_layer_version" "this" {
 resource "aws_lambda_function" "this" {
   s3_bucket        = aws_s3_bucket.this.bucket
   s3_key           = aws_s3_bucket_object.this_lambda.id
-  function_name    = "sagemaker_training_script_invoke"
+  function_name    = "${var.project_prefix}-invoke"
   handler          = "lambda_function.lambda_handler"
   source_code_hash = data.archive_file.this_data.output_base64sha256
   runtime          = var.PYTHON_VER
@@ -52,14 +52,14 @@ resource "aws_lambda_function" "this" {
 }
 
 resource "aws_sagemaker_notebook_instance" "this" {
-  name                  = "sagemaker-training-script-invoke-notebook-instance"
+  name                  = "${var.project_prefix}-invoke-notebook-instance"
   role_arn              = aws_iam_role.this_sagemaker.arn
   instance_type         = "ml.t2.medium"
   lifecycle_config_name = aws_sagemaker_notebook_instance_lifecycle_configuration.this.name
 }
 
 resource "aws_sagemaker_notebook_instance_lifecycle_configuration" "this" {
-  name = "sagemaker-training-script-invoke-notebook-instance-config"
+  name = "${var.project_prefix}-invoke-notebook-instance-config"
   on_create = base64encode(templatefile(
     "notebooks/on_start.sh",
     {

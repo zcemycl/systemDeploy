@@ -44,7 +44,7 @@ data "archive_file" "this_lambda" {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket        = "sagemaker-training-script-experiment"
+  bucket        = "${var.project_prefix}-experiment"
   force_destroy = true
 }
 

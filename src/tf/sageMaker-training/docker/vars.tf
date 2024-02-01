@@ -9,3 +9,7 @@ variable "local_docker_name" {
 variable "PYTHON_VER" {
   default = "python3.10"
 }
+
+variable "project_prefix" {
+  default = "sagemaker-training-docker"
+}

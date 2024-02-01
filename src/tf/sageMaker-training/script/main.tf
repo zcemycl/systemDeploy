@@ -27,8 +27,29 @@ resource "aws_lambda_function" "this" {
   }
 }
 
-resource "aws_sagemaker_notebook_instance" "ni" {
-  name          = "sagemaker-training-script-invoke-notebook-instance"
-  role_arn      = aws_iam_role.this_sagemaker.arn
-  instance_type = "ml.t2.medium"
+resource "aws_sagemaker_notebook_instance" "this" {
+  name                  = "sagemaker-training-script-invoke-notebook-instance"
+  role_arn              = aws_iam_role.this_sagemaker.arn
+  instance_type         = "ml.t2.medium"
+  lifecycle_config_name = aws_sagemaker_notebook_instance_lifecycle_configuration.this.name
+}
+
+resource "aws_sagemaker_notebook_instance_lifecycle_configuration" "this" {
+  name = "sagemaker-training-script-invoke-notebook-instance-config"
+  on_create = base64encode(templatefile(
+    "notebooks/on_start.sh",
+    {
+      script_s3_key      = aws_s3_bucket_object.this_train.id
+      script_s3_bucket   = aws_s3_bucket.this.id
+      sagemaker_role_arn = aws_iam_role.this_sagemaker.arn
+    }
+  ))
+  on_start = base64encode(templatefile(
+    "notebooks/on_start.sh",
+    {
+      script_s3_key      = aws_s3_bucket_object.this_train.id
+      script_s3_bucket   = aws_s3_bucket.this.id
+      sagemaker_role_arn = aws_iam_role.this_sagemaker.arn
+    }
+  ))
 }

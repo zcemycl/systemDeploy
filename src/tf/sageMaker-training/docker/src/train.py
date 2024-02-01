@@ -45,10 +45,30 @@ if __name__ == "__main__":
     # os.system("ls /opt/ml/input/data/") # training
     # os.system("ls /opt/ml/input/data/training") # A, B
     os.system("ls /opt/ml/model/")
-    print("outputs: ")
-    os.system("ls /opt/ml/output/")
-
+    # os.system("ls /opt/ml/output/")
 
     model = dummy_model()
     loss_fn = CategoricalCrossentropy()
-    optim = Adam(learning_rate=0.01)
+    optim = Adam(learning_rate=args.lr)
+    ds = tf.keras.utils.image_dataset_from_directory(
+        args.train,
+        batch_size=args.batch_size
+        )
+    ds = ds.shuffle(buffer_size=1024)
+    print(ds)
+
+    for i in range(args.epochs):
+        print("Epochs: ", i)
+        for imgs, labels in ds:
+            with tf.GradientTape() as tape:
+                one_hot_labels = tf.one_hot(labels, 2)
+                pred = model(imgs)
+                loss = loss_fn(one_hot_labels, pred)
+            grads = tape.gradient(loss, model.trainable_weights)
+            optim.apply_gradients(zip(grads, model.trainable_weights))
+            print(one_hot_labels, pred)
+            print(loss)
+            # plt.imshow(imgs[0].numpy().astype("uint8"))
+            # plt.show()
+
+    model.save(os.path.join(args.sm_model_dir, '000000001'))

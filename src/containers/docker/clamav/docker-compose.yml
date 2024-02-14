@@ -1,0 +1,28 @@
+version: '3.18'
+services:
+  clamav:
+    image: 'clamav/clamav:latest'
+    ports:
+      - 3310:3310
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:3310"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+
+  # user_code:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: node_user_code
+  #   restart: on-failure
+  #   command: node index.js
+  #   depends_on:
+  #     clamav:
+  #       condition: service_healthy
+  #   links:
+  #     - clamav
+
+networks:
+  net:
+    driver: bridge

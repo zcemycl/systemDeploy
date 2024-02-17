@@ -9,3 +9,6 @@ npm install
 docker compose up
 node index.js
 ```
+
+## Requirements
+- At least 2gb ram --> 2048mb cpu, 4096mb ram

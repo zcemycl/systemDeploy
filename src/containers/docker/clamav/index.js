@@ -9,8 +9,9 @@ const options = {
     },
     clamdscan: {
         socket: false,
-        host: "127.0.0.1",
+        // host: "127.0.0.1", // for localhost
         // host: "clamav",
+        host: "test.service.internal", // for service discovery
         port: 3310,
         active: true,
         path: "/opt/homebrew/bin/clamdscan"

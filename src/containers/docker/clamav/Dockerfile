@@ -1,8 +1,12 @@
 FROM node:18-alpine
 
+RUN apk add --update util-linux
 RUN apk add --no-cache clamav
-COPY package.json package-lock.json index.js ./
+RUN chmod -R 777 /usr/bin/clam*
+COPY package.json package-lock.json index_.js ./
 RUN npm install
-RUN freshscan
 
-CMD ["/bin/bash"]
+RUN freshclam
+
+# CMD ["/bin/sh"]
+CMD ["node", "index_.js"]

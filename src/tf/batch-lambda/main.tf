@@ -31,3 +31,24 @@ resource "aws_batch_job_queue" "this" {
     aws_batch_compute_environment.this.arn,
   ]
 }
+
+resource "aws_batch_job_definition" "this" {
+  name = "trial-job-def"
+  type = "container"
+
+  container_properties = jsonencode({
+    image       = aws_ecr_repository.this.repository_url
+    environment = []
+    resourceRequirements = [
+      {
+        type  = "VCPU"
+        value = "1"
+      },
+      {
+        type  = "MEMORY"
+        value = "1024"
+      }
+    ]
+    privileged = true
+  })
+}

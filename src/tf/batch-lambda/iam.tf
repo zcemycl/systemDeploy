@@ -17,3 +17,8 @@ resource "aws_iam_role_policy_attachment" "this_batch" {
   role       = aws_iam_role.this_batch.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
 }
+
+resource "aws_iam_instance_profile" "this_ecs" {
+  name = "ecs_instance_role"
+  role = aws_iam_role.this_ecs.name
+}

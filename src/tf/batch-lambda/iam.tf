@@ -22,3 +22,16 @@ resource "aws_iam_instance_profile" "this_ecs" {
   name = "ecs_instance_role"
   role = aws_iam_role.this_ecs.name
 }
+
+resource "aws_iam_role" "this_lambda" {
+  assume_role_policy = file("iam/lambda_assume_policy.json")
+}
+
+resource "aws_iam_policy" "this_lambda" {
+  policy = file("iam/lambda_role_policy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "this_lambda" {
+  role       = aws_iam_role.this_lambda.name
+  policy_arn = aws_iam_policy.this_lambda.arn
+}

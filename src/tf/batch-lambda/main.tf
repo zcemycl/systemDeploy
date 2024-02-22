@@ -6,7 +6,7 @@ resource "aws_batch_compute_environment" "this" {
     instance_type = [
       "c4.large"
     ]
-    max_vcpus = 16
+    max_vcpus = 2
     min_vcpus = 0
 
     security_group_ids = [
@@ -51,4 +51,23 @@ resource "aws_batch_job_definition" "this" {
     ]
     privileged = true
   })
+}
+
+resource "aws_lambda_function" "this" {
+  s3_bucket        = aws_s3_bucket.this.bucket
+  s3_key           = aws_s3_bucket_object.this_lambda.id
+  function_name    = "leo-trial-batch-invoke"
+  handler          = "lambda_function.lambda_handler"
+  source_code_hash = data.archive_file.this_lambda.output_base64sha256
+  runtime          = "python3.12"
+  role             = aws_iam_role.this_lambda.arn
+  timeout          = 900 # max
+  layers           = []
+
+  environment {
+    variables = {
+      JOBQ   = aws_batch_job_queue.this.arn
+      JOBDEF = aws_batch_job_definition.this.arn
+    }
+  }
 }

@@ -21,6 +21,8 @@ resource "aws_batch_compute_environment" "this" {
 
   type         = "MANAGED"
   service_role = aws_iam_role.this_batch.arn
+
+  depends_on = [aws_iam_role_policy_attachment.this_batch]
 }
 
 resource "aws_batch_job_queue" "this" {

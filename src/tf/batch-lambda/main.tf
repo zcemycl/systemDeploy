@@ -52,6 +52,24 @@ resource "aws_batch_job_definition" "this" {
       }
     ]
     privileged = true
+    linuxParameters = {
+      capabilities = {
+        add = [
+          "SYS_ADMIN"
+        ],
+        drop = null
+      },
+      devices = [
+        {
+          "containerPath" : "/dev/fuse",
+          "hostPath" : "/dev/fuse",
+          "permissions" : null
+        }
+      ]
+    }
+    executionRoleArn = aws_iam_role.this_batch_ecs_task_execution.arn
+    jobRoleArn       = aws_iam_role.this_batch_ecs_task.arn
+
   })
 }
 

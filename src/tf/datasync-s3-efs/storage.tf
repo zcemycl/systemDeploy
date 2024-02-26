@@ -7,8 +7,9 @@ resource "aws_efs_access_point" "this" {
 }
 
 resource "aws_efs_mount_target" "this" {
-  file_system_id = aws_efs_file_system.this.id
-  subnet_id      = data.aws_subnets.this.ids[0]
+  file_system_id  = aws_efs_file_system.this.id
+  subnet_id       = data.aws_subnets.this.ids[0]
+  security_groups = [aws_security_group.this.id]
 }
 
 data "archive_file" "this" {

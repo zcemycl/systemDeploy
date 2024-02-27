@@ -13,9 +13,9 @@ resource "local_file" "cloud_pem" {
   content  = tls_private_key.this.private_key_pem
 }
 
-# output "public_ip" {
-#     value = aws_instance.this.public_ip
-# }
+output "public_ip" {
+  value = aws_instance.this.public_ip
+}
 
 output "efs_dns" {
   value = aws_efs_file_system.this.dns_name

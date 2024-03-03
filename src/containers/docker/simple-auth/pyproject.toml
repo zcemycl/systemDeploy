@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "simple-auth"
+version = "0.1.0"
+description = ""
+authors = ["zcemycl <lyc010197@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "src/simple_auth" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+uvicorn = "^0.27.1"
+gunicorn = "^21.2.0"
+fastapi = "^0.110.0"
+sqlalchemy = "^2.0.27"
+loguru = "^0.7.2"
+
+
+[tool.poetry.group.db.dependencies]
+alembic = "^1.13.1"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = "^24.2.0"
+pytest = "^8.1.0"
+pre-commit = "^3.6.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

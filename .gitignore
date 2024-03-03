@@ -75,3 +75,4 @@ logs/
 *.tar.gz
 model/
 *.whl
+.venv/

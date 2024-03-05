@@ -32,7 +32,7 @@ resource "aws_sagemaker_user_profile" "example" {
 resource "aws_sagemaker_app" "example" {
   domain_id         = aws_sagemaker_domain.example.id
   user_profile_name = aws_sagemaker_user_profile.example.user_profile_name
-  app_name          = "leo-jplab"
+  app_name          = "default"
   app_type          = "JupyterServer"
 }
 

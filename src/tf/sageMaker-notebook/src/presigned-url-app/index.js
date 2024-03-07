@@ -5,7 +5,7 @@ const config = {
 };
 const client = new SageMakerClient(config);
 const domainId = "d-chows9qomj8t";
-const username = "test-user"
+const username = "leo-leung"
 const defaultCheckUserArgs = {
     MaxResults: 1,
     DomainIdEquals: domainId,

@@ -23,9 +23,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: bash -c "alembic -n local upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80"
     environment:
       WITHIN_DOCKER_ENV: 1
       DB_URL: "postgresql://postgres:postgres@db/postgres"
+      PGHOST: db
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
     ports:
       - 4555:80
     networks:

@@ -20,6 +20,9 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 WORKDIR /app
 COPY --from=builder /app/src ./src
 COPY app ./app
+COPY alembic.ini ./alembic.ini
+COPY alembic ./alembic
+RUN ls .
 
 
 EXPOSE 80

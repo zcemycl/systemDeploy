@@ -20,7 +20,33 @@ resource "aws_sagemaker_domain" "example" {
   subnet_ids  = data.aws_subnets.selected.ids
 
   default_user_settings {
-    execution_role = aws_iam_role.sagemaker_role.arn
+    execution_role  = aws_iam_role.sagemaker_role.arn
+    security_groups = [aws_security_group.this.id]
+
+    jupyter_server_app_settings {
+      default_resource_spec {
+        instance_type       = "system"
+        sagemaker_image_arn = "arn:aws:sagemaker:eu-west-2:712779665605:image/jupyter-server-3"
+      }
+    }
+
+    sharing_settings {
+      notebook_output_option = "Allowed"
+    }
+
+    canvas_app_settings {
+      model_register_settings {
+        status = "DISABLED"
+      }
+
+      time_series_forecasting_settings {
+        status = "DISABLED"
+      }
+    }
+  }
+
+  domain_settings {
+    security_group_ids = [aws_security_group.this.id]
   }
 }
 

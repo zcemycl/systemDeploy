@@ -1,15 +1,43 @@
-import { SageMakerClient, CreatePresignedDomainUrlCommand, ListUserProfilesCommand } from "@aws-sdk/client-sagemaker";
+import { SageMakerClient, CreatePresignedDomainUrlCommand, ListUserProfilesCommand, CreateUserProfileCommand } from "@aws-sdk/client-sagemaker";
 
 const config = {
     region: "eu-west-2"
 };
 const client = new SageMakerClient(config);
-const domainId = "d-chows9qomj8t";
-const username = "leo-leung"
+const domainId = "d-rfglyw8eh7uj";
+const username = "leo-leung-abc";
+const sgid = "sg-0a82ee821307349b4";
+const exe_role = "arn:aws:iam::322725876573:role/leo_sagemaker_role";
 const defaultCheckUserArgs = {
     MaxResults: 1,
     DomainIdEquals: domainId,
 }
+
+const defaultUserSettings = {
+    ExecutionRole: exe_role,
+    SecurityGroups: [sgid],
+    SharingSettings: {
+        NotebookOutputOption: "Allowed"
+    },
+    JupyterServerAppSettings: {
+        DefaultResourceSpec: {
+            SageMakerImageArn: "arn:aws:sagemaker:eu-west-2:712779665605:image/jupyter-server-3",
+            InstanceType: "system"
+        }
+    },
+    RStudioServerProAppSettings:{
+        AccessStatus: "DISABLED"
+    },
+    CanvasAppSettings: {
+        TimeSeriesForecastingSettings: {
+            Status: "DISABLED"
+        },
+        ModelRegisterSettings: {
+            Status: "DISABLED"
+        }
+    }
+}
+
 const input = { // CreatePresignedDomainUrlRequest
     DomainId: domainId, // required
     UserProfileName: username, // required
@@ -44,9 +72,16 @@ const checkUser = async (username) => {
 
 const isFound = await checkUser(username);
 if (!isFound) {
-    console.log({Message: "None"})
-} else {
-    const command = new CreatePresignedDomainUrlCommand(input);
-    const response = await client.send(command);
-    console.log(response);
+    console.log({Message: "None"});
+    const command_create_user = new CreateUserProfileCommand(
+        {
+            DomainId: domainId,
+            UserProfileName: username,
+            UserSettings: defaultUserSettings
+        }
+    )
+    await client.send(command_create_user);
 }
+const command = new CreatePresignedDomainUrlCommand(input);
+const response = await client.send(command);
+console.log(response);

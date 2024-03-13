@@ -78,3 +78,4 @@ model/
 .venv/
 history/
 schedules/
+storage/

@@ -19,6 +19,7 @@ asyncpg = "^0.29.0"
 greenlet = "^3.0.3"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pydantic-settings = "^2.2.1"
 
 
 [tool.poetry.group.db.dependencies]

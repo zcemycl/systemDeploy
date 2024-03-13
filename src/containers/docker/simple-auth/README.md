@@ -23,3 +23,11 @@ docker build -t test-simple-auth .
 docker run -p 3000:80 test-simple-auth
 ~/.pyenv/versions/3.11.3/bin/poetry -n local upgrade head
 ```
+
+
+## Workflow
+```mermaid
+flowchart
+    direction TB
+    a --> b;
+```

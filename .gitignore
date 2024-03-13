@@ -76,3 +76,5 @@ logs/
 model/
 *.whl
 .venv/
+history/
+schedules/

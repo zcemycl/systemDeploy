@@ -16,6 +16,6 @@ class Base(AsyncAttrs, DeclarativeBase):
 class users(Base):
     __tablename__ = "users"
     id = Column("id", Integer, primary_key=True)
-    username = Column("username", String)
+    username = Column("username", String, unique=True)
     hashed_pwd = Column("hashed_pwd", String(128))
-    salt = Column("salt", String)
+    salt = Column("salt", String, nullable=True)

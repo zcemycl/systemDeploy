@@ -90,6 +90,8 @@ async def user_login(
         )
     )
     res = (await session.execute(stmt)).scalar()
+    if res is None:
+        raise HTTPException(status_code=401, detail="Invalid Username.")
     logger.info(res.username)
     if not pwd_context.verify(password, res.hashed_pwd):
         raise HTTPException(status_code=401, detail="Invalid Password Or Username.")

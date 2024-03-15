@@ -78,6 +78,27 @@ async def create_user(
     )
     return Token(access_token=access_token, token_type="bearer")
 
+@app.post("/user/login", tags=["user"])
+async def user_login(
+    username: str,
+    password: str,
+    session: AsyncSession = Depends(get_async_session),
+) -> Token:
+    stmt = (
+        select(users).where(
+            users.username == username
+        )
+    )
+    res = (await session.execute(stmt)).scalar()
+    logger.info(res.username)
+    if not pwd_context.verify(password, res.hashed_pwd):
+        raise HTTPException(status_code=401, detail="Invalid Password Or Username.")
+    access_token_expires = timedelta(minutes=settings.jwt_access_token_expire_mins)
+    access_token = create_access_token(
+        data={"sub": username}, expires_delta=access_token_expires
+    )
+    return Token(access_token=access_token, token_type="bearer")
+
 
 @app.get("/users/count")
 async def count(

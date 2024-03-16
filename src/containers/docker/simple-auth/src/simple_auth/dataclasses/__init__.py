@@ -19,3 +19,13 @@ class users(Base):
     username = Column("username", String, unique=True)
     hashed_pwd = Column("hashed_pwd", String(128))
     salt = Column("salt", String, nullable=True)
+    posts = relationship(
+        "post",
+        backref="users"
+    )
+
+class post(Base):
+    __tablename__ = "posts"
+    id = Column("id", Integer, primary_key=True)
+    title = Column("title", String(128))
+    user = Column(Integer, ForeignKey("users.id"))

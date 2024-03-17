@@ -10,6 +10,7 @@ from simple_auth.dataclasses import users
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
+from .core.auth import JWTBearer, create_access_token, decodeJWT
 from .core.models.user import Token
 from .core.routers import auth
 from .database import get_async_session
@@ -30,18 +31,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode,
-        settings.jwt_secret_key,
-        algorithm=settings.jwt_algorithm)
-    return encoded_jwt
 
 @app.get("/")
 async def read_root():
@@ -102,7 +91,7 @@ async def user_login(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/users/count")
+@app.get("/user/count", tags=["user"])
 async def count(
     session: AsyncSession = Depends(get_async_session),
 ):

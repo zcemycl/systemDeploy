@@ -1,16 +1,18 @@
 from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from loguru import logger
 from passlib.context import CryptContext
 from simple_auth import dummy
-from simple_auth.dataclasses import users
+from simple_auth.dataclasses import post, users
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
-from .core.auth import JWTBearer, create_access_token, decodeJWT
+from .core.auth import JWTBearer, create_access_token, decode_jwt
 from .core.models.user import Token
 from .core.routers import auth
 from .database import get_async_session
@@ -100,3 +102,9 @@ async def count(
     jsons = [tmp.as_dict() for tmp in res]
     logger.info(jsons)
     return jsons
+
+@app.post("/user/posts", tags=["user"])
+async def add_post(title: str,
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]):
+    post_dc = post(title=title)
+    logger.info(credentials)

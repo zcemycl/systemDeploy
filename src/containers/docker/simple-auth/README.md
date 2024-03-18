@@ -26,8 +26,5 @@ docker run -p 3000:80 test-simple-auth
 
 
 ## Workflow
-```mermaid
-flowchart
-    direction TB
-    a --> b;
-```
+![](https://i.stack.imgur.com/A2Ckq.png)
+- Implement second auth flow

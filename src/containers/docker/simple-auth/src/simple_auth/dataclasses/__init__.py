@@ -25,7 +25,7 @@ class users(Base):
     )
 
 class post(Base):
-    __tablename__ = "posts"
+    __tablename__ = "post"
     id = Column("id", Integer, primary_key=True)
     title = Column("title", String(128))
     user = Column(Integer, ForeignKey("users.id"))

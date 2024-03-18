@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Iterator, Tuple
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -105,6 +105,9 @@ async def count(
 
 @app.post("/user/posts", tags=["user"])
 async def add_post(title: str,
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]):
-    post_dc = post(title=title)
+    cred_db: Tuple[HTTPAuthorizationCredentials, Iterator[AsyncSession], users] = Depends(JWTBearer())):
+    credentials, session, current_user_dc = cred_db
+    post_dc = post(title=title, user=current_user_dc.id)
+    session.add(post_dc)
+    await session.commit()
     logger.info(credentials)

@@ -52,7 +52,7 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request,
-        session: Iterator[AsyncSession] = Depends(get_async_session)):
+        session: Iterator[AsyncSession] = Depends(get_async_session)): # Sub-dependencies
         credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
         print(credentials)
         if credentials is None:

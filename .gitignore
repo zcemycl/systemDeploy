@@ -79,3 +79,5 @@ model/
 history/
 schedules/
 storage/
+*.egg-info
+tmp*

@@ -16,14 +16,13 @@ services:
       - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
   db:
     build:
-      context: .
-      dockerfile: ./database/Dockerfile.pgvector
+      context: database
+      dockerfile: Dockerfile.pgvector
     restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DATABASE=postgres
-      # - PGDATA=/var/lib/postgresql/data/
     # volumes:
     #   - "./src/sql/init.sql:/docker-entrypoint-initdb.d/"
     ports:
@@ -32,22 +31,22 @@ services:
       - net
     depends_on:
       - terraform
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   command: bash -c "alembic -n local upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80"
-  #   environment:
-  #     WITHIN_DOCKER_ENV: 1
-  #     DB_URL: "postgresql://postgres:postgres@db/postgres"
-  #     PGHOST: db
-  #     PGUSER: postgres
-  #     PGPASSWORD: postgres
-  #     PGDATABASE: postgres
-  #     JWT_SECRET_KEY: 7242112973bbac697cb615c4f5d1bd7a5810241b58f34b2e5401c3923740c2f2
-  #   ports:
-  #     - 4555:80
-  #   networks:
-  #     - net
-  #   depends_on:
-  #     - db
+  api:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    # command: bash -c "alembic -n local upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80"
+    environment:
+      WITHIN_DOCKER_ENV: 1
+      DB_URL: "postgresql://postgres:postgres@db/postgres"
+      PGHOST: db
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+      JWT_SECRET_KEY: 7242112973bbac697cb615c4f5d1bd7a5810241b58f34b2e5401c3923740c2f2
+    ports:
+      - 4555:80
+    networks:
+      - net
+    depends_on:
+      - db

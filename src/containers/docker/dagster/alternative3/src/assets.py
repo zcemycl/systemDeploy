@@ -2,6 +2,7 @@ import io
 from io import StringIO
 from typing import List
 
+import pdfplumber as pp
 import requests
 from dagster import AssetExecutionContext, AssetIn, asset
 from pypdf import PdfReader
@@ -25,6 +26,9 @@ def label_pdf_asset(context: AssetExecutionContext):
         text = pdf_file.pages[page].extract_text()
         context.log.info(text)
         text_list.append(text)
+    with pp.open(pdf_bytes) as f:
+        for i in f.pages:
+            print(i.extract_tables())
     return text_list
 
 @asset(ins={"upstream": AssetIn(key="label_pdf_asset")})

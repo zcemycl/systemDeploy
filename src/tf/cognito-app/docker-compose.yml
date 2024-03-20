@@ -3,6 +3,17 @@ networks:
   net:
     driver: bridge
 services:
+  terraform:
+    image: hashicorp/terraform:latest
+    volumes:
+      - ./infrastructure:/infra
+    working_dir: /infra
+    command:
+      - init
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
   db:
     build:
       context: .
@@ -19,6 +30,8 @@ services:
       - '5432:5432'
     networks:
       - net
+    depends_on:
+      - terraform
   # app:
   #   build:
   #     context: .

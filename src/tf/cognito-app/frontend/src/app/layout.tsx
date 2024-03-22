@@ -1,6 +1,6 @@
 import NavBar from "@/components/navbar";
+import Footer from "@/components/footer";
 import "./globals.css";
-import type { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
 
 export const metadata = {
@@ -19,6 +19,7 @@ export default function RootLayout({
         <body>
           <NavBar />
           {children}
+          <Footer />
         </body>
       </ThemeProvider>
     </html>

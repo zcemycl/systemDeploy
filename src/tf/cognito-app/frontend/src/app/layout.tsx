@@ -1,5 +1,7 @@
 import NavBar from "@/components/navbar";
-import "./globals.css"
+import "./globals.css";
+import type { AppProps } from "next/app";
+import { ThemeProvider } from "next-themes";
 
 export const metadata = {
   title: "Next.js",
@@ -13,10 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen grid place-content-center">
-        <NavBar />
-        {children}
-      </body>
+      <ThemeProvider attribute="class">
+        <body>
+          <NavBar />
+          {children}
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

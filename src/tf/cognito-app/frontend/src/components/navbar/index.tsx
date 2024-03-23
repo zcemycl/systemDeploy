@@ -119,7 +119,7 @@ export default function NavBar() {
             <button
               data-collapse-toggle="navbar-dropdown"
               type="button"
-              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 w-10 h-10 mr-1 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="navbar-dropdown"
               aria-expanded="false"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -141,6 +141,22 @@ export default function NavBar() {
                 />
               </svg>
             </button>
+            <button
+              type="button"
+              className="inline-flex items-center p-0 w-10 h-10 justify-center text-sm border-white text-gray-500 rounded-full focus:ring-2 hover:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            >
+              <svg
+                className="w-12 h-12"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 200 200"
+                fill="black"
+              >
+                <path
+                  fill="white"
+                  d="M135.832 140.848h-70.9c-2.9 0-5.6-1.6-7.4-4.5-1.4-2.3-1.4-5.7 0-8.6l4-8.2c2.8-5.6 9.7-9.1 14.9-9.5 1.7-.1 5.1-.8 8.5-1.6 2.5-.6 3.9-1 4.7-1.3-.2-.7-.6-1.5-1.1-2.2-6-4.7-9.6-12.6-9.6-21.1 0-14 9.6-25.3 21.5-25.3s21.5 11.4 21.5 25.3c0 8.5-3.6 16.4-9.6 21.1-.5.7-.9 1.4-1.1 2.1.8.3 2.2.7 4.6 1.3 3 .7 6.6 1.3 8.4 1.5 5.3.5 12.1 3.8 14.9 9.4l3.9 7.9c1.5 3 1.5 6.8 0 9.1-1.6 2.9-4.4 4.6-7.2 4.6zm-35.4-78.2c-9.7 0-17.5 9.6-17.5 21.3 0 7.4 3.1 14.1 8.2 18.1.1.1.3.2.4.4 1.4 1.8 2.2 3.8 2.2 5.9 0 .6-.2 1.2-.7 1.6-.4.3-1.4 1.2-7.2 2.6-2.7.6-6.8 1.4-9.1 1.6-4.1.4-9.6 3.2-11.6 7.3l-3.9 8.2c-.8 1.7-.9 3.7-.2 4.8.8 1.3 2.3 2.6 4 2.6h70.9c1.7 0 3.2-1.3 4-2.6.6-1 .7-3.4-.2-5.2l-3.9-7.9c-2-4-7.5-6.8-11.6-7.2-2-.2-5.8-.8-9-1.6-5.8-1.4-6.8-2.3-7.2-2.5-.4-.4-.7-1-.7-1.6 0-2.1.8-4.1 2.2-5.9.1-.1.2-.3.4-.4 5.1-3.9 8.2-10.7 8.2-18-.2-11.9-8-21.5-17.7-21.5z"
+                />
+              </svg>
+            </button>
           </div>
         </div>
         <div className="flex w-full justify-end h-0">
@@ -148,14 +164,14 @@ export default function NavBar() {
             className={`items-center justify-between w-1/3 sm:w-1/4 md:hidden transition-transform ${isDropdownOpen ? "scale-y-100" : "scale-y-0"}`}
             id="navbar-dropdown"
           >
-            <ul className="flex flex-col p-2 md:p-0 mt-1 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul className="flex flex-col p-2 md:p-0 mt-1 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse dark:bg-gray-800  dark:border-gray-700">
               <li>
                 {navbar_dropdown.map((keyValue) => {
                   return (
                     <Link
                       href={keyValue.path}
                       key={keyValue.name}
-                      className="block py-1 px-3 text-right text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                      className="block py-1 px-3 text-right text-gray-900 rounded hover:bg-blue-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white  dark:border-gray-700"
                       aria-current="page"
                     >
                       {keyValue.name}

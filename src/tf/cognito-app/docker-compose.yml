@@ -3,17 +3,17 @@ networks:
   net:
     driver: bridge
 services:
-  terraform:
-    image: hashicorp/terraform:latest
-    volumes:
-      - ./infrastructure:/infra
-    working_dir: /infra
-    command:
-      - init
-    environment:
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+  # terraform:
+  #   image: hashicorp/terraform:latest
+  #   volumes:
+  #     - ./infrastructure:/infra
+  #   working_dir: /infra
+  #   command:
+  #     - init
+  #   environment:
+  #     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+  #     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+  #     - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
   db:
     build:
       context: database
@@ -26,11 +26,11 @@ services:
     # volumes:
     #   - "./src/sql/init.sql:/docker-entrypoint-initdb.d/"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - net
-    depends_on:
-      - terraform
+    # depends_on:
+    #   - terraform
   api:
     build:
       context: backend
@@ -50,3 +50,17 @@ services:
       - net
     depends_on:
       - db
+
+  app:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: dev
+    ports:
+      - 4556:3000
+    networks:
+      - net
+    depends_on:
+      - db
+      - api

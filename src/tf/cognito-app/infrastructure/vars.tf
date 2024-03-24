@@ -5,3 +5,11 @@ variable "AWS_REGION" {
 variable "project_name" {
   default = "leo-test-cognito"
 }
+
+variable "domain" {
+  default = "freecaretoday.com"
+}
+
+variable "email" {
+  default = "lyc010197@gmail.com"
+}

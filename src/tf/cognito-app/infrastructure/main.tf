@@ -1,5 +1,5 @@
 resource "aws_cognito_user_pool" "this" {
-  name = "leo-test-cognito"
+  name = var.project_name
 
   admin_create_user_config {
     allow_admin_create_user_only = true
@@ -32,7 +32,7 @@ resource "aws_cognito_user_pool" "this" {
 }
 
 resource "aws_cognito_user_pool_client" "this" {
-  name = "leo-test-cognito-client"
+  name = "${var.project_name}-client"
 
   user_pool_id = aws_cognito_user_pool.this.id
 

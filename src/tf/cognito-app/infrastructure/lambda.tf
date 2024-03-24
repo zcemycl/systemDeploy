@@ -9,6 +9,13 @@ resource "aws_lambda_function" "this" {
   role             = aws_iam_role.this.arn
   timeout          = 900
   layers           = []
+
+  environment {
+    variables = {
+      DOMAIN_NAME    = var.domain
+      AUTH_CODE_SALT = var.auth_code_salt
+    }
+  }
 }
 
 resource "aws_lambda_permission" "allow_execution_from_user_pool" {

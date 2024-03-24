@@ -15,7 +15,7 @@ async function signIn() {
     AuthFlow: "CUSTOM_AUTH",
     ClientId: process.env.AWS_COGNITO_USERPOOL_CLIENT_ID,
     AuthParameters: {
-      USERNAME: "lyc010197@gmail.com",
+      USERNAME: process.env.AWS_COGNITO_TEST_EMAIL as string,
     },
   };
   const command = new InitiateAuthCommand(params);

@@ -17,3 +17,7 @@ variable "email" {
 variable "username" {
   default = "leo.leung"
 }
+
+variable "auth_code_salt" {
+  default = "hiwhatif"
+}

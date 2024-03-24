@@ -10,3 +10,12 @@ resource "aws_lambda_function" "this" {
   timeout          = 900
   layers           = []
 }
+
+resource "aws_lambda_permission" "allow_execution_from_user_pool" {
+  for_each      = local.lambda_funcs
+  statement_id  = "AllowExecutionFromUserPool"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.this[each.key].function_name
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = aws_cognito_user_pool.this.arn
+}

@@ -12,6 +12,8 @@ yarn dev
 pnpm dev
 # or
 bun dev
+# run external testing scripts
+npx ts-node-esm xxx.ts
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

@@ -26,9 +26,9 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   lambda_config {
-    create_auth_challenge          = ""
-    define_auth_challenge          = ""
-    verify_auth_challenge_response = ""
+    create_auth_challenge          = aws_lambda_function.this["create_auth_challenge"].arn
+    define_auth_challenge          = aws_lambda_function.this["define_auth_challenge"].arn
+    verify_auth_challenge_response = aws_lambda_function.this["verify_auth_challenge"].arn
   }
 }
 

@@ -5,7 +5,7 @@ resource "aws_cognito_user_pool" "this" {
     allow_admin_create_user_only = true
   }
 
-  alias_attributes = "email"
+  alias_attributes = ["email"]
 
   schema {
     name                = "email"
@@ -19,6 +19,7 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   password_policy {
+    minimum_length    = 8
     require_numbers   = false
     require_uppercase = false
     require_symbols   = false

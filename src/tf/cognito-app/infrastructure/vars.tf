@@ -13,3 +13,7 @@ variable "domain" {
 variable "email" {
   default = "lyc010197@gmail.com"
 }
+
+variable "username" {
+  default = "leo.leung"
+}

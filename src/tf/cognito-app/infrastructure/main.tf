@@ -51,3 +51,14 @@ resource "aws_cognito_user_pool_client" "this" {
   refresh_token_validity = 240
   id_token_validity      = 15
 }
+
+resource "aws_cognito_user" "this" {
+  user_pool_id = aws_cognito_user_pool.this.id
+  username     = var.username
+
+  attributes = {
+    name           = "email"
+    email          = var.email
+    email_verified = true
+  }
+}

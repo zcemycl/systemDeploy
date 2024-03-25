@@ -14,6 +14,7 @@ resource "aws_lambda_function" "this" {
     variables = {
       DOMAIN_NAME    = var.domain
       AUTH_CODE_SALT = var.auth_code_salt
+      AUTH_TIMEOUT   = 180
     }
   }
 }

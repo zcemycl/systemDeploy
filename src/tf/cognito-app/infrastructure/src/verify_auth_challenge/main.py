@@ -1,5 +1,6 @@
 import hashlib
 import os
+from datetime import datetime
 
 AUTH_CODE_SALT = os.environ["AUTH_CODE_SALT"]
 AUTH_TIMEOUT = os.environ["AUTH_TIMEOUT"]
@@ -16,7 +17,7 @@ def lambda_handler(event, context):
     auth_req_timestamp = event["request"]["privateChallengeParameters"]["timestamp"]
 
     if hashed_answer == hashed_salted_ans_link:
-        is_timeout = int(auth_req_timestamp)+AUTH_TIMEOUT > int(datetime.utcnow().timestamp())
+        is_timeout = int(auth_req_timestamp)+int(AUTH_TIMEOUT) > int(datetime.utcnow().timestamp())
         event["response"]["answerCorrect"] = is_timeout
         print(f"[INFO] USER EVENT: {email} verify result -- {is_timeout}.")
         return event

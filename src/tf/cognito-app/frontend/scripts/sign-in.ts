@@ -3,6 +3,7 @@ import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
   InitiateAuthRequest,
+  InitiateAuthResponse,
 } from "@aws-sdk/client-cognito-identity-provider";
 dotenv.config();
 
@@ -19,8 +20,9 @@ async function signIn() {
     },
   };
   const command = new InitiateAuthCommand(params);
-  const response = await cognitoIdentity.send(command);
+  const response: InitiateAuthResponse = await cognitoIdentity.send(command);
   console.log(response);
+  return response;
 }
 
 console.log("Hello World!");

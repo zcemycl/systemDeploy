@@ -33,6 +33,7 @@ def lambda_handler(event, context):
 
     url_encoded_email = quote(email)
     url = f"https://{DOMAIN_NAME}/login/?code={auth_challenge}&email={url_encoded_email}"
+    urllocal = f"http://localhost:3000/login/?code={auth_challenge}&email={url_encoded_email}"
 
     ses.send_email(
         Source=sender,
@@ -48,7 +49,7 @@ def lambda_handler(event, context):
             },
             "Body": {
                 "Html": {
-                    "Data": f"{url}",
+                    "Data": f"{url}\n{urllocal}",
                     "Charset": "UTF-8"
                 }
             }

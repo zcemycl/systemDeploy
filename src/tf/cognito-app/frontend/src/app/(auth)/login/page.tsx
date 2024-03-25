@@ -1,26 +1,29 @@
 "use client";
-import dotenv from "dotenv";
 import { useState, useEffect } from "react";
 import { useSearchParams, redirect } from "next/navigation";
 import Link from "next/link";
-import { url } from "inspector";
-
-dotenv.config();
+import { useAuth } from "@/contexts/Auth";
 
 export default function login() {
   const searchParams = useSearchParams();
+  const { isAuthenticated, setIsAuthenticated, signIn } = useAuth();
   const [email, setEmail] = useState<string>("");
+  const [sessionLoginId, setSessionLoginId] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
   const urlEmail = searchParams.get("email") ?? "";
 
-  const submitCallback = function (email: string) {
+  const submitCallback = async function (email: string) {
     console.log(`${email}`);
+    const resp = await signIn(email);
+    console.log(resp);
   };
 
   useEffect(() => {
-    if (urlCode && urlEmail) {
+    if (urlCode && urlEmail && sessionLoginId) {
+      console.log(urlCode);
+      console.log(urlEmail);
     }
-  }, [urlCode, urlEmail]);
+  }, [urlCode, urlEmail, sessionLoginId]);
 
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
@@ -49,7 +52,7 @@ export default function login() {
             />
           </div>
           <button
-            onClick={() => submitCallback(email)}
+            onClick={async () => await submitCallback(email)}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
           >
             Submit

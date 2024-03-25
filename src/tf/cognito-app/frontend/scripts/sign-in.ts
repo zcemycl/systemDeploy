@@ -8,18 +8,18 @@ import {
 dotenv.config();
 
 const cognitoIdentity = new CognitoIdentityProviderClient({
-  region: process.env.AWS_REGION,
+  region: process.env.NEXT_PUBLIC_AWS_REGION,
 });
 
 async function signIn() {
   const params: InitiateAuthRequest = {
     AuthFlow: "CUSTOM_AUTH",
-    ClientId: process.env.AWS_COGNITO_USERPOOL_CLIENT_ID,
+    ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
     AuthParameters: {
-      USERNAME: process.env.AWS_COGNITO_TEST_EMAIL as string,
+      USERNAME: process.env.NEXT_PUBLIC_AWS_COGNITO_TEST_EMAIL as string,
     },
     ClientMetadata: {
-      ENV_NAME: process.env.ENV_NAME as string,
+      ENV_NAME: process.env.NEXT_PUBLIC_ENV_NAME as string,
     },
   };
   const command = new InitiateAuthCommand(params);

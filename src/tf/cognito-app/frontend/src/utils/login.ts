@@ -11,15 +11,12 @@ const cognitoIdentity = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION,
 });
 
-async function signIn() {
+async function signIn(email: string) {
   const params: InitiateAuthRequest = {
     AuthFlow: "CUSTOM_AUTH",
     ClientId: process.env.AWS_COGNITO_USERPOOL_CLIENT_ID,
     AuthParameters: {
-      USERNAME: process.env.AWS_COGNITO_TEST_EMAIL as string,
-    },
-    ClientMetadata: {
-      ENV_NAME: process.env.ENV_NAME as string,
+      USERNAME: email,
     },
   };
   const command = new InitiateAuthCommand(params);
@@ -27,6 +24,3 @@ async function signIn() {
   console.log(response);
   return response;
 }
-
-console.log("Hello World!");
-signIn();

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { navbar_dropdown } from "@/constants/navbar-dropdown";
+import { useRouter } from "next/navigation";
 
 export default interface NavBarProps {
   isDark: boolean;
@@ -11,7 +12,6 @@ export default interface NavBarProps {
 function Button() {
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === "system" ? systemTheme : theme;
-
   return (
     <button
       onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
@@ -78,6 +78,7 @@ function Button() {
 
 export default function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const router = useRouter();
   return (
     <header className="text-gray-400 bg-gray-900 body-font fixed w-full">
       <div className="container justify-between mx-auto flex flex-wrap p-5 flex-row items-center">
@@ -143,6 +144,7 @@ export default function NavBar() {
             </button>
             <button
               type="button"
+              onClick={() => router.push("/login")}
               className="inline-flex items-center p-0 w-10 h-10 justify-center text-sm border-white text-gray-500 rounded-full focus:ring-2 hover:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             >
               <svg

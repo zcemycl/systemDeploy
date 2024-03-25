@@ -4,11 +4,11 @@ import { useSearchParams, redirect } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/Auth";
 
-export default function login() {
+export default function Login() {
   const searchParams = useSearchParams();
-  const { isAuthenticated, setIsAuthenticated, signIn } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, signIn, answerCustomChallenge } =
+    useAuth();
   const [email, setEmail] = useState<string>("");
-  const [sessionLoginId, setSessionLoginId] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
   const urlEmail = searchParams.get("email") ?? "";
 
@@ -16,14 +16,50 @@ export default function login() {
     console.log(`${email}`);
     const resp = await signIn(email);
     console.log(resp);
+    localStorage.setItem("cognito_user", JSON.stringify(resp));
   };
 
   useEffect(() => {
-    if (urlCode && urlEmail && sessionLoginId) {
-      console.log(urlCode);
-      console.log(urlEmail);
+    console.log(isAuthenticated);
+    // if (isAuthenticated) {
+    //   redirect("/");
+    // }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    async function respondAuthChallege(
+      urlCode: string,
+      urlEmail: string,
+      isAuthenticated: boolean
+    ) {
+      const cognito_user = JSON.parse(
+        localStorage.getItem("cognito_user") as string
+      );
+      if (
+        urlCode &&
+        urlEmail &&
+        "Session" in cognito_user &&
+        !isAuthenticated
+      ) {
+        const sessionLoginId = cognito_user.Session;
+        const resp = await answerCustomChallenge(
+          sessionLoginId,
+          urlCode,
+          urlEmail
+        );
+        console.log(resp);
+        if (
+          resp &&
+          Object.keys(resp).length === 0 &&
+          resp.constructor === Object
+        ) {
+          return;
+        }
+        setIsAuthenticated(true);
+      }
     }
-  }, [urlCode, urlEmail, sessionLoginId]);
+    respondAuthChallege(urlCode, urlEmail, isAuthenticated);
+  }, [urlCode, urlEmail, isAuthenticated]);
 
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
@@ -52,7 +88,11 @@ export default function login() {
             />
           </div>
           <button
-            onClick={async () => await submitCallback(email)}
+            onClick={async (e) => {
+              e.preventDefault();
+              console.log("submit email??");
+              await submitCallback(email);
+            }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
           >
             Submit

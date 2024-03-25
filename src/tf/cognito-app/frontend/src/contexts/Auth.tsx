@@ -5,12 +5,16 @@ import React, {
   createContext,
   useContext,
   useState,
+  useMemo,
 } from "react";
 import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
   InitiateAuthRequest,
   InitiateAuthResponse,
+  RespondToAuthChallengeCommand,
+  RespondToAuthChallengeRequest,
+  RespondToAuthChallengeResponse,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 interface AuthContextType {
@@ -18,6 +22,11 @@ interface AuthContextType {
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   signIn: (email: string) => Promise<InitiateAuthResponse>;
   cognitoIdentity: CognitoIdentityProviderClient;
+  answerCustomChallenge: (
+    sessionId: string,
+    code: string,
+    email: string
+  ) => Promise<RespondToAuthChallengeResponse>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -29,10 +38,17 @@ export const AuthContext = createContext<AuthContextType>({
     throw new Error("Function not implemented.");
   },
   cognitoIdentity: new CognitoIdentityProviderClient(),
+  answerCustomChallenge: function (
+    sessionId: string,
+    code: string,
+    email: string
+  ): Promise<RespondToAuthChallengeResponse> {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const cognitoIdentity = new CognitoIdentityProviderClient({
     region: process.env.NEXT_PUBLIC_AWS_REGION,
   });
@@ -46,14 +62,56 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       },
     };
     const command = new InitiateAuthCommand(params);
-    const response: InitiateAuthResponse = await cognitoIdentity.send(command);
-    return response;
+    try {
+      const response: InitiateAuthResponse =
+        await cognitoIdentity.send(command);
+      return response;
+    } catch (err) {
+      console.log(err);
+      return {};
+    }
   }
 
+  async function answerCustomChallenge(
+    sessionId: string,
+    code: string,
+    email: string
+  ) {
+    const params: RespondToAuthChallengeRequest = {
+      ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
+      ChallengeName: "CUSTOM_CHALLENGE",
+      Session: sessionId,
+      ChallengeResponses: { USERNAME: email, ANSWER: code },
+    };
+    const command = new RespondToAuthChallengeCommand(params);
+    try {
+      const response: RespondToAuthChallengeResponse =
+        await cognitoIdentity.send(command);
+      return response;
+    } catch (err) {
+      console.log(err);
+      return {};
+    }
+  }
+
+  const AuthProviderValue = useMemo<AuthContextType>(() => {
+    return {
+      isAuthenticated,
+      setIsAuthenticated,
+      cognitoIdentity,
+      signIn,
+      answerCustomChallenge,
+    };
+  }, [
+    isAuthenticated,
+    setIsAuthenticated,
+    cognitoIdentity,
+    signIn,
+    answerCustomChallenge,
+  ]);
+
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, cognitoIdentity, signIn }}
-    >
+    <AuthContext.Provider value={AuthProviderValue}>
       {children}
     </AuthContext.Provider>
   );

@@ -49,7 +49,12 @@ def lambda_handler(event, context):
             },
             "Body": {
                 "Html": {
-                    "Data": f"{url}\n{urllocal}",
+                    "Data": f"""
+                        <body>
+                        <p>{url}</p>
+                        <p>{urllocal}</p>
+                        </body>
+                    """,
                     "Charset": "UTF-8"
                 }
             }

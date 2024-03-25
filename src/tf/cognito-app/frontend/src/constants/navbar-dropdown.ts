@@ -1,14 +1,14 @@
 export const navbar_dropdown = [
   {
     name: "Search",
-    path: "/",
+    path: "/search",
   },
   {
     name: "APIs",
-    path: "/",
+    path: "/apis",
   },
   {
     name: "AI Tools",
-    path: "/",
+    path: "/ai",
   },
 ];

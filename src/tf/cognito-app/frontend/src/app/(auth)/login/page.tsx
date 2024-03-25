@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, redirect } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/Auth";
+import { getCurrentUser } from "aws-amplify/auth";
 
 export default function Login() {
   const searchParams = useSearchParams();
@@ -21,6 +22,13 @@ export default function Login() {
 
   useEffect(() => {
     console.log(isAuthenticated);
+    async function userinfo() {
+      const { username, userId, signInDetails } = await getCurrentUser();
+      console.log(`The username: ${username}`);
+      console.log(`The userId: ${userId}`);
+      console.log(`The signInDetails: ${signInDetails}`);
+    }
+    userinfo();
     // if (isAuthenticated) {
     //   redirect("/");
     // }

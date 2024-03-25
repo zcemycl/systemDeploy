@@ -7,6 +7,8 @@ import React, {
   useState,
   useMemo,
 } from "react";
+import { Amplify } from "aws-amplify";
+// import {} from "aws-amplify/auth";
 import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
@@ -16,6 +18,18 @@ import {
   RespondToAuthChallengeRequest,
   RespondToAuthChallengeResponse,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
+import { useSearchParams, redirect } from "next/navigation";
+
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolClientId: process.env
+        .NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID as string,
+      userPoolId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_ID as string,
+    },
+  },
+});
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -50,6 +64,9 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const cognitoIdentity = new CognitoIdentityProviderClient({
+    region: process.env.NEXT_PUBLIC_AWS_REGION,
+  });
+  const cognitoidentity = new CognitoIdentity({
     region: process.env.NEXT_PUBLIC_AWS_REGION,
   });
 
@@ -118,3 +135,15 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+export const ProtectedRoute = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    redirect("/login");
+  }
+  return children;
+};

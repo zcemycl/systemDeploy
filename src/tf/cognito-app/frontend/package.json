@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-amplify/adapter-nextjs": "^1.0.21",
+    "@aws-sdk/client-cognito-identity": "^3.540.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.540.0",
     "aws-amplify": "^6.0.21",
     "dotenv": "^16.4.5",

@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { jwtVerify, importSPKI } from "jose";
+import jwkToPem from "jwk-to-pem";
 
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
-
-export function get_jwk() {}
 
 export async function middleware(request: NextRequest) {
   console.log(openid_conf_uri);
@@ -35,21 +35,25 @@ export async function middleware(request: NextRequest) {
       { status: 401 }
     );
   }
-  console.log(jwk);
-
-  // validate userinfo
-  const user_info = await (
-    await fetch(openid_conf.userinfo_endpoint as string, {
-      method: "GET",
-      headers: {
-        Authorization: authorization,
-        // "Content-Type": "application/json",
+  const pem = jwkToPem(jwk[0]);
+  console.log(pem);
+  const publicKey = await importSPKI(pem, jwk[0].alg);
+  try {
+    const resjwk = await jwtVerify(token, publicKey, {
+      issuer: openid_conf.issuer,
+    });
+    console.log(resjwk);
+  } catch (e) {
+    console.log(e);
+    return Response.json(
+      {
+        success: false,
+        message: `authentication failed -- ${e}.`,
       },
-    })
-  ).json();
-  console.log(user_info);
+      { status: 401 }
+    );
+  }
   console.log(authorization);
-  // return NextResponse.redirect(new URL("/", request.url));
 }
 
 export const config = {

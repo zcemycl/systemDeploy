@@ -38,6 +38,9 @@ resource "aws_cognito_user_pool_client" "this" {
   user_pool_id = aws_cognito_user_pool.this.id
 
   explicit_auth_flows = ["CUSTOM_AUTH_FLOW_ONLY"]
+  # allowed_oauth_flows = ["code"]
+  # allowed_oauth_scopes = ["openid"]
+
 
   prevent_user_existence_errors = "ENABLED"
 
@@ -61,4 +64,9 @@ resource "aws_cognito_user" "this" {
     email          = var.email
     email_verified = true
   }
+}
+
+resource "aws_cognito_user_pool_domain" "this" {
+  domain       = replace(var.domain, ".", "-")
+  user_pool_id = aws_cognito_user_pool.this.id
 }

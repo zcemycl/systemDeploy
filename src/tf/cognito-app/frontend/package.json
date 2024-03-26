@@ -14,6 +14,8 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.540.0",
     "aws-amplify": "^6.0.21",
     "dotenv": "^16.4.5",
+    "jose": "^5.2.3",
+    "jwk-to-pem": "^2.0.5",
     "next": "14.1.4",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
@@ -22,6 +24,7 @@
     "sharp": "^0.33.2"
   },
   "devDependencies": {
+    "@types/jwk-to-pem": "^2.0.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

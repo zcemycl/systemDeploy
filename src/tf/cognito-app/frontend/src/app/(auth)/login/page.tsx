@@ -27,17 +27,9 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-    console.log(isAuthenticated);
-    // async function userinfo() {
-    //   const { username, userId, signInDetails } = await getCurrentUser();
-    //   console.log(`The username: ${username}`);
-    //   console.log(`The userId: ${userId}`);
-    //   console.log(`The signInDetails: ${signInDetails}`);
-    // }
-    // userinfo();
-    // if (isAuthenticated) {
-    //   redirect("/");
-    // }
+    if (isAuthenticated) {
+      redirect("/");
+    }
   }, [isAuthenticated]);
 
   useEffect(() => {

@@ -5,7 +5,6 @@ import jwkToPem from "jwk-to-pem";
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
 
 export async function middleware(request: NextRequest) {
-  console.log(openid_conf_uri);
   const authorization = request.headers.get("Authorization") as string;
   // validate bearer
   const [token_type, token] = authorization.split(" ");
@@ -36,13 +35,12 @@ export async function middleware(request: NextRequest) {
     );
   }
   const pem = jwkToPem(jwk[0]);
-  console.log(pem);
   const publicKey = await importSPKI(pem, jwk[0].alg);
+  let resjwk;
   try {
-    const resjwk = await jwtVerify(token, publicKey, {
+    resjwk = await jwtVerify(token, publicKey, {
       issuer: openid_conf.issuer,
     });
-    console.log(resjwk);
   } catch (e) {
     console.log(e);
     return Response.json(
@@ -53,7 +51,15 @@ export async function middleware(request: NextRequest) {
       { status: 401 }
     );
   }
-  console.log(authorization);
+
+  // modify headers
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("Identity", JSON.stringify(resjwk.payload));
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {

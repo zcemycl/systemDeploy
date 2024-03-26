@@ -1,33 +1,41 @@
 "use client";
+import { useAuth } from "@/contexts/Auth";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 
 interface IData {
   success?: boolean;
   message?: string;
   id?: number;
+  username?: string;
 }
 
 export default function Home() {
   const [credentials, setCredentials] = useState<string>("");
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [data, setData] = useState<IData>({});
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     setCredentials(localStorage.getItem("credentials") ?? "");
   }, [credentials]);
 
   useEffect(() => {
-    if (credentials!.length === 0) return;
+    if (credentials.length === 0) return;
     async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials as string);
+      const credJson = JSON.parse(credentials);
       const headers = {
         Authorization: `Bearer ${credJson.AccessToken}`,
         "Content-Type": "application/json",
       };
       const resp = await fetch("/api?id=1", { method: "GET", headers });
+      if (isAuthenticated && resp.status === 401) {
+        setIsAuthenticated(false);
+        redirect("/logout");
+      }
       const res = await resp.json();
       setData(res);
-      setLoading(false);
+      setIsLoading(false);
     }
     getData(credentials);
   }, [credentials]);
@@ -38,8 +46,12 @@ export default function Home() {
           <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
             <div className="w-full sm:p-4 px-4 mb-6">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
-                Moon hashtag pop-up try-hard offal truffaut{" "}
-                {isLoading ? "is Loading" : data!.id}
+                Hello{" "}
+                {isAuthenticated
+                  ? isLoading
+                    ? "is Loading"
+                    : `${data!.id}-${data!.username}`
+                  : ""}
               </h1>
               <div className="leading-relaxed">
                 Pour-over craft beer pug drinking vinegar live-edge gastropub,

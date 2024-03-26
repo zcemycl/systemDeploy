@@ -5,6 +5,7 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   useMemo,
 } from "react";
 import { Amplify } from "aws-amplify";
@@ -84,6 +85,18 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
+  useEffect(() => {
+    const credentials = JSON.parse(
+      localStorage.getItem("credentials") as string
+    );
+    const expireAt = parseFloat(localStorage.getItem("expireAt") as string);
+    if (
+      new Date().getTime() / 1000 < expireAt &&
+      "AccessToken" in credentials
+    ) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   async function signIn(email: string) {
     const params: InitiateAuthRequest = {

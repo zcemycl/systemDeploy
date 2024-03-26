@@ -56,10 +56,13 @@ export default function Login() {
         );
         setMode("login");
         localStorage.setItem("mode", "login");
+        const expiresAt =
+          new Date().getTime() / 1000 + resp.AuthenticationResult?.ExpiresIn!;
         localStorage.setItem(
           "credentials",
           JSON.stringify(resp.AuthenticationResult)
         );
+        localStorage.setItem("expireAt", expiresAt.toString());
         if (
           resp &&
           Object.keys(resp).length === 0 &&

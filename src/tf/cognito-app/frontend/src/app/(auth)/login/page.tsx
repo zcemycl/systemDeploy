@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams, redirect } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/Auth";
-import { getCurrentUser } from "aws-amplify/auth";
+
+type IMode = "login" | "verify";
 
 export default function Login() {
   const searchParams = useSearchParams();
@@ -12,23 +13,30 @@ export default function Login() {
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
   const urlEmail = searchParams.get("email") ?? "";
+  const [mode, setMode] = useState<string>("");
 
   const submitCallback = async function (email: string) {
     console.log(`${email}`);
     const resp = await signIn(email);
     console.log(resp);
     localStorage.setItem("cognito_user", JSON.stringify(resp));
+    localStorage.setItem("mode", "verify");
   };
 
   useEffect(() => {
+    const curMode = localStorage.getItem("mode") ?? "login";
+    setMode(curMode);
+  }, []);
+
+  useEffect(() => {
     console.log(isAuthenticated);
-    async function userinfo() {
-      const { username, userId, signInDetails } = await getCurrentUser();
-      console.log(`The username: ${username}`);
-      console.log(`The userId: ${userId}`);
-      console.log(`The signInDetails: ${signInDetails}`);
-    }
-    userinfo();
+    // async function userinfo() {
+    //   const { username, userId, signInDetails } = await getCurrentUser();
+    //   console.log(`The username: ${username}`);
+    //   console.log(`The userId: ${userId}`);
+    //   console.log(`The signInDetails: ${signInDetails}`);
+    // }
+    // userinfo();
     // if (isAuthenticated) {
     //   redirect("/");
     // }
@@ -47,6 +55,7 @@ export default function Login() {
         urlCode &&
         urlEmail &&
         "Session" in cognito_user &&
+        mode === "verify" &&
         !isAuthenticated
       ) {
         const sessionLoginId = cognito_user.Session;
@@ -56,6 +65,8 @@ export default function Login() {
           urlEmail
         );
         console.log(resp);
+        setMode("login");
+        localStorage.setItem("mode", "login");
         if (
           resp &&
           Object.keys(resp).length === 0 &&
@@ -67,7 +78,7 @@ export default function Login() {
       }
     }
     respondAuthChallege(urlCode, urlEmail, isAuthenticated);
-  }, [urlCode, urlEmail, isAuthenticated]);
+  }, [urlCode, urlEmail, isAuthenticated, mode]);
 
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">

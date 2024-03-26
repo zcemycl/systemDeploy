@@ -16,9 +16,7 @@ export default function Login() {
   const [mode, setMode] = useState<string>("");
 
   const submitCallback = async function (email: string) {
-    console.log(`${email}`);
     const resp = await signIn(email);
-    console.log(resp);
     localStorage.setItem("cognito_user", JSON.stringify(resp));
     localStorage.setItem("mode", "verify");
   };
@@ -64,9 +62,12 @@ export default function Login() {
           urlCode,
           urlEmail
         );
-        console.log(resp);
         setMode("login");
         localStorage.setItem("mode", "login");
+        localStorage.setItem(
+          "credentials",
+          JSON.stringify(resp.AuthenticationResult)
+        );
         if (
           resp &&
           Object.keys(resp).length === 0 &&

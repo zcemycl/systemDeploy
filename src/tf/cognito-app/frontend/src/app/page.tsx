@@ -1,6 +1,34 @@
+"use client";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface IData {
+  id?: number;
+}
 
 export default function Home() {
+  const [credentials, setCredentials] = useState<string>("");
+  const [data, setData] = useState<IData>({});
+  const [isLoading, setLoading] = useState(true);
+  useEffect(() => {
+    setCredentials(localStorage.getItem("credentials") as string);
+  }, [credentials]);
+
+  useEffect(() => {
+    if (credentials.length === 0) return;
+    async function getData(credentials: string) {
+      const credJson = JSON.parse(credentials as string);
+      const headers = {
+        Authorization: `Bearer ${credJson.AccessToken}`,
+        "Content-Type": "application/json",
+      };
+      const resp = await fetch("/api?id=1", { method: "GET", headers });
+      const res = await resp.json();
+      setData(res);
+      setLoading(false);
+    }
+    getData(credentials);
+  }, [credentials]);
   return (
     <>
       <section className="text-gray-400 bg-gray-900 body-font">
@@ -8,7 +36,8 @@ export default function Home() {
           <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
             <div className="w-full sm:p-4 px-4 mb-6">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
-                Moon hashtag pop-up try-hard offal truffaut
+                Moon hashtag pop-up try-hard offal truffaut{" "}
+                {isLoading ? "is Loading" : data!.id}
               </h1>
               <div className="leading-relaxed">
                 Pour-over craft beer pug drinking vinegar live-edge gastropub,

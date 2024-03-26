@@ -3,6 +3,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface IData {
+  success?: boolean;
+  message?: string;
   id?: number;
 }
 
@@ -11,11 +13,11 @@ export default function Home() {
   const [data, setData] = useState<IData>({});
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
-    setCredentials(localStorage.getItem("credentials") as string);
+    setCredentials(localStorage.getItem("credentials") ?? "");
   }, [credentials]);
 
   useEffect(() => {
-    if (credentials.length === 0) return;
+    if (credentials!.length === 0) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials as string);
       const headers = {
@@ -84,12 +86,13 @@ export default function Home() {
               height="100%"
               title="map"
               className="absolute inset-0"
-              frameBorder={0}
-              marginHeight={0}
-              marginWidth={0}
-              scrolling="no"
               src="https://maps.google.com/maps?width=100%&height=600&hl=en&q=%C4%B0zmir+(My%20Business%20Name)&ie=UTF8&t=&z=14&iwloc=B&output=embed"
-              style={{ filter: "grayscale(1) contrast(1.2) opacity(0.16)" }}
+              style={{
+                filter: "grayscale(1) contrast(1.2) opacity(0.16)",
+                border: 0,
+                overflow: "hidden",
+                margin: 0,
+              }}
             ></iframe>
             <div className="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">
               <div className="lg:w-1/2 px-6">

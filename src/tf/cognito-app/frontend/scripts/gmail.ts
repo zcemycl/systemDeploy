@@ -13,7 +13,7 @@ async function main() {
   const auth = new google.auth.OAuth2(
     credentials.web.client_id,
     credentials.web.client_secret,
-    "https://developers.google.com/oauthplayground"
+    process.env.TEST_CYPRESS_GMAIL_API_REDIRECT_URI as string
   );
   auth.setCredentials({
     access_token: process.env.TEST_CYPRESS_GMAIL_ACCESS_TOKE as string,

@@ -12,7 +12,7 @@ const nextConfig = {
   compiler: {
     reactRemoveProperties:
       process.env.NEXT_PUBLIC_ENV_NAME === "production"
-        ? { properties: ["^data-test"] }
+        ? { properties: ["^data-test", "^data-cy"] }
         : false,
     removeConsole: process.env.NEXT_PUBLIC_ENV_NAME === "production",
   },

@@ -41,7 +41,6 @@ async function main() {
       return link;
     } catch (e) {
       console.log(e);
-      return;
     }
   }
 }

@@ -42,7 +42,6 @@ async function get_login_link() {
       return link;
     } catch (e) {
       console.log(e);
-      return;
     }
   }
 }

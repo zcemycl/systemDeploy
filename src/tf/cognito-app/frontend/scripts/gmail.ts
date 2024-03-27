@@ -36,7 +36,7 @@ async function main() {
       const mailBody = Buffer.from(data, "base64").toString();
       const dom = new JSDOM(mailBody);
       const idx = process.env.NEXT_PUBLIC_ENV_NAME === "local" ? 1 : 0;
-      const link = dom.window.document.querySelectorAll("p")[idx].innerHTML;
+      const link = dom.window.document.querySelectorAll("p")[idx].textContent;
       console.log(link);
       return link;
     } catch (e) {

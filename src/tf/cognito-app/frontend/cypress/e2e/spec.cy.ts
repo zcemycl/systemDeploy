@@ -1,7 +1,20 @@
 describe("Basic template spec for cognito app frontend", () => {
   it("enter home page", () => {
-    cy.visit(Cypress.env("base_url"))
+    cy.visit("/")
+      .clearAllLocalStorage()
       .get('[data-testid="icon-login-btn"]')
-      .click();
+      .click()
+      .get('[data-testid="login-email-input"]')
+      .focus()
+      .type(Cypress.env("test_email"))
+      .get('[data-testid="login-email-submit-btn"]')
+      .click()
+      .wait(10000)
+      .task("gmail:check")
+      .then((email) => {
+        cy.visit((email as string).replace(Cypress.env("baseUrl"), ""))
+          .location("pathname")
+          .should("eq", "/");
+      });
   });
 });

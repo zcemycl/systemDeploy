@@ -1,12 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSearchParams, redirect } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/Auth";
 
 type IMode = "login" | "verify";
 
 export default function Login() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated, setIsAuthenticated, signIn, answerCustomChallenge } =
     useAuth();
@@ -28,7 +29,7 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      redirect("/");
+      router.push("/");
     }
   }, [isAuthenticated]);
 
@@ -49,6 +50,7 @@ export default function Login() {
         !isAuthenticated
       ) {
         const sessionLoginId = cognito_user.Session;
+        console.log(urlCode);
         const resp = await answerCustomChallenge(
           sessionLoginId,
           urlCode,
@@ -70,6 +72,7 @@ export default function Login() {
         ) {
           return;
         }
+
         setIsAuthenticated(true);
       }
     }
@@ -97,12 +100,14 @@ export default function Login() {
               type="email"
               id="email"
               name="email"
+              data-testid="login-email-input"
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
               className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
           <button
+            data-testid="login-email-submit-btn"
             onClick={async (e) => {
               e.preventDefault();
               console.log("submit email??");

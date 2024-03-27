@@ -40,3 +40,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ### References
 
 - https://stackoverflow.com/questions/40302349/how-to-verify-jwt-from-aws-cognito-in-the-api-backend
+- https://stateful.com/blog/gmail-api-node-tutorial
+- https://dev.to/scottwrobinson/using-to-the-gmail-api-with-nodejs-51kh

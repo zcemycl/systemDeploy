@@ -144,6 +144,7 @@ export default function NavBar() {
             </button>
             <button
               type="button"
+              data-testid="icon-login-btn"
               onClick={() => router.push("/login")}
               className="inline-flex items-center p-0 w-10 h-10 justify-center text-sm border-white text-gray-500 rounded-full focus:ring-2 hover:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             >

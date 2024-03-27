@@ -43,3 +43,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - https://stateful.com/blog/gmail-api-node-tutorial
 - https://dev.to/scottwrobinson/using-to-the-gmail-api-with-nodejs-51kh
 - https://groups.google.com/g/adwords-api/c/6WNYZYBMF2c
+- https://filiphric.com/google-sign-in-with-cypress

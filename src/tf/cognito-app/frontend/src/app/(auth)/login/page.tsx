@@ -13,7 +13,7 @@ export default function Login() {
     useAuth();
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
-  const urlEmail = searchParams.get("email") ?? "";
+  const urlEmail = decodeURIComponent(searchParams.get("email") ?? "");
   const [mode, setMode] = useState<string>("");
 
   const submitCallback = async function (email: string) {

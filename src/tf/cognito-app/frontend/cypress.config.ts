@@ -18,7 +18,7 @@ async function get_login_link() {
   );
   auth.setCredentials({
     access_token: process.env.TEST_CYPRESS_GMAIL_ACCESS_TOKE as string,
-    refresh_token: process.env.TEST_CYPRESS_GMAIL_ACCESS_TOKEN as string,
+    refresh_token: process.env.TEST_CYPRESS_GMAIL_REFRESH_TOKEN as string,
   });
 
   const gmail = google.gmail({ version: "v1", auth });

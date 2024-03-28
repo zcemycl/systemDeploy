@@ -4,7 +4,6 @@ from typing import Annotated, Iterator, Tuple
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 from loguru import logger
 from passlib.context import CryptContext
 from simple_auth import dummy

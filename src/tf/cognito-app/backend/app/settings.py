@@ -8,15 +8,29 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 SETTINGS = None
 
 class Jwk(BaseModel):
-    alg: str
-    e: str
-    kid: str
-    kty: str
-    n: str
-    use: str
+    alg: Optional[str] = None
+    e: Optional[str] = None
+    kid: Optional[str] = None
+    kty: Optional[str] = None
+    n: Optional[str] = None
+    use: Optional[str] = None
 
 class Jwks(BaseModel):
     keys: List[Jwk]
+
+class AwsCognitoClaim(BaseModel):
+    sub: str
+    iss: str
+    client_id: str
+    origin_jti: str
+    event_id: str
+    token_use: str
+    scope: str
+    auth_time: int
+    exp: int
+    iat: int
+    jti: str
+    username: str
 
 class AwsCognito(BaseModel):
     authorization_endpoint: str

@@ -5,7 +5,6 @@ from .core.auth import OAuthBearer
 from .settings import get_settings
 
 settings = get_settings()
-logger.info(settings)
 app = FastAPI()
 
 @app.get("/")

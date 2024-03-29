@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 
 import { fetchProtected } from "@/http/backend/protected";
+import { fetchApiRoot } from "@/http/internal";
 
 interface IData {
   success?: boolean;
@@ -20,25 +21,23 @@ interface IData2 {
 export default function Home() {
   const { isAuthenticated, setIsAuthenticated, credentials } = useAuth();
   const [data, setData] = useState<IData>({});
-  // const [data2, setData2] = useState<IData2>({});
+  const [data2, setData2] = useState<IData2>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (credentials.length === 0) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const headers = {
-        Authorization: `Bearer ${credJson.AccessToken}`,
-        "Content-Type": "application/json",
-      };
-      const resp = await fetch("/api?id=1", { method: "GET", headers });
+      const resp = await fetchApiRoot(1, credJson.AccessToken);
       if (isAuthenticated && resp.status === 401) {
         setIsAuthenticated(false);
         redirect("/logout");
       }
       const res = await resp.json();
-      // const resp2 = await fetchProtected()
+      const resp2 = await fetchProtected(credJson.AccessToken);
+      const res2 = await resp2.json();
       setData(res);
+      setData2(res2);
       setIsLoading(false);
     }
     getData(credentials);
@@ -54,7 +53,7 @@ export default function Home() {
                 {isAuthenticated
                   ? isLoading
                     ? "is Loading"
-                    : `${data!.id}-${data!.username}`
+                    : `${data!.id}-${data!.username}-${data2!.Hello}`
                   : ""}
               </h1>
               <div className="leading-relaxed">

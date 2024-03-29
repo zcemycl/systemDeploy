@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/contexts/Auth";
 import React from "react";
-import { PieIcon } from "@/icons";
+import { sidebar_constant } from "@/constants/sidebar";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
   return (
@@ -17,15 +17,20 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
           >
             <div className="min-h-screen z-0 px-3 py-4 w-64 bg-gray-50 dark:bg-gray-800">
               <ul className="space-y-2 font-medium">
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                  >
-                    <PieIcon />
-                    <span className="ms-3">Dashboard</span>
-                  </a>
-                </li>
+                {sidebar_constant.map((keyValue) => {
+                  return (
+                    <li>
+                      <a
+                        href={keyValue.path}
+                        key={keyValue.name}
+                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      >
+                        {keyValue.icon}
+                        <span className="ms-3">{keyValue.name}</span>
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

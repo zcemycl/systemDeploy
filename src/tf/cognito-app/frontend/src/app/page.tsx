@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 
+import { fetchProtected } from "@/http/backend/protected";
+
 interface IData {
   success?: boolean;
   message?: string;
@@ -11,14 +13,15 @@ interface IData {
   username?: string;
 }
 
+interface IData2 {
+  Hello?: string;
+}
+
 export default function Home() {
-  const [credentials, setCredentials] = useState<string>("");
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, credentials } = useAuth();
   const [data, setData] = useState<IData>({});
+  // const [data2, setData2] = useState<IData2>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  useEffect(() => {
-    setCredentials(localStorage.getItem("credentials") ?? "");
-  }, [credentials]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -34,6 +37,7 @@ export default function Home() {
         redirect("/logout");
       }
       const res = await resp.json();
+      // const resp2 = await fetchProtected()
       setData(res);
       setIsLoading(false);
     }

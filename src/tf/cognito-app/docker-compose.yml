@@ -43,7 +43,6 @@ services:
       PGUSER: postgres
       PGPASSWORD: postgres
       PGDATABASE: postgres
-      JWT_SECRET_KEY: 7242112973bbac697cb615c4f5d1bd7a5810241b58f34b2e5401c3923740c2f2
     ports:
       - 4555:80
     networks:

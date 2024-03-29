@@ -2,10 +2,11 @@
 import { useAuth } from "@/contexts/Auth";
 import { useEffect } from "react";
 export default function Logout() {
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, setCredentials } = useAuth();
   useEffect(() => {
     localStorage.clear();
     setIsAuthenticated(false);
+    setCredentials("");
   }, []);
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">

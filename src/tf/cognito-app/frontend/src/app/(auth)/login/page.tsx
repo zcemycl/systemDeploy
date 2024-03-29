@@ -9,8 +9,13 @@ type IMode = "login" | "verify";
 export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, setIsAuthenticated, signIn, answerCustomChallenge } =
-    useAuth();
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    signIn,
+    answerCustomChallenge,
+    setCredentials,
+  } = useAuth();
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
   const urlEmail = decodeURIComponent(searchParams.get("email") ?? "");
@@ -60,10 +65,9 @@ export default function Login() {
         localStorage.setItem("mode", "login");
         const expiresAt =
           new Date().getTime() / 1000 + resp.AuthenticationResult?.ExpiresIn!;
-        localStorage.setItem(
-          "credentials",
-          JSON.stringify(resp.AuthenticationResult)
-        );
+        const credentials = JSON.stringify(resp.AuthenticationResult);
+        localStorage.setItem("credentials", credentials);
+        setCredentials(credentials);
         localStorage.setItem("expireAt", expiresAt.toString());
         if (
           resp &&

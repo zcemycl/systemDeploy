@@ -42,6 +42,8 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 interface AuthContextType {
   isAuthenticated: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  credentials: string;
+  setCredentials: Dispatch<SetStateAction<string>>;
   signIn: (email: string) => Promise<InitiateAuthResponse>;
   cognitoIdentity: CognitoIdentityProviderClient;
   answerCustomChallenge: (
@@ -75,10 +77,15 @@ export const AuthContext = createContext<AuthContextType>({
   amplifyConfirmSignIn: function (email: string, code: string) {
     throw new Error("Function not implemented.");
   },
+  credentials: "",
+  setCredentials: function (value: React.SetStateAction<string>): void {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [credentials, setCredentials] = useState<string>("");
   const cognitoIdentity = new CognitoIdentityProviderClient({
     region: process.env.NEXT_PUBLIC_AWS_REGION,
   });
@@ -86,15 +93,11 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
   useEffect(() => {
-    const credentials = JSON.parse(
-      localStorage.getItem("credentials") as string
-    );
+    const credJson = JSON.parse(localStorage.getItem("credentials") as string);
     const expireAt = parseFloat(localStorage.getItem("expireAt") as string);
-    if (
-      new Date().getTime() / 1000 < expireAt &&
-      "AccessToken" in credentials
-    ) {
+    if (new Date().getTime() / 1000 < expireAt && "AccessToken" in credJson) {
       setIsAuthenticated(true);
+      setCredentials(localStorage.getItem("credentials") ?? "");
     }
   }, []);
 
@@ -158,6 +161,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     return {
       isAuthenticated,
       setIsAuthenticated,
+      credentials,
+      setCredentials,
       cognitoIdentity,
       signIn,
       answerCustomChallenge,
@@ -167,6 +172,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [
     isAuthenticated,
     setIsAuthenticated,
+    credentials,
+    setCredentials,
     cognitoIdentity,
     signIn,
     answerCustomChallenge,

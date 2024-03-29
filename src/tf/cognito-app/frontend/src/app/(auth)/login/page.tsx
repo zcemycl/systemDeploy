@@ -25,11 +25,15 @@ export default function Login() {
     const resp = await signIn(email);
     localStorage.setItem("cognito_user", JSON.stringify(resp));
     localStorage.setItem("mode", "verify");
+    localStorage.setItem("email", email);
+    router.push("/prelogin");
   };
 
   useEffect(() => {
     const curMode = localStorage.getItem("mode") ?? "login";
     setMode(curMode);
+    const curEmail = localStorage.getItem("email") ?? "";
+    setEmail(curEmail);
   }, []);
 
   useEffect(() => {

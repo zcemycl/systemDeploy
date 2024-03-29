@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { useOpenBar } from "@/contexts";
+import { useOpenBar, useAuth } from "@/contexts";
 import Link from "next/link";
 import { navbar_dropdown } from "@/constants/navbar-dropdown";
 import { useRouter } from "next/navigation";
@@ -61,8 +61,39 @@ function Button() {
 }
 
 export default function NavBar() {
-  const { isDropDownOpen, setIsDropDownOpen } = useOpenBar();
+  const { isAuthenticated } = useAuth();
+  const { isDropDownOpen, setIsDropDownOpen, isSideBarOpen, setIsSideBarOpen } =
+    useOpenBar();
+  const refDropDown = useRef(null);
+  const refMenuBtn = useRef(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleOutSideDropDownClick = ({ target }: Event) => {
+      const isInsideDropDown = (
+        refDropDown.current as unknown as HTMLDivElement
+      ).contains(target as Node);
+      const isInsideMenuBtn = (
+        refMenuBtn.current as unknown as HTMLDivElement
+      ).contains(target as Node);
+      if (!isInsideDropDown) {
+        if (isInsideMenuBtn) {
+          return;
+        }
+        setIsDropDownOpen(false);
+      }
+    };
+
+    window.addEventListener("mousedown", (e: Event) =>
+      handleOutSideDropDownClick(e)
+    );
+
+    return () => {
+      window.removeEventListener("mousedown", (e: Event) =>
+        handleOutSideDropDownClick(e)
+      );
+    };
+  }, [refDropDown, refMenuBtn]);
   return (
     <header className="text-gray-400 bg-gray-900 body-font fixed w-full">
       <div className="container justify-between mx-auto flex flex-wrap p-5 flex-row items-center">
@@ -91,6 +122,7 @@ export default function NavBar() {
           <div className="ml-4 py-1 pl-4 border-l border-gray-700	flex items-center text-base justify-center">
             <Button />
             <button
+              ref={refMenuBtn}
               data-collapse-toggle="navbar-dropdown"
               type="button"
               className="inline-flex items-center p-2 w-10 h-10 mr-1 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -104,14 +136,20 @@ export default function NavBar() {
             <button
               type="button"
               data-testid="icon-login-btn"
-              onClick={() => router.push("/login")}
-              className="inline-flex items-center p-0 w-10 h-10 justify-center text-sm border-white text-gray-500 rounded-full focus:ring-2 hover:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              onClick={() => {
+                if (isAuthenticated) {
+                  setIsSideBarOpen(!isSideBarOpen);
+                } else {
+                  router.push("/login");
+                }
+              }}
+              className={`inline-flex items-center p-0 w-10 h-10 justify-center text-sm border-white text-gray-500 rounded-full focus:ring-2 hover:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 ${isSideBarOpen ? "pointer-events-none" : ""} cursor-pointer`}
             >
               <ProfileIcon />
             </button>
           </div>
         </div>
-        <div className="flex w-full justify-end h-0">
+        <div className="flex w-full justify-end h-0" ref={refDropDown}>
           <div
             className={`items-center z-10 justify-between w-1/3 sm:w-1/4 md:hidden transition-transform ${isDropDownOpen ? "scale-y-100" : "scale-y-0"}`}
             id="navbar-dropdown"

@@ -1,12 +1,15 @@
 "use client";
-import { useAuth } from "@/contexts";
+import { useAuth, useOpenBar } from "@/contexts";
 import { useEffect } from "react";
 export default function Logout() {
   const { setIsAuthenticated, setCredentials } = useAuth();
+  const { setIsDropDownOpen, setIsSideBarOpen } = useOpenBar();
   useEffect(() => {
     localStorage.clear();
     setIsAuthenticated(false);
     setCredentials("");
+    setIsDropDownOpen(false);
+    setIsSideBarOpen(false);
   }, []);
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">

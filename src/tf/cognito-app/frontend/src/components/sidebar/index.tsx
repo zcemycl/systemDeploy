@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@/contexts/Auth";
+import { useAuth } from "@/contexts";
 import React from "react";
 import { sidebar_constant } from "@/constants/sidebar";
 

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useTheme } from "next-themes";
+import { useOpenBar } from "@/contexts";
 import Link from "next/link";
 import { navbar_dropdown } from "@/constants/navbar-dropdown";
 import { useRouter } from "next/navigation";
@@ -60,7 +61,7 @@ function Button() {
 }
 
 export default function NavBar() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const { isDropDownOpen, setIsDropDownOpen } = useOpenBar();
   const router = useRouter();
   return (
     <header className="text-gray-400 bg-gray-900 body-font fixed w-full">
@@ -95,7 +96,7 @@ export default function NavBar() {
               className="inline-flex items-center p-2 w-10 h-10 mr-1 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="navbar-dropdown"
               aria-expanded="false"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={() => setIsDropDownOpen(!isDropDownOpen)}
             >
               <span className="sr-only">Open main menu</span>
               <MenuIcon />
@@ -112,7 +113,7 @@ export default function NavBar() {
         </div>
         <div className="flex w-full justify-end h-0">
           <div
-            className={`items-center z-10 justify-between w-1/3 sm:w-1/4 md:hidden transition-transform ${isDropdownOpen ? "scale-y-100" : "scale-y-0"}`}
+            className={`items-center z-10 justify-between w-1/3 sm:w-1/4 md:hidden transition-transform ${isDropDownOpen ? "scale-y-100" : "scale-y-0"}`}
             id="navbar-dropdown"
           >
             <ul className="flex flex-col p-2 md:p-0 mt-1 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse dark:bg-gray-800  dark:border-gray-700">

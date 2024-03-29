@@ -3,7 +3,7 @@ import Footer from "@/components/footer";
 import SideBar from "@/components/sidebar";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import { AuthProvider } from "@/contexts/Auth";
+import { AuthProvider, OpenBarProvider } from "@/contexts";
 
 export const metadata = {
   title: "Drugig",
@@ -19,13 +19,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class">
-          <AuthProvider>
-            <SideBar>
-              <NavBar />
-              {children}
-              <Footer />
-            </SideBar>
-          </AuthProvider>
+          <OpenBarProvider>
+            <AuthProvider>
+              <SideBar>
+                <NavBar />
+                {children}
+                <Footer />
+              </SideBar>
+            </AuthProvider>
+          </OpenBarProvider>
         </ThemeProvider>
       </body>
     </html>

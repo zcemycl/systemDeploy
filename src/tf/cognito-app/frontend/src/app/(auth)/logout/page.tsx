@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@/contexts/Auth";
+import { useAuth } from "@/contexts";
 import { useEffect } from "react";
 export default function Logout() {
   const { setIsAuthenticated, setCredentials } = useAuth();

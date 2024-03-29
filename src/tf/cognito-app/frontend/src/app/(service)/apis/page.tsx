@@ -1,4 +1,4 @@
-import { ProtectedRoute } from "@/contexts/Auth";
+import { ProtectedRoute } from "@/contexts";
 
 export default function APIs() {
   return (

@@ -1,5 +1,6 @@
 import NavBar from "@/components/navbar";
 import Footer from "@/components/footer";
+import SideBar from "@/components/sidebar";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/Auth";
@@ -19,9 +20,11 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class">
           <AuthProvider>
-            <NavBar />
-            {children}
-            <Footer />
+            <SideBar>
+              <NavBar />
+              {children}
+              <Footer />
+            </SideBar>
           </AuthProvider>
         </ThemeProvider>
       </body>

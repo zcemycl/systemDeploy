@@ -3,6 +3,13 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
+import {
+  SESClient,
+  SendEmailCommand,
+  SendEmailCommandInput,
+  SESClientConfig,
+} from "@aws-sdk/client-ses";
+import { useRouter } from "next/navigation";
 
 import { fetchProtected } from "@/http/backend/protected";
 import { fetchApiRoot } from "@/http/internal";
@@ -18,11 +25,77 @@ interface IData2 {
   Hello?: string;
 }
 
+interface IRequestForm {
+  name: string;
+  email: string;
+  message: string;
+}
+
 export default function Home() {
+  const router = useRouter();
   const { isAuthenticated, setIsAuthenticated, credentials } = useAuth();
   const [data, setData] = useState<IData>({});
   const [data2, setData2] = useState<IData2>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const defaultRequestForm = {
+    name: "",
+    email: "",
+    message: "",
+  };
+  const [requestForm, setRequestForm] =
+    useState<IRequestForm>(defaultRequestForm);
+
+  async function handleSubmitRequestForm() {
+    let config: SESClientConfig = {
+      region: process.env.NEXT_PUBLIC_AWS_REGION as string,
+    };
+    if (process.env.NEXT_PUBLIC_ENV_NAME === "local") {
+      config = {
+        ...config,
+        credentials: {
+          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
+          secretAccessKey: process.env
+            .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
+        },
+      };
+    }
+    const ses_client = new SESClient(config);
+    const input: SendEmailCommandInput = {
+      Source: `no-reply@${process.env.NEXT_PUBLIC_DOMAIN_NAME as string}`,
+      Destination: {
+        ToAddresses: [process.env.NEXT_PUBLIC_ADMIN_EMAIL as string],
+      },
+      Message: {
+        Subject: {
+          Data: "Drugig Website Login Request",
+          Charset: "UTF-8",
+        },
+        Body: {
+          Html: {
+            Data: `<body><p>${requestForm.name} (${requestForm.email}): ${requestForm.message}</p></body>`,
+            Charset: "UTF-8",
+          },
+        },
+      },
+    };
+    const command = new SendEmailCommand(input);
+    const response = await ses_client.send(command);
+    console.log(response);
+    const tmpRequestForm = {
+      ...requestForm,
+      message: "",
+    };
+    setRequestForm(tmpRequestForm);
+    localStorage.setItem("requestForm", JSON.stringify(tmpRequestForm));
+    router.push("/requestaccount");
+  }
+
+  useEffect(() => {
+    const requestFormJson =
+      JSON.parse(localStorage.getItem("requestForm") as string) ??
+      defaultRequestForm;
+    setRequestForm(requestFormJson);
+  }, []);
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -149,6 +222,18 @@ export default function Home() {
                 type="text"
                 id="name"
                 name="name"
+                value={requestForm.name}
+                onChange={(e) => {
+                  const tmpRequestForm = {
+                    ...requestForm,
+                    name: e.currentTarget.value,
+                  };
+                  setRequestForm(tmpRequestForm);
+                  localStorage.setItem(
+                    "requestForm",
+                    JSON.stringify(tmpRequestForm)
+                  );
+                }}
                 className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
               />
             </div>
@@ -163,6 +248,18 @@ export default function Home() {
                 type="email"
                 id="email"
                 name="email"
+                value={requestForm.email}
+                onChange={(e) => {
+                  const tmpRequestForm = {
+                    ...requestForm,
+                    email: e.currentTarget.value,
+                  };
+                  setRequestForm(tmpRequestForm);
+                  localStorage.setItem(
+                    "requestForm",
+                    JSON.stringify(tmpRequestForm)
+                  );
+                }}
                 className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
               />
             </div>
@@ -176,10 +273,25 @@ export default function Home() {
               <textarea
                 id="message"
                 name="message"
+                value={requestForm.message}
+                onChange={(e) => {
+                  const tmpRequestForm = {
+                    ...requestForm,
+                    message: e.currentTarget.value,
+                  };
+                  setRequestForm(tmpRequestForm);
+                  localStorage.setItem(
+                    "requestForm",
+                    JSON.stringify(tmpRequestForm)
+                  );
+                }}
                 className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 h-32 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
               ></textarea>
             </div>
-            <button className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+            <button
+              onClick={async () => await handleSubmitRequestForm()}
+              className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+            >
               Submit
             </button>
             <p className="text-xs text-gray-400 text-opacity-90 mt-3">

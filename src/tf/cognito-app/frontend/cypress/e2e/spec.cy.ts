@@ -15,6 +15,13 @@ describe("Basic template spec for cognito app frontend", () => {
         cy.visit((email as string).replace(Cypress.env("baseUrl"), ""))
           .location("pathname")
           .should("eq", "/");
-      });
+      })
+      .wait(2000)
+      .get('[data-testid="icon-login-btn"]')
+      .click()
+      .get('[data-testid="logout-link"]')
+      .click()
+      .location("pathname")
+      .should("eq", "/logout");
   });
 });

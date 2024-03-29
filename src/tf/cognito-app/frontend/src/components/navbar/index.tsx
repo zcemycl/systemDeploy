@@ -12,11 +12,22 @@ export default interface NavBarProps {
 }
 
 function Button() {
-  const { systemTheme, theme, setTheme } = useTheme();
-  const currentTheme = theme === "system" ? systemTheme : theme;
+  const { theme, setTheme } = useTheme();
+  useEffect(() => {
+    const currentTheme = localStorage.getItem("theme") ?? "dark";
+    setTheme(currentTheme);
+  }, []);
   return (
     <button
-      onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
+      onClick={() => {
+        if (theme == "dark") {
+          localStorage.setItem("theme", "light");
+          setTheme("light");
+        } else {
+          localStorage.setItem("theme", "dark");
+          setTheme("dark");
+        }
+      }}
       className="
             w-12
             h-6
@@ -37,8 +48,12 @@ function Button() {
             flex-end
         "
     >
-      <MoonIcon />
-      <SunIcon />
+      <div className="w-4 h-4 absolute left-1">
+        <MoonIcon />
+      </div>
+      <div className="w-4 h-4 absolute dark:hidden right-1 border-black">
+        <SunIcon />
+      </div>
       <div
         id="toggle"
         className="

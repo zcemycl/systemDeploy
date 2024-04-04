@@ -15,7 +15,7 @@ every_hour_partition = HourlyPartitionsDefinition(start_date="2023-10-01-00:00")
 
 @asset(
     key="label_pdf_asset",
-    # partitions_def=TimeWindowPartitionsDefinition(start="2023-10-01", fmt="%Y-%m-%d", cron_schedule="*/2 * * * *")
+    # partitions_def=every_min_partition
     partitions_def=every_hour_partition
 )
 def label_pdf_asset(context: AssetExecutionContext):

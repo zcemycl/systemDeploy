@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        terraform-version: ["3.11"]
+        terraform-version: ["1.3.0"]
         os: [ubuntu-22.04, macos-latest, windows-latest]
         path:
           - src/tf/batch-lambda

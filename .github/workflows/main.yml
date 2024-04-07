@@ -44,3 +44,8 @@ jobs:
         working-directory: ${{ matrix.path }}
         id: validate
         run: terraform validate
+
+      - name: Terraform plan
+        working-directory: ${{ matrix.path }}
+        id: plan
+        run: terraform plan

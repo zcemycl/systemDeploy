@@ -1,17 +1,23 @@
 import io
+import time
 from io import StringIO
 from typing import List
 
 import pdfplumber as pp
 import requests
-from dagster import (AssetExecutionContext, AssetIn,
-                     HourlyPartitionsDefinition,
+from dagster import (AssetExecutionContext, AssetIn, AutoMaterializePolicy,
+                     AutoMaterializeRule, HourlyPartitionsDefinition,
                      TimeWindowPartitionsDefinition, asset,
-                     build_schedule_from_partitioned_job, define_asset_job)
+                     build_schedule_from_partitioned_job, define_asset_job,
+                     graph_asset, op)
 from pypdf import PdfReader
 
 every_min_partition = TimeWindowPartitionsDefinition(start="2023-10-01", fmt="%Y-%m-%d", cron_schedule="*/2 * * * *")
 every_hour_partition = HourlyPartitionsDefinition(start_date="2023-10-01-00:00")
+wait_for_all_parents_policy = AutoMaterializePolicy.eager().with_rules(
+    AutoMaterializeRule.skip_on_not_all_parents_updated(),
+    AutoMaterializeRule.materialize_on_cron("*/2 * * * *", timezone="US/Central"),
+)
 
 @asset(
     key="label_pdf_asset",
@@ -48,3 +54,47 @@ asset_job = define_asset_job(
 schedule = build_schedule_from_partitioned_job(
     asset_job
 )
+
+@asset(partitions_def=every_min_partition)
+def a1():
+    time.sleep(10)
+    return [1,2,3]
+
+@op
+def plus_one(nums: List[int]):
+    return [i+1 for i in nums]
+
+@graph_asset(partitions_def=every_min_partition,
+    auto_materialize_policy=wait_for_all_parents_policy
+)
+def a1_plus(a1):
+    return plus_one(a1)
+
+@asset(partitions_def=every_min_partition,
+    auto_materialize_policy=wait_for_all_parents_policy
+)
+def final(a1_plus):
+    all_res = []
+    all_res.extend(a1_plus)
+    return all_res
+
+a1_asset_job = define_asset_job(
+    "a1_asset_job", selection=[a1]
+)
+a1_schedule = build_schedule_from_partitioned_job(
+    a1_asset_job
+)
+
+# a1_plus_asset_job = define_asset_job(
+#     "a1_plus_asset_job", selection=[a1_plus]
+# )
+# a1_plus_schedule = build_schedule_from_partitioned_job(
+#     a1_plus_asset_job
+# )
+
+# final_asset_job = define_asset_job(
+#     "final_asset_job", selection=[final]
+# )
+# final_schedule = build_schedule_from_partitioned_job(
+#     final_asset_job
+# )

@@ -8,5 +8,10 @@ all_assets = load_assets_from_modules([assets])
 defs = Definitions(
     assets=all_assets,
     # jobs=[assets.asset_job],
-    schedules=[assets.schedule]
+    schedules=[
+        assets.schedule,
+        assets.a1_schedule,
+        # assets.a1_plus_schedule,
+        # assets.final_schedule,
+    ]
     )

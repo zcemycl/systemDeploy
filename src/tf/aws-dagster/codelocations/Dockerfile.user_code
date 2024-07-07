@@ -8,7 +8,7 @@ ARG MODULE_SRC_DIR
 ARG MODULE_NAME
 ARG PORT
 ENV MODULE_SRC_DIR=${MODULE_SRC_DIR}
-ENV MODULE NAME=${MODULE_NAME}
+ENV MODULE_NAME=${MODULE_NAME}
 ENV PORT=${PORT}
 
 # Checkout and install dagster libraries needed to run the gRPC server
@@ -32,4 +32,4 @@ EXPOSE ${PORT}
 
 # CMD allows this to be overridden from run launchers or executors that want
 # to run other commands against your repository
-CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-m", "etl1"]
+CMD dagster api grpc -h 0.0.0.0 -p ${PORT} -m ${MODULE_NAME}

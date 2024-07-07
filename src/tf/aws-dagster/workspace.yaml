@@ -1,0 +1,5 @@
+load_from:
+  - grpc_server:
+      host: dagster_user_code_etl1
+      port: 4000
+      location_name: "user_code_etl1"

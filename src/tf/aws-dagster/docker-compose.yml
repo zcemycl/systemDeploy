@@ -1,0 +1,95 @@
+version: "3.11"
+x-dagster-common: &dagster_common
+  build:
+    context: .
+    dockerfile: Dockerfile.dagster
+  environment:
+    DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+    DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+    DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+  # volumes:
+  #   - /var/run/docker.sock:/var/run/docker.sock
+  # - /Users/spare/Documents/data/io_manager_storage:/tmp/io_manager_storage
+  networks:
+    - net
+  depends_on:
+    - dagster-db
+    - dagster-user-code-etl1
+networks:
+  net:
+    driver: bridge
+services:
+  dagster-db:
+    build:
+      context: .
+      dockerfile: Dockerfile.pgvector
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+      # - PGDATA=/var/lib/postgresql/data/
+    # volumes:
+    #   - "./src/sql/init.sql:/docker-entrypoint-initdb.d/"
+    ports:
+      - "5455:5432"
+    networks:
+      - net
+  dagster-s3:
+    restart: always
+    image: minio/minio
+    container_name: minio
+    volumes:
+      - ./minio_data:/data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: "minio_user"
+      MINIO_ROOT_PASSWORD: "minio_pwd"
+      MINIO_ADDRESS: ":9000"
+      MINIO_PORT: "9000"
+      MINIO_STORAGE_USE_HTTPS: False
+      MINIO_CONSOLE_ADDRESS: ":9001"
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - net
+  dagster-user-code-etl1:
+    build:
+      context: .
+      dockerfile: codelocations/Dockerfile.user_code
+    container_name: dagster_user_code_etl1
+    restart: always
+    networks:
+      - net
+    depends_on:
+      - dagster-db
+  # webserver:
+  #   <<: *dagster_common
+  #   entrypoint:
+  #     - dagster-webserver
+  #     - -h
+  #     - "0.0.0.0"
+  #     - -p
+  #     - "3000"
+  #     - -w
+  #     - workspace.yaml
+  #   container_name: dagster_webserver
+  #   expose:
+  #     - 3000
+  #   ports:
+  #     - 3000:3000
+
+  # daemon:
+  #   <<: *dagster_common
+  #   entrypoint:
+  #     - dagster-daemon
+  #     - run
+  #   container_name: dagster_daemon
+  #   restart: on-failure

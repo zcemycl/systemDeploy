@@ -1,0 +1,35 @@
+ARG PYTHON_VERSION=3.11.3
+ARG MODULE_SRC_DIR=codelocations
+ARG MODULE_NAME=etl1
+ARG PORT=4000
+
+FROM python:${PYTHON_VERSION}-slim
+ARG MODULE_SRC_DIR
+ARG MODULE_NAME
+ARG PORT
+ENV MODULE_SRC_DIR=${MODULE_SRC_DIR}
+ENV MODULE NAME=${MODULE_NAME}
+ENV PORT=${PORT}
+
+# Checkout and install dagster libraries needed to run the gRPC server
+# exposing your repository to dagster-webserver and dagster-daemon, and to load the DagsterInstance
+
+RUN pip install \
+    dagster \
+    dagster-postgres \
+    dagster-docker \
+    pandas
+
+# Add repository code
+
+WORKDIR /opt/dagster/app
+
+COPY "$MODULE_SRC_DIR/$MODULE_NAME" /opt/dagster/app/
+RUN ls /opt/dagster/app
+
+# Run dagster gRPC server on port 4000
+EXPOSE ${PORT}
+
+# CMD allows this to be overridden from run launchers or executors that want
+# to run other commands against your repository
+CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", ${PORT}, "-f", "/opt/dagster/app/etl1/etl1/__init__.py"]

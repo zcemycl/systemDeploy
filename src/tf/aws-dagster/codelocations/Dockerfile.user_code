@@ -32,4 +32,4 @@ EXPOSE ${PORT}
 
 # CMD allows this to be overridden from run launchers or executors that want
 # to run other commands against your repository
-CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", ${PORT}, "-f", "/opt/dagster/app/etl1/etl1/__init__.py"]
+CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-m", "etl1"]

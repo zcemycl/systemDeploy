@@ -8,9 +8,10 @@ x-dagster-common: &dagster_common
     DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
     DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
-  # volumes:
-  #   - /var/run/docker.sock:/var/run/docker.sock
-  # - /Users/spare/Documents/data/io_manager_storage:/tmp/io_manager_storage
+    DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /Users/spare/Documents/data/io_manager_storage:/tmp/io_manager_storage
   networks:
     - net
   depends_on:
@@ -19,6 +20,7 @@ x-dagster-common: &dagster_common
 networks:
   net:
     driver: bridge
+    name: dagster_net
 services:
   dagster-db:
     build:
@@ -65,31 +67,37 @@ services:
       context: .
       dockerfile: codelocations/Dockerfile.user_code
     container_name: dagster_user_code_etl1
+    image: ${DAGSTER_CURRENT_IMAGE}
+    environment:
+      DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
     restart: always
     networks:
       - net
     depends_on:
       - dagster-db
-  # webserver:
-  #   <<: *dagster_common
-  #   entrypoint:
-  #     - dagster-webserver
-  #     - -h
-  #     - "0.0.0.0"
-  #     - -p
-  #     - "3000"
-  #     - -w
-  #     - workspace.yaml
-  #   container_name: dagster_webserver
-  #   expose:
-  #     - 3000
-  #   ports:
-  #     - 3000:3000
+  webserver:
+    <<: *dagster_common
+    entrypoint:
+      - dagster-webserver
+      - -h
+      - "0.0.0.0"
+      - -p
+      - "3000"
+      - -w
+      - workspace.yaml
+    container_name: dagster_webserver
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
 
-  # daemon:
-  #   <<: *dagster_common
-  #   entrypoint:
-  #     - dagster-daemon
-  #     - run
-  #   container_name: dagster_daemon
-  #   restart: on-failure
+  daemon:
+    <<: *dagster_common
+    entrypoint:
+      - dagster-daemon
+      - run
+    container_name: dagster_daemon
+    restart: on-failure

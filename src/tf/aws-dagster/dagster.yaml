@@ -2,6 +2,9 @@ scheduler:
   module: dagster.core.scheduler
   class: DagsterDaemonScheduler
 
+code_servers:
+  reload_timeout: 20
+
 run_coordinator:
   module: dagster.core.run_coordinator
   class: QueuedRunCoordinator

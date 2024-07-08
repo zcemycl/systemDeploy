@@ -1,0 +1,63 @@
+[tool.poetry]
+name = "etl1"
+version = "0.1.0"
+description = ""
+authors = ["zcemycl <lyc010197@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "etl1" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+dagster = "^1.7.12"
+dagster-postgres = "^0.23.12"
+dagster-aws = "^0.23.12"
+dagster-docker = "^0.23.12"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = "^24.4.2"
+pytest = "^8.2.2"
+pre-commit = "^3.7.1"
+flake8 = "^7.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 72
+include = '''
+/(
+    etl1
+  | tests
+  | \.pyi?$
+)/
+'''
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.nox
+  | __pycache__
+  | \.pyc$
+  | \.ipynb$
+  | \.md$
+  | build
+  | .venv
+  | dist
+  | \.eggs
+  | \.yml
+  | alembic
+)/
+'''
+
+[tool.isort]
+src_paths = ["etl1", "tests"]
+skip=[".tox",".nox",".venv","build","dist","__pycache__"]
+skip_glob=[".venv/*","build/*","dist/*","resources/*"]
+sections="FUTURE,STDLIB,SETUPTOOLS,TEST,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+known_first_party = "etl1"
+atomic = true
+profile = "black"

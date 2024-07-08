@@ -3,7 +3,29 @@ ARG MODULE_SRC_DIR=codelocations
 ARG MODULE_NAME=etl1
 ARG PORT=4000
 
-FROM python:${PYTHON_VERSION}-slim
+
+FROM python:${PYTHON_VERSION}-bullseye AS builder
+ARG MODULE_SRC_DIR
+ARG MODULE_NAME
+RUN pip install poetry==1.8.2
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
+
+WORKDIR /app
+COPY $MODULE_SRC_DIR/$MODULE_NAME/pyproject.toml ./
+COPY $MODULE_SRC_DIR/$MODULE_NAME/poetry.lock ./
+COPY "$MODULE_SRC_DIR/$MODULE_NAME" ./
+RUN touch README.md
+RUN poetry install --without dev && rm -rf $POETRY_CACHE_DIR
+
+
+FROM python:${PYTHON_VERSION}-slim AS runtime
+ENV DAGSTER_HOME=/opt/dagster/app
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 ARG MODULE_SRC_DIR
 ARG MODULE_NAME
 ARG PORT
@@ -11,21 +33,9 @@ ENV MODULE_SRC_DIR=${MODULE_SRC_DIR}
 ENV MODULE_NAME=${MODULE_NAME}
 ENV PORT=${PORT}
 
-# Checkout and install dagster libraries needed to run the gRPC server
-# exposing your repository to dagster-webserver and dagster-daemon, and to load the DagsterInstance
+WORKDIR ${DAGSTER_HOME}
 
-RUN pip install \
-    dagster \
-    dagster-postgres \
-    dagster-docker \
-    pandas
-
-# Add repository code
-
-WORKDIR /opt/dagster/app
-
-COPY "$MODULE_SRC_DIR/$MODULE_NAME" /opt/dagster/app/
-RUN ls /opt/dagster/app
+COPY "$MODULE_SRC_DIR/$MODULE_NAME" ${DAGSTER_HOME}
 
 # Run dagster gRPC server on port 4000
 EXPOSE ${PORT}

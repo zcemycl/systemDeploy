@@ -8,6 +8,7 @@ x-dagster-common: &dagster_common
     DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
     DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+    DAGSTER_POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
     DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
@@ -73,6 +74,9 @@ services:
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
       DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
+    volumes:
+      - ./codelocations/etl1/etl1:/opt/dagster/app/etl1
+    command: dagster code-server start -h 0.0.0.0 -p 4000 -m etl1
     restart: always
     networks:
       - net

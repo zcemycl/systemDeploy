@@ -32,4 +32,7 @@ EXPOSE ${PORT}
 
 # CMD allows this to be overridden from run launchers or executors that want
 # to run other commands against your repository
+## deploy
 CMD dagster api grpc -h 0.0.0.0 -p ${PORT} -m ${MODULE_NAME}
+## dev
+# CMD dagster code-server start -h 0.0.0.0 -p ${PORT} -m ${MODULE_NAME}

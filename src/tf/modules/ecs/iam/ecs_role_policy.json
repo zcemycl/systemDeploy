@@ -1,0 +1,21 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "autoscaling:ExecutePolicy",
+          "s3:*",
+          "ecr:*",
+          "ses:*",
+          "secretsmanager:GetResourcePolicy",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:ListSecretVersionIds",
+          "sagemaker:*",
+          "cognito-idp:*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      }
+    ]
+}

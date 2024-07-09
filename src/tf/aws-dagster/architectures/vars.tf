@@ -21,3 +21,8 @@ variable "alb_subnets_cidr" {
   # default = ["10.1.0.0/21", "10.1.8.0/21"]
   default = ["10.1.0.0/21"]
 }
+
+variable "openvpn_server_ami" {
+  type    = string
+  default = "ami-07d20571c32ba6cdc"
+}

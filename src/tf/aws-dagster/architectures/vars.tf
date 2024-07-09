@@ -10,3 +10,14 @@ variable "vpc_cidr" {
   type    = string
   default = "10.1.0.0/16"
 }
+
+variable "availability_zones" {
+  type    = list(string)
+  default = ["eu-west-2a", "eu-west-2b"]
+}
+
+variable "alb_subnets_cidr" {
+  type = list(string)
+  # default = ["10.1.0.0/21", "10.1.8.0/21"]
+  default = ["10.1.0.0/21"]
+}

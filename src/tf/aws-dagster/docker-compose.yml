@@ -64,6 +64,19 @@ services:
       retries: 3
     networks:
       - net
+  dagster-s3-populate:
+    image: minio/mc
+    depends_on:
+      - dagster-s3
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set minio http://dagster-s3:9000 minioadmin minioadmin;
+      /usr/bin/mc mb minio/my-bucket;
+      # /usr/bin/mc mb /data/my-bucket/some-key # does not work
+      "
+    networks:
+      - net
   dagster-user-code-etl1:
     build:
       context: .

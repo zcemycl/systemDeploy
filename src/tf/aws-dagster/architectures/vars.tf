@@ -26,3 +26,12 @@ variable "openvpn_server_ami" {
   type    = string
   default = "ami-07d20571c32ba6cdc"
 }
+
+variable "domain" {
+  type    = string
+  default = "freecaretoday.com"
+}
+
+variable "admin_pwd" {
+  type = string
+}

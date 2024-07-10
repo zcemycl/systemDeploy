@@ -93,12 +93,15 @@ resource "aws_instance" "this" {
   iam_instance_profile        = aws_iam_instance_profile.this.name
   user_data = templatefile("./setup.sh", {
     admin_password = var.admin_pwd
+    email          = var.email
+    domain         = var.domain
+    subdomain      = "${var.subdomain}.${var.domain}"
   })
 }
 
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.this.zone_id
-  name    = "vpn"
+  name    = var.subdomain
   type    = "A"
   ttl     = 60
   records = [aws_instance.this.public_ip]

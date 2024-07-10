@@ -32,6 +32,16 @@ variable "domain" {
   default = "freecaretoday.com"
 }
 
+variable "subdomain" {
+  type    = string
+  default = "openvpn"
+}
+
 variable "admin_pwd" {
   type = string
+}
+
+variable "email" {
+  type    = string
+  default = "lyc010197@gmail.com"
 }

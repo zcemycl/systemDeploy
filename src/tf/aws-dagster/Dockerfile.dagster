@@ -1,17 +1,23 @@
-FROM python:3.10-slim
+ARG PYTHON_VERSION=3.11.3
+ARG DAGSTER_CONF=dagster.yaml
+ARG WORKSPACE_CONF=workspace.yaml
+FROM python:${PYTHON_VERSION}-slim
+ARG DAGSTER_CONF
+ARG WORKSPACE_CONF
 
 RUN pip install \
     dagster \
     dagster-graphql \
     dagster-webserver \
     dagster-postgres \
-    dagster-docker
+    dagster-docker \
+    dagster-aws
 
 # Set $DAGSTER_HOME and copy dagster instance and workspace YAML there
 ENV DAGSTER_HOME=/opt/dagster/dagster_home/
 
 RUN mkdir -p $DAGSTER_HOME
 
-COPY dagster.yaml workspace.yaml $DAGSTER_HOME
+COPY ${DAGSTER_CONF} ${WORKSPACE_CONF} $DAGSTER_HOME
 
 WORKDIR $DAGSTER_HOME

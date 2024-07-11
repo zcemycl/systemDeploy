@@ -1,3 +1,5 @@
 *.venv/
 *__pycache__/
 codelocations/etl1/.venv
+codelocations/etl2/.venv
+minio_data

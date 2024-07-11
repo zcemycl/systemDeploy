@@ -33,8 +33,7 @@ variable "domain" {
 }
 
 variable "subdomain" {
-  type    = string
-  default = "openvpn"
+  type = string
 }
 
 variable "admin_pwd" {

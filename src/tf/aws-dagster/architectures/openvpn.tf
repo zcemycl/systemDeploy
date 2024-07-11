@@ -9,6 +9,12 @@ resource "null_resource" "this" {
   }
 }
 
+resource "null_resource" "this2" {
+  provisioner "local-exec" {
+    command = "echo '${tls_private_key.this.public_key_openssh}' > public_key.pem"
+  }
+}
+
 module "openvpn" {
   source             = "github.com/zcemycl/amazon-openvpn-ddns"
   AWS_REGION         = var.AWS_REGION

@@ -17,9 +17,9 @@ variable "availability_zones" {
 }
 
 variable "alb_subnets_cidr" {
-  type = list(string)
-  # default = ["10.1.0.0/21", "10.1.8.0/21"]
-  default = ["10.1.0.0/21"]
+  type    = list(string)
+  default = ["10.1.0.0/21", "10.1.8.0/21"]
+  # default = ["10.1.0.0/21"]
 }
 
 variable "dagster_daemon_subnets_cidr" {

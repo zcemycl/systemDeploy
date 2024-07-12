@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "this" {
   name       = "${var.prefix}-db-subnet-group"
-  subnet_ids = var.db_subnet_ids
+  subnet_ids = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*db_nat.*", name)) > 0]
 }
 
 resource "aws_db_instance" "this" {
@@ -14,7 +14,7 @@ resource "aws_db_instance" "this" {
   username            = random_string.this.result
   password            = random_password.this.result
 
-  vpc_security_group_ids = var.sg_ids
+  vpc_security_group_ids = [module.security_groups.sg_ids["everything"].id]
   db_subnet_group_name   = aws_db_subnet_group.this.name
 
   backup_retention_period = 0
@@ -25,8 +25,36 @@ resource "aws_db_instance" "this" {
   skip_final_snapshot = true
   # final_snapshot_identifier = "${var.prefix}-rds-postgres-final"
 
-  monitoring_interval = 60
-  monitoring_role_arn = aws_iam_role.this_monitoring.arn
+  #   monitoring_interval = 60
+  #   monitoring_role_arn = aws_iam_role.this_monitoring.arn
 
-  performance_insights_enabled = true
+  #   performance_insights_enabled = true
+}
+
+resource "random_string" "this" {
+  length  = 16
+  special = false
+  numeric = false
+}
+
+resource "random_password" "this" {
+  length  = 32
+  special = false
+  numeric = true
+}
+
+resource "aws_secretsmanager_secret" "this" {
+  name = "${var.prefix}-postgres-creds"
+}
+
+resource "aws_secretsmanager_secret_version" "this" {
+  secret_id = aws_secretsmanager_secret.this.id
+  secret_string = jsonencode({
+    "username"             = random_string.this.result
+    "password"             = random_password.this.result
+    "engine"               = "aurora-postgresql"
+    "host"                 = aws_db_instance.this.address
+    "port"                 = 5432
+    "dbInstanceIdentifier" = aws_db_instance.this.id
+  })
 }

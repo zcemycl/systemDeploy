@@ -22,6 +22,26 @@ variable "alb_subnets_cidr" {
   default = ["10.1.0.0/21"]
 }
 
+variable "dagster_daemon_subnets_cidr" {
+  type    = list(string)
+  default = ["10.1.24.0/21"]
+}
+
+variable "etl1_subnets_cidr" {
+  type    = list(string)
+  default = ["10.1.32.0/21"]
+}
+
+variable "etl2_subnets_cidr" {
+  type    = list(string)
+  default = ["10.1.40.0/21"]
+}
+
+variable "dagster_webserver_subnets_cidr" {
+  type    = list(string)
+  default = ["10.1.48.0/21"]
+}
+
 variable "openvpn_server_ami" {
   type    = string
   default = "ami-07d20571c32ba6cdc"
@@ -43,4 +63,9 @@ variable "admin_pwd" {
 variable "email" {
   type    = string
   default = "lyc010197@gmail.com"
+}
+
+variable "db_subnets_cidr" {
+  type    = list(string)
+  default = ["10.1.56.0/21", "10.1.64.0/21"]
 }

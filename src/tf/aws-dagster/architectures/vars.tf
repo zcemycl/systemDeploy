@@ -69,3 +69,8 @@ variable "db_subnets_cidr" {
   type    = list(string)
   default = ["10.1.56.0/21", "10.1.64.0/21"]
 }
+
+variable "cloud_map_namespace" {
+  type    = string
+  default = "dagster.internal"
+}

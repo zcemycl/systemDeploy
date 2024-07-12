@@ -38,6 +38,7 @@ x-dagster-code-common: &dagster_code_common
     DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
     DAGSTER_CURRENT_IMAGE: ${DAGSTER_CURRENT_IMAGE}
+    ENV: local
   restart: always
   networks:
     - net
@@ -126,6 +127,7 @@ services:
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
       DAGSTER_CURRENT_IMAGE: dagster_user_code_etl2
+      ENV: local
     volumes:
       - ./codelocations/etl2/etl2:/opt/dagster/app/etl2
     command: dagster code-server start -h 0.0.0.0 -p 4001 -m etl2

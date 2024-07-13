@@ -41,6 +41,16 @@ module "logging" {
       vpc_id            = aws_vpc.this.id
       sg_ids            = [module.security_groups.sg_ids["everything"].id]
       subnet_ids        = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*daemon_nat.*", name)) > 0]
+    },
+    {
+      name              = "etl2-hotload"
+      group_name        = "/ecs/etl2-hotload"
+      stream_name       = "etl2-hotload"
+      retention_in_days = 1
+      enable_vpc_endpt  = false
+      vpc_id            = aws_vpc.this.id
+      sg_ids            = [module.security_groups.sg_ids["everything"].id]
+      subnet_ids        = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*daemon_nat.*", name)) > 0]
     }
   ]
 }

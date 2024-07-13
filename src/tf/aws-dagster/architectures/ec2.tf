@@ -20,13 +20,6 @@ data "aws_ami" "amazon_linux_2" {
 }
 # ami-00877cb58e935baf9
 
-# data "templatefile" "user_data" {
-#   template = file("${path.module}/user_data.sh")
-
-#   vars = {
-#     ecs_cluster_name = aws_ecs_cluster.this.name
-#   }
-# }
 
 resource "aws_iam_role" "this_ecs_ec2" {
   name               = "${var.prefix}-hotload-etl2"
@@ -51,11 +44,11 @@ resource "aws_key_pair" "this" {
 resource "aws_launch_template" "this" {
   name          = "${var.prefix}-launch-template-hotload"
   image_id      = data.aws_ami.amazon_linux_2.id
-  instance_type = "t3.medium"
+  instance_type = "t3a.xlarge"
   key_name      = aws_key_pair.this.key_name
-  user_data = templatefile("${path.module}/user_data.sh", {
+  user_data = base64encode(templatefile("${path.module}/user_data.sh", {
     ecs_cluster_name = aws_ecs_cluster.this.name
-  })
+  }))
   vpc_security_group_ids = [module.security_groups.sg_ids["everything"].id]
 
   iam_instance_profile {
@@ -67,9 +60,32 @@ resource "aws_launch_template" "this" {
   }
 }
 
-# resource "aws_ecs_service" "this" {
-#     name = "${var.prefix}-ecs-hotload"
-#     iam_role = aws_iam_role.this_ecs_ec2.arn
-#     cluster = aws_ecs_cluster.this.id
+resource "aws_autoscaling_group" "this" {
+  name                = "${var.prefix}-asg-ec2-hotload"
+  vpc_zone_identifier = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
+  #   launch_configuration = aws_launch_template.this.name
+  launch_template {
+    id      = aws_launch_template.this.id
+    version = "$Latest"
+  }
 
-# }
+
+  desired_capacity          = 1
+  min_size                  = 1
+  max_size                  = 1
+  health_check_grace_period = 0
+  health_check_type         = "EC2"
+  protect_from_scale_in     = true
+
+  tag {
+    key                 = "Name"
+    value               = aws_ecs_cluster.this.name
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "AmazonECSManaged"
+    value               = ""
+    propagate_at_launch = true
+  }
+}

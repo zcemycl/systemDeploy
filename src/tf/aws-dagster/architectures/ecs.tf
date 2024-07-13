@@ -58,10 +58,33 @@ resource "aws_ecs_cluster" "this" {
   name = "${var.prefix}-cluster"
 }
 
-resource "aws_ecs_cluster_capacity_providers" "example" {
-  cluster_name = aws_ecs_cluster.this.name
+resource "aws_appautoscaling_target" "this" {
+  max_capacity       = 1
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.this_hotload.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
 
-  capacity_providers = ["FARGATE"]
+resource "aws_ecs_capacity_provider" "this" {
+  name = "hello_ecs_ec2_capacity_provider"
+
+  auto_scaling_group_provider {
+    auto_scaling_group_arn         = aws_autoscaling_group.this.arn
+    managed_termination_protection = "ENABLED"
+
+    managed_scaling {
+      maximum_scaling_step_size = 1
+      minimum_scaling_step_size = 1
+      status                    = "ENABLED"
+      target_capacity           = 1
+    }
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "cas" {
+  cluster_name       = aws_ecs_cluster.this.name
+  capacity_providers = [aws_ecs_capacity_provider.this.name, "FARGATE"]
 
   default_capacity_provider_strategy {
     base              = 1
@@ -69,6 +92,18 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
     capacity_provider = "FARGATE"
   }
 }
+
+# resource "aws_ecs_cluster_capacity_providers" "example" {
+#   cluster_name = aws_ecs_cluster.this.name
+
+#   capacity_providers = ["FARGATE"]
+
+#   default_capacity_provider_strategy {
+#     base              = 1
+#     weight            = 100
+#     capacity_provider = "FARGATE"
+#   }
+# }
 
 module "ecs_srv_task" {
   source                            = "github.com/zcemycl/systemDeploy/src/tf/modules/ecs"

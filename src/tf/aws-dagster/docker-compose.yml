@@ -111,7 +111,8 @@ services:
     <<: *dagster_code_common
     volumes:
       - ./codelocations/etl1/etl1:/opt/dagster/app/etl1
-    command: dagster code-server start -h 0.0.0.0 -p 4000 -m etl1
+    # command: dagster code-server start -h 0.0.0.0 -p 4000 -m etl1
+    command: dagster api grpc -h 0.0.0.0 -p 4000 -m etl1
   dagster-user-code-etl2:
     <<: *dagster_code_common
     build:
@@ -130,7 +131,8 @@ services:
       ENV: local
     volumes:
       - ./codelocations/etl2/etl2:/opt/dagster/app/etl2
-    command: dagster code-server start -h 0.0.0.0 -p 4001 -m etl2
+    # command: dagster code-server start -h 0.0.0.0 -p 4001 -m etl2
+    command: dagster api grpc -h 0.0.0.0 -p 4001 -m etl2
   webserver:
     <<: *dagster_common
     entrypoint:

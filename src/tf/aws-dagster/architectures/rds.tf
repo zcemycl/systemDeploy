@@ -5,6 +5,7 @@ resource "aws_db_subnet_group" "this" {
 
 resource "aws_db_instance" "this" {
   allocated_storage   = 30
+  db_name             = "postgres"
   storage_type        = "gp2"
   instance_class      = "db.t4g.micro"
   engine              = "postgres"
@@ -56,5 +57,29 @@ resource "aws_secretsmanager_secret_version" "this" {
     "host"                 = aws_db_instance.this.address
     "port"                 = 5432
     "dbInstanceIdentifier" = aws_db_instance.this.id
+    "dbname"               = aws_db_instance.this.db_name
   })
+}
+
+
+resource "aws_service_discovery_service" "this" {
+  name = "db"
+  dns_config {
+    namespace_id   = aws_service_discovery_private_dns_namespace.this.id
+    routing_policy = "WEIGHTED"
+    dns_records {
+      ttl  = 300
+      type = "CNAME"
+    }
+  }
+}
+
+resource "aws_service_discovery_instance" "this" {
+  instance_id = aws_db_instance.this.id
+  service_id  = aws_service_discovery_service.this.id
+
+  attributes = {
+    AWS_INSTANCE_CNAME = aws_db_instance.this.address
+    AWS_INSTANCE_PORT  = aws_db_instance.this.port
+  }
 }

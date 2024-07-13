@@ -77,7 +77,7 @@ resource "null_resource" "etl2_push" {
 
 resource "null_resource" "webserver_push" {
   provisioner "local-exec" {
-    command = "cd .. && docker build --platform linux/amd64 -t ${module.ecr.ecr_repo_urls["${var.prefix}-dagster-webserver"]}:latest -f Dockerfile.dagster . --build-arg='DAGSTER_CONF=dagster-prod.yaml' --build-arg='WORKSPACE_CONF=workspace.yaml'"
+    command = "cd .. && docker build --platform linux/amd64 -t ${module.ecr.ecr_repo_urls["${var.prefix}-dagster-webserver"]}:latest -f Dockerfile.dagster . --build-arg='DAGSTER_CONF=dagster-prod.yaml' --build-arg='WORKSPACE_CONF=workspace-prod.yaml'"
   }
   provisioner "local-exec" {
     command = "aws ecr get-login-password --region ${var.AWS_REGION} | docker login --username AWS --password-stdin ${module.ecr.ecr_registry_ids["${var.prefix}-dagster-webserver"]}.dkr.ecr.${var.AWS_REGION}.amazonaws.com"

@@ -58,6 +58,18 @@ resource "aws_ecs_cluster" "this" {
   name = "${var.prefix}-cluster"
 }
 
+resource "aws_ecs_cluster_capacity_providers" "example" {
+  cluster_name = aws_ecs_cluster.this.name
+
+  capacity_providers = ["FARGATE"]
+
+  default_capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = "FARGATE"
+  }
+}
+
 module "ecs_srv_task" {
   source                            = "github.com/zcemycl/systemDeploy/src/tf/modules/ecs"
   prefix                            = var.prefix
@@ -113,7 +125,7 @@ module "ecs_srv_task" {
       cluster_id       = aws_ecs_cluster.this.id
       cluster_arn      = aws_ecs_cluster.this.arn
       sg_ids           = [module.security_groups.sg_ids["everything"].id]
-      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*etl1_nat.*", name)) > 0]
+      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
       lb_target_groups = []
     }
     etl2 = {
@@ -166,7 +178,7 @@ module "ecs_srv_task" {
       cluster_id       = aws_ecs_cluster.this.id
       cluster_arn      = aws_ecs_cluster.this.arn
       sg_ids           = [module.security_groups.sg_ids["everything"].id]
-      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*etl2_nat.*", name)) > 0]
+      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
       lb_target_groups = []
     }
     webserver = {
@@ -216,7 +228,7 @@ module "ecs_srv_task" {
       cluster_id       = aws_ecs_cluster.this.id
       cluster_arn      = aws_ecs_cluster.this.arn
       sg_ids           = [module.security_groups.sg_ids["everything"].id]
-      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*webserver_nat.*", name)) > 0]
+      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
       lb_target_groups = []
     }
     daemon = {
@@ -266,7 +278,7 @@ module "ecs_srv_task" {
       cluster_id       = aws_ecs_cluster.this.id
       cluster_arn      = aws_ecs_cluster.this.arn
       sg_ids           = [module.security_groups.sg_ids["everything"].id]
-      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*daemon_nat.*", name)) > 0]
+      subnet_ids       = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
       lb_target_groups = []
     }
   }

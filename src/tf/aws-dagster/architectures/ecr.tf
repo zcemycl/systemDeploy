@@ -38,18 +38,6 @@ module "ecr" {
       sg_ids               = []
       subnet_ids           = []
       route_table_ids      = []
-    },
-    {
-      name                 = "${var.prefix}-dagster-daemon"
-      lastn                = 5
-      image_tag_mutability = "MUTABLE"
-      scan_on_push         = true
-      force_delete         = true
-      enable_vpc_endpt     = false
-      vpc_id               = aws_vpc.this.id
-      sg_ids               = []
-      subnet_ids           = []
-      route_table_ids      = []
     }
   ]
 }
@@ -82,7 +70,8 @@ resource "null_resource" "etl2_push" {
   }
 
   depends_on = [
-    module.ecr
+    module.ecr,
+    null_resource.etl1_push
   ]
 }
 
@@ -98,6 +87,7 @@ resource "null_resource" "webserver_push" {
   }
 
   depends_on = [
-    module.ecr
+    module.ecr,
+    null_resource.etl2_push
   ]
 }

@@ -32,14 +32,14 @@ variable "etl1_subnets_cidr" {
   default = ["10.1.32.0/21"]
 }
 
-variable "etl2_subnets_cidr" {
-  type    = list(string)
-  default = ["10.1.40.0/21"]
-}
+# variable "etl2_subnets_cidr" {
+#   type    = list(string)
+#   default = ["10.1.40.0/21"]
+# }
 
 variable "dagster_webserver_subnets_cidr" {
   type    = list(string)
-  default = ["10.1.48.0/21"]
+  default = ["10.1.48.0/21", "10.1.40.0/21"]
 }
 
 variable "openvpn_server_ami" {

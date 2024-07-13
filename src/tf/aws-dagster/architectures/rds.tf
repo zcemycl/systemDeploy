@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "this" {
   name       = "${var.prefix}-db-subnet-group"
-  subnet_ids = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*db_nat.*", name)) > 0]
+  subnet_ids = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
 }
 
 resource "aws_db_instance" "this" {
@@ -44,8 +44,10 @@ resource "random_password" "this" {
   numeric = true
 }
 
+resource "random_uuid" "uuid" {}
+
 resource "aws_secretsmanager_secret" "this" {
-  name = "${var.prefix}-postgres-creds"
+  name = "${var.prefix}-creds-${random_uuid.uuid.result}"
 }
 
 resource "aws_secretsmanager_secret_version" "this" {

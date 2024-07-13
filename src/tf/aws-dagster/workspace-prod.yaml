@@ -10,6 +10,6 @@ load_from:
       location_name: { "env": "ETL2_CODE_LOC_NAME" }
 
   - grpc_server:
-      host: { "env": "ETL2_CODE_SERVER_HOST" }
-      port: { "env": "ETL2_CODE_SERVER_PORT" }
+      host: etl2hotload.dagster.internal
+      port: 4002
       location_name: etl2_code_server_hotload

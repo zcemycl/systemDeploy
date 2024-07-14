@@ -63,14 +63,11 @@ resource "aws_launch_template" "this" {
 resource "aws_autoscaling_group" "this" {
   name                = "${var.prefix}-asg-ec2-hotload"
   vpc_zone_identifier = [for name, obj in module.private_subnet.subnets : obj.id if length(regexall(".*dagster_nat.*", name)) > 0]
-  #   launch_configuration = aws_launch_template.this.name
   launch_template {
     id      = aws_launch_template.this.id
     version = "$Latest"
   }
 
-
-  desired_capacity          = 1
   min_size                  = 1
   max_size                  = 1
   health_check_grace_period = 0

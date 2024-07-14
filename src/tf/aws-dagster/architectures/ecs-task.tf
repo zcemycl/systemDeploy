@@ -96,14 +96,15 @@ resource "aws_service_discovery_service" "this_hotload" {
 }
 
 resource "aws_ecs_service" "this_hotload" {
-  name = "hotload-etl2"
-  # iam_role = aws_iam_role.this_srv.arn
+  name            = "hotload-etl2"
   cluster         = aws_ecs_cluster.this.id
   desired_count   = 1
   task_definition = aws_ecs_task_definition.this.arn
-  launch_type     = "EC2"
-  #     deployment_minimum_healthy_percent = 50
-  #   deployment_maximum_percent         = 200
+
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.this.name
+    weight            = 100
+  }
 
   network_configuration {
     security_groups = [module.security_groups.sg_ids["everything"].id]

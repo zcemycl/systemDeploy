@@ -1,5 +1,6 @@
-version: '3.10'
-
+networks:
+  net:
+    driver: bridge
 services:
   neo4j:
     image: neo4j:latest
@@ -15,3 +16,22 @@ services:
     ports:
       - "7474:7474"
       - "7687:7687"
+    networks:
+      - net
+  add-data:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.etl
+      args:
+        - HOSTNAME=neo4j
+    entrypoint: python -m backend
+    depends_on:
+      - neo4j
+    networks:
+      - net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 10s

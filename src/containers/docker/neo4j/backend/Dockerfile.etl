@@ -1,0 +1,28 @@
+ARG HOSTNAME=localhost
+FROM python:3.11.3-bullseye AS builder
+RUN pip install poetry==1.8.2
+
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
+
+WORKDIR /app
+COPY backend/pyproject.toml backend/poetry.lock ./
+COPY backend/src/backend ./src/backend
+RUN touch README.md
+
+RUN poetry install --without dev && rm -rf $POETRY_CACHE_DIR
+
+FROM python:3.11-slim-buster AS runtime
+ARG HOSTNAME
+ENV HOSTNAME=${HOSTNAME}
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+WORKDIR /app
+RUN apt-get update
+RUN apt install zip -y
+COPY --from=builder /app/src ./src
+
+ENTRYPOINT [ "/bin/bash", "-c", "echo Hello World" ]

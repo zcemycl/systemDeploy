@@ -18,6 +18,12 @@ services:
       - "7687:7687"
     networks:
       - net
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
   add-data:
     build:
       context: .
@@ -26,7 +32,8 @@ services:
         - HOSTNAME=neo4j
     entrypoint: python -m backend
     depends_on:
-      - neo4j
+      neo4j:
+        condition: service_healthy
     networks:
       - net
     deploy:

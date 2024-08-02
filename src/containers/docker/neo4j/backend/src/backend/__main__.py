@@ -1,5 +1,7 @@
 import os
+import string
 
+import numpy as np
 from loguru import logger
 from neo4j import GraphDatabase
 
@@ -28,7 +30,7 @@ with GraphDatabase.driver(URI, auth=AUTH) as driver:
             resp = list(session.run(cmd, None))
             print(resp)
 
-        resp = list(session.run(query, parameters={'rows': ["d"]}))
+        resp = list(session.run(query, parameters={'rows': list(string.ascii_lowercase)}))
 
     query = '''
         UNWIND $row.table_keywords AS keyword
@@ -39,11 +41,13 @@ with GraphDatabase.driver(URI, auth=AUTH) as driver:
         MERGE (p)-[:CONTAINS]->(k)
         RETURN k.name AS name
     '''
+    rng = np.random.default_rng(2)
     with driver.session(database="neo4j") as session:
         for record in [
             {
-                "table_keywords": ["a", "c", "b"],
-                "product": "d",
+                "table_keywords": rng.choice(list(string.ascii_lowercase), 3),
+                "product": each,
             }
+            for each in list(string.ascii_lowercase)
         ]:
             resp = list(session.run(query, parameters={'row': record}))

@@ -7,6 +7,8 @@ export default function Home() {
   const [visNetwork, setVisNetwork] = useState<any>(null);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  const [showMenu, setShowMenu] = useState(false);
+  const [selectedNodes, setSelectedNodes] = useState<any>({});
 
   useEffect(() => {
     const draw = () => {
@@ -82,19 +84,50 @@ export default function Home() {
         viz.network?.on("click", (event) => {
           // console.log(event)
           console.log("click");
-          const selection = viz.network?.getSelectedNodes();
-          console.log(selection);
-          console.log(e);
-          console.log(event.event.target.getBoundingClientRect());
-          console.log(event.event.center);
+          setShowMenu(false);
+          // console.log(event);
+          // console.log(event.event.target.getBoundingClientRect());
+          // console.log(event.event.center);
           const rect = event.event.target.getBoundingClientRect();
           // let correctedX = event.event.center.x - rect.x;
           // let correctedY = event.event.center.y - rect.y;
-          let correctedX = event.event.center.x;
-          let correctedY = event.event.center.y;
-          console.log(correctedX, correctedY);
+        });
+
+        viz.network?.on("oncontext", (event) => {
+          event.event.preventDefault();
+          console.log("oncontext");
+          console.log(event);
+          const rect = event.event.target.getBoundingClientRect();
+          let correctedX = event.event.x;
+          let correctedY = event.event.y;
+          const nodeId = viz.network?.getNodeAt({
+            x: correctedX - rect.x,
+            y: correctedY - rect.y,
+          });
+          console.log(nodeId);
           setX(correctedX);
           setY(correctedY);
+          setShowMenu(true);
+        });
+
+        viz.network?.on("select", (event) => {
+          console.log("select");
+          console.log(event);
+          setShowMenu(false);
+          // const selection = vis?.network?.getSelectedNodes();
+          // console.log(selection);
+          // const labels = viz?.nodes
+          //   .get()
+          //   .filter((node: any) => event.nodes?.includes(node.id))
+          //   .map((node: any) => {
+          //     return node.label;
+          //   });
+          // console.log(labels);
+          // if (labels.length !== 0) {
+          //   const cmd = `MATCH (p:Product) WHERE p.name="${labels[0]}" RETURN p;`;
+          //   console.log(cmd);
+          //   viz.renderWithCypher(cmd);
+          // }
         });
       });
 
@@ -111,12 +144,14 @@ export default function Home() {
     >
       <div className="flex items-center content-center align-middle flex-row justify-center">
         <div id="viz" className="border border-white bg-white"></div>
-        <div
-          className={`absolute bg-slate-600 text-white`}
-          style={{ left: x, top: y }}
-        >
-          <h1>Hello</h1>
-        </div>
+        {showMenu && (
+          <div
+            className={`absolute bg-slate-600 text-white`}
+            style={{ left: x, top: y }}
+          >
+            <h1>Hello</h1>
+          </div>
+        )}
       </div>
     </section>
   );

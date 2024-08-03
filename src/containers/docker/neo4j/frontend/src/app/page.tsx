@@ -4,6 +4,9 @@ import NeoVis, { NeovisConfig, NeoVisEvents } from "neovis.js";
 
 export default function Home() {
   const [vis, setVis] = useState<any>(null);
+  const [visNetwork, setVisNetwork] = useState<any>(null);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
 
   useEffect(() => {
     const draw = () => {
@@ -71,6 +74,31 @@ export default function Home() {
       };
       const viz = new NeoVis(config);
       viz.render();
+      viz.network?.on("click", () => {
+        console.log("hello");
+      });
+      viz.registerOnEvent(NeoVisEvents.CompletionEvent, (e) => {
+        console.log("hh");
+        viz.network?.on("click", (event) => {
+          // console.log(event)
+          console.log("click");
+          const selection = viz.network?.getSelectedNodes();
+          console.log(selection);
+          console.log(e);
+          console.log(event.event.target.getBoundingClientRect());
+          console.log(event.event.center);
+          const rect = event.event.target.getBoundingClientRect();
+          // let correctedX = event.event.center.x - rect.x;
+          // let correctedY = event.event.center.y - rect.y;
+          let correctedX = event.event.center.x;
+          let correctedY = event.event.center.y;
+          console.log(correctedX, correctedY);
+          setX(correctedX);
+          setY(correctedY);
+        });
+      });
+
+      console.log(viz.network);
       setVis(viz);
     };
     draw();
@@ -83,6 +111,12 @@ export default function Home() {
     >
       <div className="flex items-center content-center align-middle flex-row justify-center">
         <div id="viz" className="border border-white bg-white"></div>
+        <div
+          className={`absolute bg-slate-600 text-white`}
+          style={{ left: x, top: y }}
+        >
+          <h1>Hello</h1>
+        </div>
       </div>
     </section>
   );

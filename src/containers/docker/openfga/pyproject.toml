@@ -4,11 +4,27 @@ version = "0.1.0"
 description = ""
 authors = ["zcemycl <lyc010197@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "datacore",  from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 openfga-sdk = "^0.6.0"
+uvicorn = "^0.30.5"
+sqlalchemy = "^2.0.31"
+fastapi = "^0.112.0"
+loguru = "^0.7.2"
 
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = "^24.8.0"
+pytest = "^8.3.2"
+flake8 = "^7.1.1"
+pre-commit = "^3.8.0"
+
+
+[tool.poetry.group.db.dependencies]
+alembic = "^1.13.2"
 
 [build-system]
 requires = ["poetry-core"]

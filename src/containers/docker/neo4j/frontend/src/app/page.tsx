@@ -9,7 +9,7 @@ export default function Home() {
   const [y, setY] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
   const [selectedNodes, setSelectedNodes] = useState<any>({});
-  const [neo4jquery, setNeo4jQuery] = useState("");
+  const [neo4jquery, setNeo4jquery] = useState("");
   const [shiftEnterPressed, setShiftEnterPressed] = useState(false);
 
   useEffect(() => {
@@ -179,23 +179,25 @@ export default function Home() {
           cols={40}
           className="bg-sky-800 rounded-md p-3 border border-white w-1/2 break-words"
           value={neo4jquery}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             console.log(e);
-            console.log((e.nativeEvent as any).inputType);
-            if (
-              shiftEnterPressed &&
-              (e.nativeEvent as any).inputType == "insertLineBreak"
-            ) {
+            const inputType = (
+              e.nativeEvent as unknown as { inputType: string }
+            ).inputType;
+            console.log(inputType);
+            if (shiftEnterPressed && inputType === "insertLineBreak") {
               return;
             }
-            setNeo4jQuery((e.target as HTMLTextAreaElement).value);
+            setNeo4jquery(e.target.value);
           }}
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+            console.log(e);
             if (e.key === "Enter" && e.shiftKey) {
               console.log("Enter");
-              console.log(neo4jquery.replace(/(\r\n|\n|\r)/gm, " "));
+              const query = neo4jquery.replace(/(\r\n|\n|\r)/gm, " ");
+              console.log(query, vis !== null);
               if (vis !== null) {
-                vis.renderWithCypher(neo4jquery.replace(/(\r\n|\n|\r)/gm, " "));
+                vis.renderWithCypher(query);
               }
             }
           }}

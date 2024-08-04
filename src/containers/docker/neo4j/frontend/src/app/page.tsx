@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import NeoVis, { NeovisConfig, NeoVisEvents } from "neovis.js";
 
 export default function Home() {
@@ -9,6 +9,8 @@ export default function Home() {
   const [y, setY] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
   const [selectedNodes, setSelectedNodes] = useState<any>({});
+  const [neo4jquery, setNeo4jQuery] = useState("");
+  const [shiftEnterPressed, setShiftEnterPressed] = useState(false);
 
   useEffect(() => {
     const draw = () => {
@@ -80,7 +82,6 @@ export default function Home() {
         console.log("hello");
       });
       viz.registerOnEvent(NeoVisEvents.CompletionEvent, (e) => {
-        console.log("hh");
         viz.network?.on("click", (event) => {
           // console.log(event)
           console.log("click");
@@ -88,7 +89,7 @@ export default function Home() {
           // console.log(event);
           // console.log(event.event.target.getBoundingClientRect());
           // console.log(event.event.center);
-          const rect = event.event.target.getBoundingClientRect();
+          // const rect = event.event.target.getBoundingClientRect();
           // let correctedX = event.event.center.x - rect.x;
           // let correctedY = event.event.center.y - rect.y;
         });
@@ -137,12 +138,34 @@ export default function Home() {
     draw();
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && event.shiftKey) {
+        setShiftEnterPressed(true);
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && event.shiftKey) {
+        setShiftEnterPressed(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
   return (
     <section
       className="bg-slate-700 min-w-full min-h-screen
       text-white p-5"
     >
-      <div className="flex items-center content-center align-middle flex-row justify-center">
+      <div className="flex items-center content-center align-middle flex-col justify-center space-y-2">
         <div id="viz" className="border border-white bg-white"></div>
         {showMenu && (
           <div
@@ -152,6 +175,31 @@ export default function Home() {
             <h1>Hello</h1>
           </div>
         )}
+        <textarea
+          cols={40}
+          className="bg-sky-800 rounded-md p-3 border border-white w-1/2 break-words"
+          value={neo4jquery}
+          onChange={(e) => {
+            console.log(e);
+            console.log((e.nativeEvent as any).inputType);
+            if (
+              shiftEnterPressed &&
+              (e.nativeEvent as any).inputType == "insertLineBreak"
+            ) {
+              return;
+            }
+            setNeo4jQuery((e.target as HTMLTextAreaElement).value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && e.shiftKey) {
+              console.log("Enter");
+              console.log(neo4jquery.replace(/(\r\n|\n|\r)/gm, " "));
+              if (vis !== null) {
+                vis.renderWithCypher(neo4jquery.replace(/(\r\n|\n|\r)/gm, " "));
+              }
+            }
+          }}
+        />
       </div>
     </section>
   );

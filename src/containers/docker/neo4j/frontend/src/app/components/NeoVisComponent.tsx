@@ -1,17 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { NeovisConfig } from "neovis.js/dist/types";
 // import { NeovisConfig, NeoVisEvents } from "neovis.js";
 
 // Dynamically import Neovis so that it only runs in the browser
-const NeoVis = dynamic(() => import("neovis.js").then((mod) => mod.default), {
-  ssr: false,
-});
-const loadNeovis = () =>
-  import("neovis.js").then((module) => ({
-    NeovisConfig: module.NeovisConfig,
-    NeoVisEvents: module.NeoVisEvents,
-  }));
+// const NeoVis = dynamic<any>(
+//   () => import("neovis.js").then((mod) => mod.default),
+//   {
+//     ssr: false,
+//   }
+// );
+// const loadNeovis = () =>
+//   import("neovis.js").then((module) => ({
+//     default: module.default,
+//     NeoVisEvents: module.NeoVisEvents,
+//   }));
 
 const NeoVisComponent: React.FC = () => {
   const [vis, setVis] = useState<any>(null);
@@ -22,35 +26,21 @@ const NeoVisComponent: React.FC = () => {
   const [selectedNodes, setSelectedNodes] = useState<any>({});
   const [neo4jquery, setNeo4jquery] = useState("");
   const [shiftEnterPressed, setShiftEnterPressed] = useState(false);
-  const [NeovisConfig, setNeovisConfig] = useState(null);
-  const [NeoVisEvents, setNeoVisEvents] = useState(null);
-
-  //   useEffect(() => {
-  //     if (vis !== null) {
-  //       vis.network?.on("click", () => {
-  //         console.log("hello");
-  //       });
-  //       vis.registerOnEvent(NeoVisEvents.CompletionEvent, (e) => {
-  //       });
-  //     }
-  //   }, [vis]);
+  const [NeoVisEvents, setNeoVisEvents] = useState<any>(null);
 
   useEffect(() => {
     const initializeNeovis = async () => {
       // Import Neovis dynamically
-      const {
-        default: NeoVis,
-        NeovisConfig,
-        NeoVisEvents,
-      } = await import("neovis.js");
-      setNeovisConfig(NeovisConfig);
+      //   loadNeovis();
+      const { default: NeoVis, NeoVisEvents } = await import("neovis.js");
+      console.log(NeoVis);
       setNeoVisEvents(NeoVisEvents);
 
       // Configuration for Neovis
       const config = {
         containerId: "viz",
         neo4j: {
-          serverUrl: "bolt://localhost:7687",
+          serverUrl: "neo4j://localhost:7687",
           serverPassword: "password",
           serverUser: "neo4j",
         },
@@ -111,7 +101,7 @@ const NeoVisComponent: React.FC = () => {
       };
       // Initialize Neovis
       const viz = new NeoVis(config);
-      viz.render();
+      //   viz.render();
       setVis(viz);
       //   viz.registerOnEvent(NeoVisEvents.CompletionEvent, (e) => {
       //     console.log(e.recordCount);
@@ -174,11 +164,12 @@ const NeoVisComponent: React.FC = () => {
   useEffect(() => {
     if (vis !== null && NeoVisEvents !== null) {
       vis.render();
-      vis.registerOnEvent(NeoVisEvents.CompletionEvent, (e) => {
+      console.log(vis, NeoVisEvents);
+      vis.registerOnEvent(NeoVisEvents.CompletionEvent, (e: any) => {
         // if (vis === null || vis.network === null) {
         //   console.log("error");
         // }
-        vis.network?.on("click", (event) => {
+        vis.network.on("click", (event: any) => {
           // console.log(event)
           console.log("click");
           setShowMenu(false);
@@ -190,24 +181,34 @@ const NeoVisComponent: React.FC = () => {
           // let correctedY = event.event.center.y - rect.y;
         });
 
-        vis.network?.on("oncontext", (event) => {
-          event.event.preventDefault();
-          console.log("oncontext");
-          console.log(event);
-          const rect = event.event.target.getBoundingClientRect();
-          let correctedX = event.event.x;
-          let correctedY = event.event.y;
-          const nodeId = vis.network?.getNodeAt({
-            x: correctedX - rect.x,
-            y: correctedY - rect.y,
-          });
-          console.log(nodeId);
-          setX(correctedX);
-          setY(correctedY);
-          setShowMenu(true);
-        });
+        vis.network.on(
+          "oncontext",
+          (event: {
+            event: {
+              preventDefault: () => void;
+              target: { getBoundingClientRect: () => any };
+              x: number;
+              y: number;
+            };
+          }) => {
+            event.event.preventDefault();
+            console.log("oncontext");
+            console.log(event);
+            const rect = event.event.target.getBoundingClientRect();
+            let correctedX = event.event.x;
+            let correctedY = event.event.y;
+            const nodeId = vis.network?.getNodeAt({
+              x: correctedX - rect.x,
+              y: correctedY - rect.y,
+            });
+            console.log(nodeId);
+            setX(correctedX);
+            setY(correctedY);
+            setShowMenu(true);
+          }
+        );
 
-        vis.network?.on("select", (event) => {
+        vis.network.on("select", (event: any) => {
           console.log("select");
           console.log(event);
           setShowMenu(false);
@@ -228,7 +229,7 @@ const NeoVisComponent: React.FC = () => {
         });
       });
     }
-  }, [vis]);
+  }, [vis, NeoVisEvents]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -255,6 +256,10 @@ const NeoVisComponent: React.FC = () => {
   return (
     <div className="flex items-center content-center align-middle flex-col justify-center space-y-2">
       <div id="viz" className="border border-white bg-white"></div>
+      {(NeoVisEvents === null || vis === null || vis.network === null) && (
+        <div>Loading</div>
+      )}
+
       {showMenu && (
         <div
           className={`absolute bg-slate-600 text-white`}
@@ -265,7 +270,7 @@ const NeoVisComponent: React.FC = () => {
       )}
       <textarea
         cols={40}
-        className="bg-sky-800 rounded-md p-3 border border-white w-1/2 break-words"
+        className="bg-sky-800 rounded-md p-3 border border-white w-1/2 break-words text-white"
         value={neo4jquery}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           console.log(e);

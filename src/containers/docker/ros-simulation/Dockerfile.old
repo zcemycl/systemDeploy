@@ -16,4 +16,9 @@ RUN echo "source /catkin_ws/devel/setup.bash" > ~/.bashrc
 RUN pip install rospkg
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
     cd /catkin_ws/; catkin_make; source /catkin_ws/devel/setup.bash'
+# WORKDIR /opt/ros/noetic
+# RUN . setup.bash
+# WORKDIR /catkin_ws
+# RUN catkin_make
 WORKDIR /
+COPY ./run_gazebo.sh /run_gazebo.sh

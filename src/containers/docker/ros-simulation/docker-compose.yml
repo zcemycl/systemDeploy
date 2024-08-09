@@ -1,0 +1,32 @@
+networks:
+  rosnet:
+    name: rosnet
+    driver: bridge
+services:
+  roscore:
+    build:
+      context: .
+      dockerfile: Dockerfile.old
+    networks:
+      - rosnet
+    command: roscore -p 11311
+    ports:
+      - 11311:11311
+  gazebo:
+    build:
+      context: .
+      dockerfile: Dockerfile.old
+    networks:
+      - rosnet
+    command: /run_gazebo.sh
+    environment:
+      - ROS_MASTER_URI=http://roscore:11311/
+      - DISPLAY=host.docker.internal:0.0
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 10s
+    depends_on:
+      - roscore

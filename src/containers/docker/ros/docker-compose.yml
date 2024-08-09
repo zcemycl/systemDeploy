@@ -1,0 +1,88 @@
+x-ros-common: &ros_common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  networks:
+    - rosnet
+networks:
+  rosnet:
+    name: rosnet
+    driver: bridge
+services:
+  roscore:
+    <<: *ros_common
+    ports:
+      - 11311:11311
+    command: roscore -p 11311
+
+  rostopic-list:
+    <<: *ros_common
+    environment:
+      - ROS_MASTER_URI=http://roscore:11311/
+    command: rostopic list
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 10s
+    depends_on:
+      - roscore
+
+  rostopic-pub:
+    <<: *ros_common
+    environment:
+      - ROS_MASTER_URI=http://roscore:11311/
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 10s
+    depends_on:
+      - roscore
+      - rostopic-list
+    command:
+      [
+        "rostopic",
+        "pub",
+        "/chatter",
+        "std_msgs/String",
+        "data: hello",
+        "-r",
+        "1",
+      ]
+
+  rostopic-sub:
+    <<: *ros_common
+    environment:
+      - ROS_MASTER_URI=http://roscore:11311/
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 10s
+    depends_on:
+      - roscore
+      - rostopic-list
+      - rostopic-pub
+    command: ["rostopic", "echo", "/chatter"]
+
+  roslaunch-foxglove-bridge:
+    <<: *ros_common
+    environment:
+      - ROS_MASTER_URI=http://roscore:11311/
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 10s
+    ports:
+      - 8765:8765
+    depends_on:
+      - roscore
+      - rostopic-list
+      - rostopic-pub
+    command: ["roslaunch", "foxglove_bridge", "foxglove_bridge.launch"]

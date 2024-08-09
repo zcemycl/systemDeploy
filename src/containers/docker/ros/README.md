@@ -11,3 +11,8 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch # initialize the gazeb
 export TURTLEBOT3_MODEL=burger
 roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 ```
+
+## References
+
+1. https://foxglove.dev/blog/installing-ros1-on-macos-with-docker
+2. https://foxglove.dev/blog/installing-ros2-on-macos-with-docker

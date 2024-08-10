@@ -3,7 +3,8 @@
     ```
     https://sourceforge.net/projects/vcxsrv/
     ```
-2. Run docker compose
+2. Open XLaunch, set display number to 0.
+3. Run docker compose
     ```
     docker compose up
     ```

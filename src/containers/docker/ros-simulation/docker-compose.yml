@@ -1,32 +1,56 @@
+x-ros-common: &ros_common
+  build:
+    context: .
+    dockerfile: Dockerfile.old
+  networks:
+    - rosnet
+  volumes:
+    - /tmp/.X11-unix:/tmp/.X11-unix:rw
+  environment:
+    - ROS_MASTER_URI=http://roscore:11311/
+    - DISPLAY=host.docker.internal:0.0
+    - QT_X11_NO_MITSHM=1
+  # runtime: nvidia
+  deploy:
+    restart_policy:
+      condition: on-failure
+      delay: 5s
+      max_attempts: 5
+      window: 10s
+    # resources:
+    #   reservations:
+    #     devices:
+    #       - driver: nvidia
+    #         count: 1
+    #         capabilities: [gpu]
 networks:
   rosnet:
     name: rosnet
     driver: bridge
 services:
   roscore:
-    build:
-      context: .
-      dockerfile: Dockerfile.old
-    networks:
-      - rosnet
+    <<: *ros_common
     command: roscore -p 11311
+    container_name: roscore
     ports:
       - 11311:11311
-  gazebo:
-    build:
-      context: .
-      dockerfile: Dockerfile.old
-    networks:
-      - rosnet
+  ros-simulation:
+    <<: *ros_common
     command: /run_gazebo.sh
-    environment:
-      - ROS_MASTER_URI=http://roscore:11311/
-      - DISPLAY=host.docker.internal:0.0
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 5
-        window: 10s
+    container_name: ros-simulation
     depends_on:
       - roscore
+  ros-algo:
+    <<: *ros_common
+    command: /run_algo.sh
+    container_name: ros-algo
+    depends_on:
+      - roscore
+      - ros-simulation
+  ros-rviz:
+    <<: *ros_common
+    command: /run_rviz.sh
+    container_name: ros-rviz
+    depends_on:
+      - roscore
+      - ros-simulation

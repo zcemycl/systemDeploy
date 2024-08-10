@@ -1,8 +1,19 @@
 FROM osrf/ros:noetic-desktop-full
+
+ENV NVIDIA_VISIBLE_DEVICES \
+    ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+
 RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install wget git python3-pip python3-catkin-tools -y
 RUN apt-get install ros-noetic-joy ros-noetic-control-toolbox \
     ros-noetic-robot-controllers ros-noetic-gazebo-ros \
+    ros-noetic-gmapping ros-noetic-robot-state-publisher \
+    ros-noetic-rviz ros-noetic-gazebo-ros-control \
+    ros-noetic-gazebo-ros-pkgs \
+    # ros-noetic-ignition-math6-vendor \
+    # ignition ignition-launch-cli ignition-tools \
     ros-noetic-gazebo-plugins ros-noetic-rgbd-launch -y
 WORKDIR /
 RUN mkdir -p catkin_ws/src/
@@ -21,4 +32,4 @@ RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
 # WORKDIR /catkin_ws
 # RUN catkin_make
 WORKDIR /
-COPY ./run_gazebo.sh /run_gazebo.sh
+COPY ./run_gazebo.sh ./run_rviz.sh ./run_algo.sh /

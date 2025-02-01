@@ -1,0 +1,29 @@
+networks:
+  net:
+services:
+  ros_empty:
+    # runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # alternatively, use `count: all` for all GPUs
+              capabilities: [gpu]
+    tty: true
+    network_mode: host
+    ipc: host
+    privileged: true
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.overall
+      target: tbase
+    # command: ["roslaunch",  "gazebo_ros" ,  "empty_world.launch"]
+    environment:
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - TURTLEBOT3_MODEL=waffle_pi
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw

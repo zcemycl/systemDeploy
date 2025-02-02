@@ -51,4 +51,4 @@ WORKDIR /turtlebot3_ws
 # CMD source /root/.bashrc && echo $PATH && roslaunch gazebo_ros empty_world.launch
 # CMD cat /root/.bashrc
 
-CMD source /opt/ros/noetic/setup.bash && source /turtlebot3_ws/devel/setup.bash && roslaunch turtlebot3_gazebo turtlebot3_world.launch
+# CMD source /opt/ros/noetic/setup.bash && source /turtlebot3_ws/devel/setup.bash && roslaunch turtlebot3_gazebo turtlebot3_world.launch

@@ -20,6 +20,11 @@ services:
       dockerfile: Dockerfile.overall
       target: tbase
     # command: ["roslaunch",  "gazebo_ros" ,  "empty_world.launch"]
+    command: bash -c 'source /opt/ros/noetic/setup.bash && source /turtlebot3_ws/devel/setup.bash && roslaunch turtlebot3_gazebo turtlebot3_world.launch'
+    # command: ["source", "/opt/ros/noetic/setup.bash", "&&", "source", "/turtlebot3_ws/devel/setup.bash", "&&", "roslaunch", "turtlebot3_gazeb", "turtlebot3_world.launch"]
+      # - source /opt/ros/noetic/setup.bash
+      # - source /turtlebot3_ws/devel/setup.bash
+      # - roslaunch turtlebot3_gazebo turtlebot3_world.launch
     environment:
       - NVIDIA_DRIVER_CAPABILITIES=all
       - DISPLAY=${DISPLAY}

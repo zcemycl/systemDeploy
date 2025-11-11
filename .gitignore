@@ -81,3 +81,4 @@ schedules/
 storage/
 *.egg-info
 tmp*
+data/

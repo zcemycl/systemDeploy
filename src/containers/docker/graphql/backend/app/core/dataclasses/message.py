@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from .member import member
 
 class message(Base):
-    __tablename__ = "member"
+    __tablename__ = "message"
 
     id = Column(
         "id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4

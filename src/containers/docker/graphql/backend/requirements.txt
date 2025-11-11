@@ -8,3 +8,4 @@ strawberry-graphql[fastapi]
 uvicorn[standard]
 asyncpg
 sqlalchemy[asyncio]
+asyncpg

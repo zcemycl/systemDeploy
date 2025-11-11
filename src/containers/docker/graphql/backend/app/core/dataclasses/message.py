@@ -30,5 +30,5 @@ class message(Base):
         ForeignKey("member.id", ondelete="CASCADE"), nullable=True
     )
     member: Mapped["member"] = relationship(
-        back_populates="message",
+        back_populates="messages",
     )

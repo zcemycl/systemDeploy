@@ -1,0 +1,10 @@
+fastapi
+graphene
+graphene-sqlalchemy
+pydantic
+sqlalchemy
+alembic
+strawberry-graphql[fastapi]
+uvicorn[standard]
+asyncpg
+sqlalchemy[asyncio]

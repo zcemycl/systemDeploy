@@ -12,4 +12,4 @@ class Member(BaseModel):
     id: UUID
     name: str
     age: int
-    messages: List["Message"]
+    messages: List["Message"] = []

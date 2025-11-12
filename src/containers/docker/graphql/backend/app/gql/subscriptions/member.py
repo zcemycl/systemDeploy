@@ -8,11 +8,15 @@ from sqlalchemy.sql import select
 
 from ..types import MemberType
 
-pubsub = KafkaPubSub(topic="members")
 
 @strawberry.type
 class MemberSubscription:
     @strawberry.subscription
     async def member_stream(self) -> AsyncGenerator[MemberType, None]:
-        async for message in pubsub.subscribe():
-            yield MemberType(**message)
+        pubsub = KafkaPubSub(topic="members")
+        try:
+            async for message in pubsub.subscribe():
+                yield MemberType(**message)
+        finally:
+            if pubsub.consumer:
+                await pubsub.consumer.stop()

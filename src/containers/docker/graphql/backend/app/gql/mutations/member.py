@@ -1,10 +1,9 @@
 import strawberry
 from app.core.dataclasses import member
-from app.kafka import KafkaPubSub
+from app.kafka import pubsub
 
 from ..types import MemberType
 
-pubsub = KafkaPubSub(topic="members")
 
 @strawberry.type
 class MemberMutation:

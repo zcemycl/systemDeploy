@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
@@ -28,7 +29,9 @@ class KafkaPubSub:
             bootstrap_servers=self.bootstrap_servers,
             value_deserializer=lambda v: json.loads(v.decode("utf-8")),
             auto_offset_reset="latest",
-            group_id="graphql-subscriber",
+            # load balancing --> no uuid
+            # broadcasting -> yes uuid
+            group_id=f"graphql-subscriber-{uuid.uuid4()}",
         )
         await self.consumer.start()
         try:
@@ -36,3 +39,5 @@ class KafkaPubSub:
                 yield msg.value
         finally:
             await self.consumer.stop()
+
+pubsub = KafkaPubSub(topic="members")

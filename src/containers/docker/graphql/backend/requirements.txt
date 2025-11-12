@@ -9,3 +9,4 @@ uvicorn[standard]
 asyncpg
 sqlalchemy[asyncio]
 asyncpg
+websockets

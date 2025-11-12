@@ -12,3 +12,4 @@ asyncpg
 websockets
 aiokafka
 aioredis
+broadcaster[redis]

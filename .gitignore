@@ -82,3 +82,4 @@ storage/
 *.egg-info
 tmp*
 data/
+*.rdb

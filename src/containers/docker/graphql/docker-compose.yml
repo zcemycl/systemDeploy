@@ -13,15 +13,19 @@ services:
       - ${PWD}/data/data:/var/lib/postgresql/data
     ports:
       - 5433:5432
-  # zookeeper: # https://github.com/bitnami/containers.git
-  #   image: bitnami/zookeeper:latest
-  #   ports:
-  #     - 2181:2181
-  #   environment:
-  #     - ALLOW_ANONYMOUS_LOGIN=yes
-  #   networks:
-  #     - net
-  kafka:
+    networks:
+      - net
+  graphql-redis:
+    image: redis:7
+    container_name: graphql-redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - net
+  graphql-kafka:
     image: bitnami/kafka:latest # https://github.com/bitnami/containers.git
     user: root
     ports:
@@ -38,7 +42,6 @@ services:
       - KAFKA_CFG_LOG_DIRS=/bitnami/kafka/data
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       # - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-
     volumes:
       - ./Kafka:/bitnami/kafka
     networks:

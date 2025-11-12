@@ -10,3 +10,5 @@ asyncpg
 sqlalchemy[asyncio]
 asyncpg
 websockets
+aiokafka
+aioredis

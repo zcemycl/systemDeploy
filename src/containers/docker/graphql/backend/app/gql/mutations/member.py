@@ -1,12 +1,10 @@
-import uuid
-from typing import List
-
 import strawberry
 from app.core.dataclasses import member
-from sqlalchemy.sql import select
+from app.kafka import KafkaPubSub
 
 from ..types import MemberType
 
+pubsub = KafkaPubSub(topic="members")
 
 @strawberry.type
 class MemberMutation:
@@ -25,8 +23,13 @@ class MemberMutation:
         session.add(new_member)
         await session.commit()
         await session.refresh(new_member)
-        return MemberType(
+        new_member_type = MemberType(
             id=new_member.id,
             name=new_member.name,
             age=new_member.age
         )
+        await pubsub.publish({
+            **new_member_type.__dict__,
+            "id": str(new_member_type.id),
+        })
+        return new_member_type

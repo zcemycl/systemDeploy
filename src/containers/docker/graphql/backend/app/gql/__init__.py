@@ -7,7 +7,7 @@ from .utils.context import get_context
 
 schema = strawberry.Schema(
     query=Query,
-    # mutation=Mutation,
+    mutation=Mutation,
 )
 
 graphql_app = GraphQLRouter(

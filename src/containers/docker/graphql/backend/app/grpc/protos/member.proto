@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package member;
+
+service MemberService {
+    rpc StreamMembers (Empty) returns (stream MemberReply);
+}
+
+message Empty {}
+
+message MemberReply {
+    string id = 1;
+    string name = 2;
+    int32 age = 3;
+}

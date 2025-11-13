@@ -13,3 +13,4 @@ websockets
 aiokafka
 aioredis
 broadcaster[redis]
+loguru

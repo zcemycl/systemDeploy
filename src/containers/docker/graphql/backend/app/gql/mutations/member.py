@@ -1,6 +1,7 @@
 import strawberry
 from app.core.dataclasses import member
 from app.kafka import pubsub
+from app.redis import redis_publisher
 
 from ..types import MemberType
 
@@ -27,8 +28,10 @@ class MemberMutation:
             name=new_member.name,
             age=new_member.age
         )
-        await pubsub.publish({
+        payload = {
             **new_member_type.__dict__,
             "id": str(new_member_type.id),
-        })
+        }
+        await pubsub.publish(payload)
+        await redis_publisher(payload)
         return new_member_type

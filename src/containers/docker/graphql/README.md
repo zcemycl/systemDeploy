@@ -37,3 +37,5 @@
         --grpc_python_out=$GRPC_DIR/generated/ \
         $GRPC_DIR/protos/member.proto
     ```
+3. Define service logic in `services`.
+4. Define server endpoints in `server` from `services`.

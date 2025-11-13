@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package member;
 
+import "common.proto";
+
 service MemberService {
     rpc StreamMembers (Empty) returns (stream MemberReply);
 }
-
-message Empty {}
 
 message MemberReply {
     string id = 1;

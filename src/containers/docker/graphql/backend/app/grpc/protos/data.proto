@@ -1,0 +1,21 @@
+syntax = "proto3";
+package data;
+
+service DataService {
+  rpc GetLargeDataset(DataRequest) returns (stream DataChunk);
+  rpc GetAnotherDataset(AnotherRequest) returns (stream DataChunk);
+}
+
+message DataRequest {
+  string query = 1;
+  int32 page_size = 2;
+}
+
+message AnotherRequest {
+  string filter = 1;
+  int32 page_size = 2;
+}
+
+message DataChunk {
+  string payload = 1; // JSON string for flexibility
+}

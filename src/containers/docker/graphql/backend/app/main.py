@@ -2,12 +2,20 @@ import asyncio
 
 import grpc
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from .gql import graphql_app
 from .grpc.generated import data_pb2, data_pb2_grpc
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # or ["http://localhost:5173"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(graphql_app, prefix="/graphql")
 
 async def grpc_to_bytes_get_large(query: str):

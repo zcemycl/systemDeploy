@@ -1,35 +1,63 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
+interface StreamItem {
+  id: number;
+  category: string;
+  value: number;
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [items, setItems] = useState<StreamItem[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  async function fetchLarge() {
+    setLoading(true);
+
+    const response = await fetch(
+      "/stream/large?query=test");
+
+    const reader = response.body?.getReader();
+    if (!reader) return;
+
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      const lines = chunk.trim().split("\n");
+      console.log(chunk)
+
+      for (const line of lines) {
+        try {
+          const obj: StreamItem = JSON.parse(line);
+          setItems(prev => [...prev, obj]);
+        } catch (e) {
+          console.error("Invalid JSON", line);
+        }
+      }
+    }
+
+    setLoading(false);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: "20px" }}>
+      <button onClick={fetchLarge} disabled={loading}>
+        {loading ? "Loading..." : "Load Large Dataset"}
+      </button>
+
+      <ul style={{ marginTop: "20px" }}>
+        {items.map((item, i) => (
+          <li key={i}>
+            {item.id} – {item.category} – {item.value}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default App

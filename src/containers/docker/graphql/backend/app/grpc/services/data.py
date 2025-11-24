@@ -12,7 +12,7 @@ class DataServiceServicer(data_pb2_grpc.DataServiceServicer):
             payload = json.dumps({"id": row, "category": "large", "value": row})
             yield data_pb2.DataChunk(payload=payload)
             # allow cancellation/backpressure
-            await asyncio.sleep(0)
+            await asyncio.sleep(2)
 
     async def GetAnotherDataset(self, request, context):
         data = [1,2,3]

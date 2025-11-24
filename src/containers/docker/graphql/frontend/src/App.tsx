@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import './App.css'
 
 interface StreamItem {
   id: number;

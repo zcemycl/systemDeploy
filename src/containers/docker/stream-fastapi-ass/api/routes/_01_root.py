@@ -7,5 +7,5 @@ router = APIRouter()
 async def read_root():
     return {
         "message": "Use /stream-text to see streaming output.",
-        "learning_order": ["abcd_01_root", "abcd_02_stream_text"],
+        "learning_order": ["_01_root", "_02_stream_text", "_03_stream_llm"],
     }

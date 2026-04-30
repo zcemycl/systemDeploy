@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Route02StreamText from './components/Route02StreamText'
 import Route03StreamLlm from './components/Route03StreamLlm'
 import Route04StreamGraph from './components/Route04StreamGraph'
+import Route05StreamSpawn from './components/Route05StreamSpawn'
 
 function App() {
   const apiBaseUrl = 'http://127.0.0.1:53199'
@@ -23,6 +24,11 @@ function App() {
       label: '04 Stream Graph Route',
       content: <Route04StreamGraph apiBaseUrl={apiBaseUrl} />,
     },
+    {
+      key: 'route-05',
+      label: '05 Stream Spawn Route',
+      content: <Route05StreamSpawn apiBaseUrl={apiBaseUrl} />,
+    },
   ]
 
   const totalCards = cards.length
@@ -37,7 +43,6 @@ function App() {
 
   return (
     <main className="mx-auto max-w-6xl space-y-4 p-6">
-      <h1 className="text-2xl font-semibold">Hello World Frontend</h1>
       <p className="text-sm">API Base URL: {apiBaseUrl}</p>
 
       <section className="space-y-3 rounded border p-4">

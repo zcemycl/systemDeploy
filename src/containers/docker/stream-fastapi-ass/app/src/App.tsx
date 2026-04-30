@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Route02StreamText from './components/Route02StreamText'
 import Route03StreamLlm from './components/Route03StreamLlm'
+import Route04StreamGraph from './components/Route04StreamGraph'
 
 function App() {
   const apiBaseUrl = 'http://127.0.0.1:53199'
@@ -16,6 +17,11 @@ function App() {
       key: 'route-03',
       label: '03 Stream LLM Route',
       content: <Route03StreamLlm apiBaseUrl={apiBaseUrl} />,
+    },
+    {
+      key: 'route-04',
+      label: '04 Stream Graph Route',
+      content: <Route04StreamGraph apiBaseUrl={apiBaseUrl} />,
     },
   ]
 

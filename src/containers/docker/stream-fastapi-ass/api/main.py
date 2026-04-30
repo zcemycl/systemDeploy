@@ -1,7 +1,8 @@
 from fastapi import FastAPI
+from routes._01_root import router as root_router
+from routes._02_stream_text import router as stream_text_router
 
 app = FastAPI()
 
-@app.get("/")
-async def read_root():
-    return {"message": "Hello World"}
+app.include_router(root_router)
+app.include_router(stream_text_router)

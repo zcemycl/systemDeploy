@@ -1,15 +1,69 @@
+import { useState } from 'react'
 import Route02StreamText from './components/Route02StreamText'
 import Route03StreamLlm from './components/Route03StreamLlm'
 
 function App() {
   const apiBaseUrl = 'http://127.0.0.1:53199'
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const cards = [
+    {
+      key: 'route-02',
+      label: '02 Stream Text Route',
+      content: <Route02StreamText apiBaseUrl={apiBaseUrl} />,
+    },
+    {
+      key: 'route-03',
+      label: '03 Stream LLM Route',
+      content: <Route03StreamLlm apiBaseUrl={apiBaseUrl} />,
+    },
+  ]
+
+  const totalCards = cards.length
+
+  function goPrev() {
+    setActiveIndex((prev) => (prev - 1 + totalCards) % totalCards)
+  }
+
+  function goNext() {
+    setActiveIndex((prev) => (prev + 1) % totalCards)
+  }
 
   return (
-    <main className="mx-auto max-w-3xl space-y-4 p-6">
+    <main className="mx-auto max-w-6xl space-y-4 p-6">
       <h1 className="text-2xl font-semibold">Hello World Frontend</h1>
       <p className="text-sm">API Base URL: {apiBaseUrl}</p>
-      <Route02StreamText apiBaseUrl={apiBaseUrl} />
-      <Route03StreamLlm apiBaseUrl={apiBaseUrl} />
+
+      <section className="space-y-3 rounded border p-4">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm">
+            Card {activeIndex + 1} / {totalCards}: {cards[activeIndex].label}
+          </p>
+          <div className="flex gap-2">
+            <button className="rounded border px-3 py-1" onClick={goPrev} type="button">
+              ← Prev
+            </button>
+            <button className="rounded border px-3 py-1" onClick={goNext} type="button">
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-hidden">
+          <div
+            className="flex transition-transform duration-300 ease-out"
+            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          >
+            {cards.map((card) => (
+              <div key={card.key} className="w-full shrink-0">
+                {card.content}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Add more cards into `cards` array as you learn more routes */}
+      </section>
     </main>
   )
 }

@@ -42,7 +42,8 @@ async def stream_llm(
         async for chunk in llm.astream(prompt):
             if chunk.content:
                 # SSE format helps browsers render updates incrementally.
-                yield chunk.content
+                yield f"data: {chunk.content}\n\n"
+        yield "data: [DONE]\n\n"
 
     return StreamingResponse(
         token_stream(),

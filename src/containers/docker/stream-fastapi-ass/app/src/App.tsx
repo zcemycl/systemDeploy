@@ -3,6 +3,7 @@ import Route02StreamText from './components/Route02StreamText'
 import Route03StreamLlm from './components/Route03StreamLlm'
 import Route04StreamGraph from './components/Route04StreamGraph'
 import Route05StreamSpawn from './components/Route05StreamSpawn'
+import Route06StreamGraphReview from './components/Route06StreamGraphReview'
 
 function App() {
   const apiBaseUrl = 'http://127.0.0.1:53199'
@@ -28,6 +29,11 @@ function App() {
       key: 'route-05',
       label: '05 Stream Spawn Route',
       content: <Route05StreamSpawn apiBaseUrl={apiBaseUrl} />,
+    },
+    {
+      key: 'route-06',
+      label: '06 Stream Graph Review Route',
+      content: <Route06StreamGraphReview apiBaseUrl={apiBaseUrl} />,
     },
   ]
 

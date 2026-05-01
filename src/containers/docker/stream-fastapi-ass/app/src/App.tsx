@@ -5,6 +5,7 @@ import Route04StreamGraph from './components/Route04StreamGraph'
 import Route05StreamSpawn from './components/Route05StreamSpawn'
 import Route06StreamGraphReview from './components/Route06StreamGraphReview'
 import Route07StreamGraphInterrupt from './components/Route07StreamGraphInterrupt'
+import Route08GraphqlSubscription from './components/Route08GraphqlSubscription'
 
 function App() {
   const apiBaseUrl = 'http://127.0.0.1:53199'
@@ -40,6 +41,11 @@ function App() {
       key: 'route-07',
       label: '07 Stream Graph Interrupt Route',
       content: <Route07StreamGraphInterrupt apiBaseUrl={apiBaseUrl} />,
+    },
+    {
+      key: 'route-08',
+      label: '08 GraphQL Subscription Stream',
+      content: <Route08GraphqlSubscription apiBaseUrl={apiBaseUrl} />,
     },
   ]
 

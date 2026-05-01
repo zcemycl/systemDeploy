@@ -62,9 +62,21 @@ type StreamEvent =
 
 type NodeStatus = 'idle' | 'running' | 'completed'
 
+type NodeDetail = {
+  nodeId: string
+  label: string
+  status: NodeStatus
+  durationMs?: number
+  lastEventType: string
+  payload?: unknown
+  stateSnapshot?: AgentState
+}
+
 export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
   const [graph, setGraph] = useState<GraphDefinition>({ nodes: [], edges: [] })
   const [nodeStatuses, setNodeStatuses] = useState<Record<string, NodeStatus>>({})
+  const [nodeDetails, setNodeDetails] = useState<Record<string, NodeDetail>>({})
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [steps, setSteps] = useState<string[]>([])
   const [eventLog, setEventLog] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -87,6 +99,22 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
       const json = (await response.json()) as GraphDefinition
       setGraph(json)
       setNodeStatuses(Object.fromEntries(json.nodes.map((node) => [node.id, 'idle' as const])))
+      setNodeDetails(
+        Object.fromEntries(
+          json.nodes.map((node) => [
+            node.id,
+            {
+              nodeId: node.id,
+              label: node.label,
+              status: 'idle' as const,
+              lastEventType: 'definition_loaded',
+            },
+          ]),
+        ),
+      )
+      if (!selectedNodeId && json.nodes.length > 0) {
+        setSelectedNodeId(json.nodes[0].id)
+      }
       setEventLog((prev) => [...prev, `Loaded definition: ${json.nodes.length} nodes, ${json.edges.length} edges`])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -102,7 +130,9 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
     setPendingReview(null)
     setReviewComment('')
     setEditedText('')
+    setSelectedNodeId(null)
     setNodeStatuses(Object.fromEntries(graph.nodes.map((node) => [node.id, 'idle' as const])))
+    setNodeDetails({})
 
     try {
       await new Promise<void>((resolve, reject) => {
@@ -122,6 +152,23 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
               setGraph(payload.graph)
               setSteps(payload.state.steps)
               setNodeStatuses(Object.fromEntries(payload.graph.nodes.map((node) => [node.id, 'idle' as const])))
+              setNodeDetails(
+                Object.fromEntries(
+                  payload.graph.nodes.map((node) => [
+                    node.id,
+                    {
+                      nodeId: node.id,
+                      label: node.label,
+                      status: 'idle' as const,
+                      lastEventType: 'graph_init',
+                      stateSnapshot: payload.state,
+                    },
+                  ]),
+                ),
+              )
+              if (payload.graph.nodes.length > 0) {
+                setSelectedNodeId(payload.graph.nodes[0].id)
+              }
               setEventLog((prev) => [...prev, `Graph initialized (run_id: ${payload.run_id})`])
               return
             }
@@ -130,6 +177,17 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
               setPendingReview(payload)
               setEditedText(payload.payload.review_text ?? '')
               setNodeStatuses((prev) => ({ ...prev, [payload.node.id]: 'running' }))
+              setNodeDetails((prev) => ({
+                ...prev,
+                [payload.node.id]: {
+                  nodeId: payload.node.id,
+                  label: payload.node.label,
+                  status: 'running',
+                  lastEventType: 'review_required',
+                  payload: payload.payload,
+                },
+              }))
+              setSelectedNodeId(payload.node.id)
               setEventLog((prev) => [...prev, `${payload.node.label} waiting for your decision`])
               return
             }
@@ -137,6 +195,17 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
             if (payload.type === 'review_submitted') {
               setPendingReview(null)
               setSteps(payload.state.steps)
+              setNodeDetails((prev) => ({
+                ...prev,
+                [payload.node.id]: {
+                  nodeId: payload.node.id,
+                  label: payload.node.label,
+                  status: prev[payload.node.id]?.status ?? 'running',
+                  lastEventType: 'review_submitted',
+                  payload: payload.decision,
+                  stateSnapshot: payload.state,
+                },
+              }))
               setEventLog((prev) => [...prev, `${payload.node.label}: ${payload.decision.action}`])
               return
             }
@@ -144,6 +213,17 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
             if (payload.type === 'node_completed') {
               setSteps(payload.state.steps)
               setNodeStatuses((prev) => ({ ...prev, [payload.node.id]: 'completed' }))
+              setNodeDetails((prev) => ({
+                ...prev,
+                [payload.node.id]: {
+                  nodeId: payload.node.id,
+                  label: payload.node.label,
+                  status: 'completed',
+                  durationMs: payload.duration_ms,
+                  lastEventType: 'node_completed',
+                  stateSnapshot: payload.state,
+                },
+              }))
               setEventLog((prev) => [
                 ...prev,
                 `${payload.node.label}${payload.node.is_review ? ' (review)' : ''} completed in ${payload.duration_ms.toFixed(0)} ms`,
@@ -216,6 +296,8 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
     }
   }
 
+  const selectedNodeDetail = selectedNodeId ? nodeDetails[selectedNodeId] : null
+
   return (
     <section className="space-y-3 rounded border p-4">
       <h2 className="text-lg font-semibold">06 Stream Graph Review Route</h2>
@@ -236,17 +318,56 @@ export default function Route06StreamGraphReview({ apiBaseUrl }: Props) {
           {orderedNodes.length === 0 && <p className="text-sm text-slate-500">No nodes yet. Load definition first.</p>}
           {orderedNodes.map((node, index) => (
             <div key={node.id} className="flex items-center gap-2">
-              <div className={`rounded border px-3 py-2 text-sm font-medium ${nodeClass(nodeStatuses[node.id] ?? 'idle', node.is_review)}`}>
+              <button
+                className={`rounded border px-3 py-2 text-left text-sm font-medium ${nodeClass(nodeStatuses[node.id] ?? 'idle', node.is_review)} ${selectedNodeId === node.id ? 'ring-2 ring-blue-400' : ''}`}
+                type="button"
+                onClick={() => setSelectedNodeId(node.id)}
+              >
                 <p>{node.label}</p>
                 <p className="text-xs opacity-75">
                   id: {node.id}
                   {node.is_review ? ' (review)' : ''}
                 </p>
-              </div>
+              </button>
               {index < orderedNodes.length - 1 && <span className="text-slate-500">→</span>}
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="space-y-1">
+        <p className="text-sm font-medium">Selected Node Details</p>
+        {!selectedNodeDetail && <p className="rounded border px-2 py-1 text-sm">Click a node to inspect details.</p>}
+        {selectedNodeDetail && (
+          <div className="space-y-2 rounded border p-2 text-sm">
+            <p>
+              <strong>Node:</strong> {selectedNodeDetail.label} ({selectedNodeDetail.nodeId})
+            </p>
+            <p>
+              <strong>Status:</strong> {selectedNodeDetail.status}
+            </p>
+            <p>
+              <strong>Last Event:</strong> {selectedNodeDetail.lastEventType}
+            </p>
+            {typeof selectedNodeDetail.durationMs === 'number' && (
+              <p>
+                <strong>Duration:</strong> {selectedNodeDetail.durationMs.toFixed(2)} ms
+              </p>
+            )}
+            <div>
+              <p className="font-medium">Payload</p>
+              <pre className="max-h-32 overflow-auto rounded border p-2 text-xs whitespace-pre-wrap">
+                {selectedNodeDetail.payload ? JSON.stringify(selectedNodeDetail.payload, null, 2) : '-'}
+              </pre>
+            </div>
+            <div>
+              <p className="font-medium">State Snapshot</p>
+              <pre className="max-h-36 overflow-auto rounded border p-2 text-xs whitespace-pre-wrap">
+                {selectedNodeDetail.stateSnapshot ? JSON.stringify(selectedNodeDetail.stateSnapshot, null, 2) : '-'}
+              </pre>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-1">

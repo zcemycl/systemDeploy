@@ -8,6 +8,7 @@ from routes._05_stream_spawn import router as stream_spawn_router
 from routes._06_stream_graph import router as stream_graph_06_router
 from routes._07_stream_graph_interrupt import router as stream_graph_07_router
 from routes._08_graphql_subscription import graphql_08_router
+from routes._09_graphql_interrupt import graphql_09_router
 
 app = FastAPI()
 
@@ -27,3 +28,4 @@ app.include_router(stream_spawn_router)
 app.include_router(stream_graph_06_router)
 app.include_router(stream_graph_07_router)
 app.include_router(graphql_08_router, prefix="/graphql-08")
+app.include_router(graphql_09_router, prefix="/graphql-09")

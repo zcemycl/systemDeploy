@@ -11,7 +11,7 @@ import {
 } from '@apollo/client'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions/index.js'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from 'graphql-ws'
 
 type Props = {
@@ -84,6 +84,14 @@ type PendingReview = {
   allowedActions: string[]
 }
 
+type NodeStatus = 'idle' | 'running' | 'waiting_review' | 'completed' | 'failed'
+
+type NodeUiState = {
+  status: NodeStatus
+  pulse: boolean
+  lastEvent?: string
+}
+
 function Route09GraphqlInterruptInner() {
   const { data: definitionData, loading: loadingDefinition, error: definitionError } = useQuery(GRAPH_DEFINITION_QUERY)
   const [createRun] = useMutation(CREATE_RUN_MUTATION)
@@ -98,6 +106,55 @@ function Route09GraphqlInterruptInner() {
   const [comment, setComment] = useState('')
   const [editedText, setEditedText] = useState('')
   const [submittingDecision, setSubmittingDecision] = useState(false)
+  const [nodeStates, setNodeStates] = useState<Record<string, NodeUiState>>({})
+  const pulseTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
+
+  const nodes = definitionData?.graphDefinition09?.nodes ?? []
+  const orderedNodes = useMemo(
+    () => [...nodes].sort((a: { order: number }, b: { order: number }) => a.order - b.order),
+    [nodes],
+  )
+  const nodeOrder = useMemo(() => orderedNodes.map((n: { id: string }) => n.id), [orderedNodes])
+
+  useEffect(() => {
+    if (orderedNodes.length === 0) return
+    setNodeStates((prev) => {
+      const next: Record<string, NodeUiState> = {}
+      for (const node of orderedNodes) {
+        next[node.id] = prev[node.id] ?? { status: 'idle', pulse: false }
+      }
+      return next
+    })
+  }, [orderedNodes])
+
+  useEffect(
+    () => () => {
+      for (const timerId of Object.values(pulseTimers.current)) {
+        clearTimeout(timerId)
+      }
+    },
+    [],
+  )
+
+  function pulseNode(nodeId: string, status: NodeStatus, lastEvent: string) {
+    setNodeStates((prev) => ({
+      ...prev,
+      [nodeId]: { status, pulse: true, lastEvent },
+    }))
+    if (pulseTimers.current[nodeId]) {
+      clearTimeout(pulseTimers.current[nodeId])
+    }
+    pulseTimers.current[nodeId] = setTimeout(() => {
+      setNodeStates((prev) => ({
+        ...prev,
+        [nodeId]: {
+          ...(prev[nodeId] ?? { status, lastEvent }),
+          pulse: false,
+        },
+      }))
+      delete pulseTimers.current[nodeId]
+    }, 800)
+  }
 
   useSubscription(STREAM_SUBSCRIPTION, {
     variables: { runId },
@@ -139,14 +196,32 @@ function Route09GraphqlInterruptInner() {
           allowedActions: payload.allowedActions ?? ['approve', 'reject', 'edit'],
         })
         setEditedText(reviewText)
+        if (payload.nodeId) {
+          pulseNode(payload.nodeId, 'waiting_review', payload.type)
+        }
       }
 
       if (payload.type === 'review_submitted') {
         setPendingReview(null)
+        if (payload.nodeId) {
+          pulseNode(payload.nodeId, 'running', payload.type)
+        }
+      }
+
+      if (payload.type === 'node_completed' && payload.nodeId) {
+        pulseNode(payload.nodeId, 'completed', payload.type)
+        const nodeIndex = nodeOrder.indexOf(payload.nodeId)
+        if (nodeIndex >= 0 && nodeIndex < nodeOrder.length - 1) {
+          const nextNodeId = nodeOrder[nodeIndex + 1]
+          pulseNode(nextNodeId, 'running', 'node_started')
+        }
       }
 
       if (payload.type === 'graph_completed' || payload.type === 'stream_error') {
         setRunning(false)
+        if (payload.type === 'stream_error' && pendingReview?.nodeId) {
+          pulseNode(pendingReview.nodeId, 'failed', payload.type)
+        }
       }
     },
     onError: (err) => {
@@ -162,6 +237,11 @@ function Route09GraphqlInterruptInner() {
     setPendingReview(null)
     setComment('')
     setEditedText('')
+    if (orderedNodes.length > 0) {
+      setNodeStates(
+        Object.fromEntries(orderedNodes.map((node: { id: string }) => [node.id, { status: 'idle', pulse: false }])),
+      )
+    }
     try {
       const result = await createRun()
       const id = result.data?.createRun09 as string | undefined
@@ -171,6 +251,9 @@ function Route09GraphqlInterruptInner() {
       setRunId(id)
       setRunning(true)
       setEventLog((prev) => [...prev, `Run created: ${id}`])
+      if (nodeOrder.length > 0) {
+        pulseNode(nodeOrder[0], 'running', 'node_started')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
       setRunning(false)
@@ -204,8 +287,17 @@ function Route09GraphqlInterruptInner() {
       setSubmittingDecision(false)
     }
   }
-
-  const nodes = definitionData?.graphDefinition09?.nodes ?? []
+  function nodeClass(status: NodeStatus, pulse: boolean, isReview: boolean): string {
+    if (status === 'running') return pulse ? 'border-blue-500 bg-blue-100 text-blue-900 ring-2 ring-blue-300' : 'border-blue-400 bg-blue-50 text-blue-900'
+    if (status === 'waiting_review') {
+      return pulse
+        ? 'border-purple-500 bg-purple-100 text-purple-900 ring-2 ring-purple-300'
+        : 'border-purple-400 bg-purple-50 text-purple-900'
+    }
+    if (status === 'completed') return pulse ? 'border-green-500 bg-green-100 text-green-900 ring-2 ring-green-300' : 'border-green-400 bg-green-50 text-green-900'
+    if (status === 'failed') return 'border-red-500 bg-red-100 text-red-900 ring-2 ring-red-300'
+    return isReview ? 'border-purple-200 bg-white text-slate-900' : 'border-slate-300 bg-white text-slate-900'
+  }
 
   return (
     <section className="space-y-3 rounded border p-4">
@@ -229,6 +321,26 @@ function Route09GraphqlInterruptInner() {
         ) : (
           <p>{nodes.length > 0 ? nodes.map((node: { label: string }) => node.label).join(' -> ') : 'No nodes loaded.'}</p>
         )}
+      </div>
+
+      <div className="overflow-x-auto rounded border p-3">
+        <div className="flex min-w-max items-center gap-2">
+          {orderedNodes.length === 0 && <p className="text-sm text-slate-500">Load graph definition to see nodes.</p>}
+          {orderedNodes.map((node: { id: string; label: string; isReview: boolean }, index: number) => {
+            const ui = nodeStates[node.id] ?? { status: 'idle', pulse: false }
+            return (
+              <div key={node.id} className="flex items-center gap-2">
+                <div className={`rounded border px-3 py-2 text-sm font-medium transition-all duration-200 ${nodeClass(ui.status, ui.pulse, node.isReview)}`}>
+                  <p>{node.label}</p>
+                  <p className="text-xs opacity-75">
+                    {node.id} - {ui.status}
+                  </p>
+                </div>
+                {index < orderedNodes.length - 1 && <span className="text-slate-500">→</span>}
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <div className="rounded border p-2 text-sm">
